@@ -212,6 +212,7 @@ init 6
 #### Cài đặt NTP trên CTL1
 
 - Tải gói `chrony`
+
 ```sh
 apt-get -y install chrony
 ````
@@ -238,6 +239,7 @@ sed -i 's/server 3.debian.pool.ntp.org offline minpoll 8/ \
 ```
 
 - Khởi động lại NTP Server
+
 ```sh
 /etc/init.d/chrony restart
  ```
@@ -245,6 +247,7 @@ sed -i 's/server 3.debian.pool.ntp.org offline minpoll 8/ \
 #### Cài đặt NTP trên CTL2
 
 - Tải gói NTP
+
 ```sh
 apt-get -y install chrony
 ```
@@ -267,9 +270,16 @@ sed -i 's/server 3.debian.pool.ntp.org offline minpoll 8/ \
 # server 3.debian.pool.ntp.org offline minpoll 8/g' /etc/chrony/chrony.conf
 ```
 
+- Khởi động lại NTP Server
+
+```sh
+/etc/init.d/chrony restart
+ ```
+
 #### Cài đặt NTP trên CTL3
 
 - Tải gói NTP
+
 ```sh
 apt-get -y install chrony
 ```
@@ -291,3 +301,51 @@ sed -i 's/server 2.debian.pool.ntp.org offline minpoll 8/ \
 sed -i 's/server 3.debian.pool.ntp.org offline minpoll 8/ \
 # server 3.debian.pool.ntp.org offline minpoll 8/g' /etc/chrony/chrony.conf
 ```
+
+- Khởi động lại NTP Server
+
+```sh
+/etc/init.d/chrony restart
+ ```
+
+ ### Cài đặt Memcached
+
+ #### Cài đặt trên CTL1
+ 
+- Tải gói cài đặt memcached
+
+ ```sh 
+ apt-get -y install memcached python-memcache
+ ```
+
+ #### Cài đặt trên CTL3
+ 
+- Tải gói cài đặt memcached
+
+ ```sh 
+ apt-get -y install memcached python-memcache
+ ```
+
+ #### Cài đặt trên CTL3
+ 
+- Tải gói cài đặt memcached
+
+ ```sh 
+ apt-get -y install memcached python-memcache
+ ```
+
+ ### Cài đặt MariaDB Galera cluster
+
+  #### Cài đặt trên CTL1
+
+  ```sh
+  apt-get install python-software-properties
+
+  apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 0xcbcb082a1bb943db
+
+  add-apt-repository 'deb http://mirror.jmu.edu/pub/mariadb/repo/5.6/ubuntu trusty main'
+
+  apt-get update
+
+  apt-get install -y galera  mariadb-galera-server-5.5 mariadb-client-5.5 libmariadbclient18 mariadb-client-core-5.5 rsync netcat-openbsd
+
