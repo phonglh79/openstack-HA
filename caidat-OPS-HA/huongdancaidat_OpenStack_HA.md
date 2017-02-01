@@ -308,9 +308,8 @@ sed -i 's/server 3.debian.pool.ntp.org offline minpoll 8/ \
 /etc/init.d/chrony restart
  ```
 
- ### Cài đặt Memcached
-
- #### Cài đặt trên CTL1
+### Cài đặt Memcached
+#### Cài đặt Memcached trên CTL1
  
 - Tải gói cài đặt memcached
 
@@ -318,7 +317,7 @@ sed -i 's/server 3.debian.pool.ntp.org offline minpoll 8/ \
  apt-get -y install memcached python-memcache
  ```
 
- #### Cài đặt trên CTL3
+#### Cài đặt Memcached trên CTL2
  
 - Tải gói cài đặt memcached
 
@@ -326,7 +325,7 @@ sed -i 's/server 3.debian.pool.ntp.org offline minpoll 8/ \
  apt-get -y install memcached python-memcache
  ```
 
- #### Cài đặt trên CTL3
+#### Cài đặt Memcached trên CTL3
  
 - Tải gói cài đặt memcached
 
@@ -334,21 +333,251 @@ sed -i 's/server 3.debian.pool.ntp.org offline minpoll 8/ \
  apt-get -y install memcached python-memcache
  ```
 
- ### Cài đặt MariaDB Galera cluster
+### Cài đặt MariaDB và Galera
 
-  #### Cài đặt trên CTL1
+#### Cài đặt MariaDB và Galera trên CTL1, CTL2 và CTL3
 
-  ```sh
+- Khai báo gói phần mềm cần thiét
+
+```sh
 apt-get -y install python-software-properties
 
+```
+
+- Khai báo gói repo cho Galera
+
+```sh
 apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 0xcbcb082a1bb943db
-
 add-apt-repository "deb http://mirror.edatel.net.co/mariadb/repo/5.5/ubuntu trusty main"
-
 apt-get update
+````
 
+- Cài đặt Mariadb và Galera. Lưu ý, mật khẩu lúc này setup là `Welcome123`
+
+```sh
 echo mysql-server mysql-server/root_password password Welcome123 | debconf-set-selections
 echo mysql-server mysql-server/root_password_again password Welcome123 | debconf-set-selections
 
 apt-get install -y rsync galera  mariadb-galera-server
 ```
+
+- Kiểm tra trên từng node bằng lệnh `mysql -u root -p`. Kết quả như sau: 
+
+```sh
+root@controller2:~# mysql -u root -p
+Enter password:
+Welcome to the MariaDB monitor.  Commands end with ; or \g.
+Your MariaDB connection id is 36
+Server version: 5.5.54-MariaDB-1~trusty-wsrep mariadb.org binary distribution, wsrep_25.14.r9949137
+
+Copyright (c) 2000, 2016, Oracle, MariaDB Corporation Ab and others.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+MariaDB [(none)]>
+```
+
+- Phiên bản cài đặt Mariadb là Mariadb 5.5
+
+```sh
+root@controller1:~# dpkg -l | grep mariadb
+ii  libmariadbclient18                  5.5.54+maria-1~trusty             amd64        MariaDB database client library
+ii  mariadb-client-5.5                  5.5.54+maria-1~trusty             amd64        MariaDB database client binaries
+ii  mariadb-client-core-5.5             5.5.54+maria-1~trusty             amd64        MariaDB database core client binaries
+ii  mariadb-common                      5.5.54+maria-1~trusty             all          MariaDB database common files (e.g. /etc/mysql/conf.d/mariadb.cnf)
+ii  mariadb-galera-server               5.5.54+maria-1~trusty             all          MariaDB database server with Galera cluster (metapackage depending on the latest version)
+ii  mariadb-galera-server-5.5           5.5.54+maria-1~trusty             amd64        MariaDB database server with Galera cluster binaries
+root@controller1:~#
+```
+
+- Phiên bản cài đặt galera là galera 5.5
+
+```sh
+root@controller1:~# dpkg -l | grep galera
+ii  galera-3                            25.3.19-trusty                    amd64        Replication framework for transactional applications
+ii  mariadb-galera-server               5.5.54+maria-1~trusty             all          MariaDB database server with Galera cluster (metapackage depending on the latest version)
+ii  mariadb-galera-server-5.5           5.5.54+maria-1~trusty             amd64        MariaDB database server with Galera cluster binaries
+root@controller1:~#
+```
+
+### Cấu hình MariaDB và Galera
+#### Cấu hình MariaDB và Galera trên CTL1
+
+- Sao lưu fiel cấu hình của MariaDB
+
+```sh
+cp /etc/mysql/my.cnf /etc/mysql/my.cnf.orig
+```
+
+- Comment các dòng sau trong file `/etc/mysql/my.cnf`
+
+```sh
+#bind-address           = 127.0.0.1
+#default_storage_engine = InnoDB
+#query_cache_limit              = 128K
+#query_cache_size               = 64M
+```
+
+- Thêm các dòng sau vào file `/etc/mysql/conf.d/cluster.cnf`
+
+```sh
+[mysqld]
+binlog_format=ROW
+default_storage_engine=innodb
+innodb_autoinc_lock_mode=2
+bind-address=0.0.0.0
+```
+
+- Khai báo thêm file dưới
+
+cat << EOF > /etc/mysql/conf.d/cluster.cnf
+[mysqld]
+query_cache_size=0
+binlog_format=ROW
+default-storage-engine=innodb
+innodb_autoinc_lock_mode=2
+innodb_locks_unsafe_for_binlog=1
+innodb_file_per_table
+innodb_flush_log_at_trx_commit=2
+query_cache_type=0
+bind-address=0.0.0.0
+
+max_connections = 102400
+max_allowed_packet  = 16M
+
+# Galera Provider Configuration
+wsrep_provider=/usr/lib/galera/libgalera_smm.so
+#wsrep_provider_options="gcache.size=32G"
+
+# Galera Cluster Configuration
+wsrep_cluster_name="openstack"
+wsrep_cluster_address="gcomm://10.10.10.51,10.10.10.52,10.10.10.53"
+# Galera Synchronization Congifuration
+wsrep_sst_method=rsync
+#wsrep_sst_auth=user:pass
+
+# Galera Node Configuration
+wsrep_node_address="10.10.10.51"
+wsrep_node_name="controller1"
+EOF
+
+
+#### Cấu hình MariaDB và Galera trên CTL2
+
+- Sao lưu fiel cấu hình của MariaDB
+
+```sh
+cp /etc/mysql/my.cnf /etc/mysql/my.cnf.orig
+```
+
+- Comment các dòng sau trong file `/etc/mysql/my.cnf`
+
+```sh
+#bind-address           = 127.0.0.1
+#default_storage_engine = InnoDB
+#query_cache_limit              = 128K
+#query_cache_size               = 64M
+```
+
+- Thêm các dòng sau vào file `/etc/mysql/conf.d/cluster.cnf`
+
+```sh
+[mysqld]
+binlog_format=ROW
+default_storage_engine=innodb
+innodb_autoinc_lock_mode=2
+bind-address=0.0.0.0
+```
+
+- Khai báo thêm file dưới
+
+cat << EOF > /etc/mysql/conf.d/cluster.cnf
+[mysqld]
+query_cache_size=0
+binlog_format=ROW
+default-storage-engine=innodb
+innodb_autoinc_lock_mode=2
+innodb_locks_unsafe_for_binlog=1
+innodb_file_per_table
+innodb_flush_log_at_trx_commit=2
+query_cache_type=0
+bind-address=0.0.0.0
+
+max_connections = 102400
+max_allowed_packet  = 16M
+
+# Galera Provider Configuration
+wsrep_provider=/usr/lib/galera/libgalera_smm.so
+#wsrep_provider_options="gcache.size=32G"
+
+# Galera Cluster Configuration
+wsrep_cluster_name="openstack"
+wsrep_cluster_address="gcomm://10.10.10.51,10.10.10.52,10.10.10.53"
+# Galera Synchronization Congifuration
+wsrep_sst_method=rsync
+#wsrep_sst_auth=user:pass
+
+# Galera Node Configuration
+wsrep_node_address="10.10.10.52"
+wsrep_node_name="controller2"
+EOF
+
+#### Cấu hình MariaDB và Galera trên CTL3
+
+- Sao lưu fiel cấu hình của MariaDB
+
+```sh
+cp /etc/mysql/my.cnf /etc/mysql/my.cnf.orig
+```
+
+- Comment các dòng sau trong file `/etc/mysql/my.cnf`
+
+```sh
+#bind-address           = 127.0.0.1
+#default_storage_engine = InnoDB
+#query_cache_limit              = 128K
+#query_cache_size               = 64M
+```
+
+- Thêm các dòng sau vào file `/etc/mysql/conf.d/cluster.cnf`
+
+```sh
+[mysqld]
+binlog_format=ROW
+default_storage_engine=innodb
+innodb_autoinc_lock_mode=2
+bind-address=0.0.0.0
+```
+
+- Khai báo thêm file dưới
+
+cat << EOF > /etc/mysql/conf.d/cluster.cnf
+[mysqld]
+query_cache_size=0
+binlog_format=ROW
+default-storage-engine=innodb
+innodb_autoinc_lock_mode=2
+innodb_locks_unsafe_for_binlog=1
+innodb_file_per_table
+innodb_flush_log_at_trx_commit=2
+query_cache_type=0
+bind-address=0.0.0.0
+
+max_connections = 102400
+max_allowed_packet  = 16M
+
+# Galera Provider Configuration
+wsrep_provider=/usr/lib/galera/libgalera_smm.so
+#wsrep_provider_options="gcache.size=32G"
+
+# Galera Cluster Configuration
+wsrep_cluster_name="openstack"
+wsrep_cluster_address="gcomm://10.10.10.51,10.10.10.52,10.10.10.53"
+# Galera Synchronization Congifuration
+wsrep_sst_method=rsync
+#wsrep_sst_auth=user:pass
+
+# Galera Node Configuration
+wsrep_node_address="10.10.10.53"
+wsrep_node_name="controller3"
+EOF
