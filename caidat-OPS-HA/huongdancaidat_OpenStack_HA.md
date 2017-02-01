@@ -207,3 +207,87 @@ add-apt-repository cloud-archive:mitaka -y
 ```sh
 init 6
 ```
+
+### Cài đặt Network Time Protocol (NTP)
+#### Cài đặt NTP trên CTL1
+
+- Tải gói `chrony`
+```sh
+apt-get -y install chrony
+````
+
+- Cấu hình NTP Server
+
+```sh
+cp /etc/chrony/chrony.conf /etc/chrony/chrony.conf.orig
+
+
+sed -i 's/server 0.debian.pool.ntp.org offline minpoll 8/ \
+server 1.vn.pool.ntp.org iburst \
+server 0.asia.pool.ntp.org iburst \
+server 3.asia.pool.ntp.org iburst/g' /etc/chrony/chrony.conf
+
+sed -i 's/server 1.debian.pool.ntp.org offline minpoll 8/ \
+# server 1.debian.pool.ntp.org offline minpoll 8/g' /etc/chrony/chrony.conf
+
+sed -i 's/server 2.debian.pool.ntp.org offline minpoll 8/ \
+# server 2.debian.pool.ntp.org offline minpoll 8/g' /etc/chrony/chrony.conf
+
+sed -i 's/server 3.debian.pool.ntp.org offline minpoll 8/ \
+# server 3.debian.pool.ntp.org offline minpoll 8/g' /etc/chrony/chrony.conf
+```
+
+- Khởi động lại NTP Server
+```sh
+/etc/init.d/chrony restart
+ ```
+
+#### Cài đặt NTP trên CTL2
+
+- Tải gói NTP
+```sh
+apt-get -y install chrony
+```
+
+- Cấu hình NTP trên CTL2
+
+```sh
+cp /etc/chrony/chrony.conf /etc/chrony/chrony.conf.orig
+
+sed -i "s/server 0.debian.pool.ntp.org offline minpoll 8/ \
+server 10.10.10.51 iburst/g" /etc/chrony/chrony.conf
+
+sed -i 's/server 1.debian.pool.ntp.org offline minpoll 8/ \
+# server 1.debian.pool.ntp.org offline minpoll 8/g' /etc/chrony/chrony.conf
+
+sed -i 's/server 2.debian.pool.ntp.org offline minpoll 8/ \
+# server 2.debian.pool.ntp.org offline minpoll 8/g' /etc/chrony/chrony.conf
+
+sed -i 's/server 3.debian.pool.ntp.org offline minpoll 8/ \
+# server 3.debian.pool.ntp.org offline minpoll 8/g' /etc/chrony/chrony.conf
+```
+
+#### Cài đặt NTP trên CTL3
+
+- Tải gói NTP
+```sh
+apt-get -y install chrony
+```
+
+- Cấu hình NTP trên CTL3
+
+```sh
+cp /etc/chrony/chrony.conf /etc/chrony/chrony.conf.orig
+
+sed -i "s/server 0.debian.pool.ntp.org offline minpoll 8/ \
+server 10.10.10.51 iburst/g" /etc/chrony/chrony.conf
+
+sed -i 's/server 1.debian.pool.ntp.org offline minpoll 8/ \
+# server 1.debian.pool.ntp.org offline minpoll 8/g' /etc/chrony/chrony.conf
+
+sed -i 's/server 2.debian.pool.ntp.org offline minpoll 8/ \
+# server 2.debian.pool.ntp.org offline minpoll 8/g' /etc/chrony/chrony.conf
+
+sed -i 's/server 3.debian.pool.ntp.org offline minpoll 8/ \
+# server 3.debian.pool.ntp.org offline minpoll 8/g' /etc/chrony/chrony.conf
+```
