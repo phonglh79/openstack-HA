@@ -418,18 +418,9 @@ cp /etc/mysql/my.cnf /etc/mysql/my.cnf.orig
 #query_cache_size               = 64M
 ```
 
-- Thêm các dòng sau vào file `/etc/mysql/conf.d/cluster.cnf`
-
-```sh
-[mysqld]
-binlog_format=ROW
-default_storage_engine=innodb
-innodb_autoinc_lock_mode=2
-bind-address=0.0.0.0
-```
-
 - Khai báo thêm file dưới
 
+```
 cat << EOF > /etc/mysql/conf.d/cluster.cnf
 [mysqld]
 query_cache_size=0
@@ -460,7 +451,7 @@ wsrep_sst_method=rsync
 wsrep_node_address="10.10.10.51"
 wsrep_node_name="controller1"
 EOF
-
+```
 
 #### Cấu hình MariaDB và Galera trên CTL2
 
@@ -479,18 +470,9 @@ cp /etc/mysql/my.cnf /etc/mysql/my.cnf.orig
 #query_cache_size               = 64M
 ```
 
-- Thêm các dòng sau vào file `/etc/mysql/conf.d/cluster.cnf`
-
-```sh
-[mysqld]
-binlog_format=ROW
-default_storage_engine=innodb
-innodb_autoinc_lock_mode=2
-bind-address=0.0.0.0
-```
-
 - Khai báo thêm file dưới
 
+```sh
 cat << EOF > /etc/mysql/conf.d/cluster.cnf
 [mysqld]
 query_cache_size=0
@@ -521,6 +503,7 @@ wsrep_sst_method=rsync
 wsrep_node_address="10.10.10.52"
 wsrep_node_name="controller2"
 EOF
+```
 
 #### Cấu hình MariaDB và Galera trên CTL3
 
@@ -529,8 +512,8 @@ EOF
 ```sh
 cp /etc/mysql/my.cnf /etc/mysql/my.cnf.orig
 ```
-
 - Comment các dòng sau trong file `/etc/mysql/my.cnf`
+
 
 ```sh
 #bind-address           = 127.0.0.1
@@ -539,18 +522,9 @@ cp /etc/mysql/my.cnf /etc/mysql/my.cnf.orig
 #query_cache_size               = 64M
 ```
 
-- Thêm các dòng sau vào file `/etc/mysql/conf.d/cluster.cnf`
-
-```sh
-[mysqld]
-binlog_format=ROW
-default_storage_engine=innodb
-innodb_autoinc_lock_mode=2
-bind-address=0.0.0.0
-```
-
 - Khai báo thêm file dưới
 
+```
 cat << EOF > /etc/mysql/conf.d/cluster.cnf
 [mysqld]
 query_cache_size=0
@@ -581,3 +555,4 @@ wsrep_sst_method=rsync
 wsrep_node_address="10.10.10.53"
 wsrep_node_name="controller3"
 EOF
+```
