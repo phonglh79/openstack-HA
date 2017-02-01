@@ -339,13 +339,16 @@ sed -i 's/server 3.debian.pool.ntp.org offline minpoll 8/ \
   #### Cài đặt trên CTL1
 
   ```sh
-  apt-get install python-software-properties
+apt-get -y install python-software-properties
 
-  apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 0xcbcb082a1bb943db
+apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 0xcbcb082a1bb943db
 
-  add-apt-repository 'deb http://mirror.jmu.edu/pub/mariadb/repo/5.6/ubuntu trusty main'
+add-apt-repository "deb http://mirror.edatel.net.co/mariadb/repo/5.5/ubuntu trusty main"
 
-  apt-get update
+apt-get update
 
-  apt-get install -y galera  mariadb-galera-server-5.5 mariadb-client-5.5 libmariadbclient18 mariadb-client-core-5.5 rsync netcat-openbsd
+echo mysql-server mysql-server/root_password password Welcome123 | debconf-set-selections
+echo mysql-server mysql-server/root_password_again password Welcome123 | debconf-set-selections
 
+apt-get install -y rsync galera  mariadb-galera-server
+```
