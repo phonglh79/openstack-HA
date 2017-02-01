@@ -86,7 +86,7 @@ init 6
 cp /etc/network/interfaces /etc/network/interfaces.orig
 ```
 
-- Khai báo IP cho các NICs của node Controller1 
+- Khai báo IP cho các NICs của node Controller2
 
 ```sh
 cat << EOF >> /etc/network/interfaces
@@ -151,7 +151,7 @@ init 6
 cp /etc/network/interfaces /etc/network/interfaces.orig
 ```
 
-- Khai báo IP cho các NICs của node Controller1 
+- Khai báo IP cho các NICs của node Controller3
 
 ```sh
 cat << EOF >> /etc/network/interfaces
