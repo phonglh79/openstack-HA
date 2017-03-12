@@ -14,7 +14,10 @@ apt-get update
 
 - 
 
-## Chuan bi mo hinh
+## Các thiết lập về network
+
+- IP VIP được sử dụng là: `192.168.11.70`
+
 ### Controlelr1
 - SSH: umdt/1q	root/1q
 - IP cho controller1
