@@ -30,6 +30,7 @@ apt-get update
 ### Controlelr2
 - SSH: umdt/1q	root/1q
 - IP cho controller2
+
   ```sh
 	eth0: 	Hostonly	192.168.11.130		 /24		
 	eth1: 	NAT			172.16.69.200		     /24		172.16.69.1
@@ -40,6 +41,7 @@ apt-get update
 ### Controlelr3
 - SSH: `umdt/1q`	`root/1q`
 - IP cho controller3
+
   ```sh
   eth0: 	Hostonly	192.168.11.132		/24		
   eth1: 	NAT			172.16.69.201		    /24		172.16.69.1
@@ -105,6 +107,7 @@ apt-get update
   sed -i 's/PermitRootLogin without-password/PermitRootLogin yes/g' /etc/ssh/sshd_config
   ```
 - Khoi dong la CONTROLLER1
+
   ```sh
   init 6
   ```
@@ -274,9 +277,10 @@ apt-get update
   cp /etc/corosync/corosync.conf /etc/corosync/corosync.conf.orig
   ```
 
-- Sua file /etc/corosync/corosync.conf tren ca 3 node
+- Sua file `/etc/corosync/corosync.conf` tren ca 3 node
 
   ```sh
+  cat << EOF >> /etc/corosync/corosync.conf
   totem {
     version: 2
     cluster_name: lbcluster
@@ -316,6 +320,7 @@ apt-get update
     to_syslog: yes
     timestamp: on
   }
+  EOF
   ```
 
 - Tao file voi noi dung duoi
@@ -343,7 +348,7 @@ apt-get update
 - Dung tren 1 trong 3 node kiem tra trang thai cua corosync
   ```sh
   sudo corosync-cmapctl | grep members
-  ```sh
+  ```
 
 
 - Ket qua nhu duoi
