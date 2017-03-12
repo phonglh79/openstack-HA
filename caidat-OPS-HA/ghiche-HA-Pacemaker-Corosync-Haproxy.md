@@ -21,6 +21,7 @@ apt-get update
 ### Controlelr1
 - SSH: umdt/1q	root/1q
 - IP cho controller1
+
   ```sh
   eth0: 	Hostonly	192.168.11.129		/24		
   eth1: 	NAT			  172.16.69.210		  /24		172.16.69.1
@@ -242,6 +243,8 @@ apt-get update
   sudo apt-get -y install ntp
 
   sudo apt-get -y install pacemaker haveged
+
+  sudo apt-get -y install haproxy 
   ```
 
 - Dung tren controller1 thuc hien lenh duoi
@@ -464,9 +467,10 @@ apt-get update
 - Lúc này ta sẽ nhìn thấy `ocf::heartbeat:IPaddr2` và `lsb:haproxy` chạy trên cùng node `u14-ctl3`
 
 ########################################################################################################
-### Cai HAproxy
+### Cài đặt HAproxy
 
 - Cài đặt gói
+
   ```sh
   sudo apt-get -y install haproxy
   ```
@@ -553,6 +557,7 @@ apt-get update
 
 - Khai báo cấu hình cho HAproxy trên 03 node  `/etc/haproxy/haproxy.cfg`
   ```sh
+  cat <<EOF>> /etc/haproxy/haproxy.cfg
   global
     log         127.0.0.1 syslog
     maxconn     1000
@@ -592,6 +597,7 @@ apt-get update
           stats uri /stats
           stats realm HAProxy\ Statistics
           stats auth admin:congto6789
+  EOF
   ```
 
 - Truy cập vào trang theo dõi tình trạng HAproxy, nhập user là: `congto` mật khẩu là: `congto6789`
