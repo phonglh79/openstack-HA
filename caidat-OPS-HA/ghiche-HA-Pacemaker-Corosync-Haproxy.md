@@ -18,11 +18,11 @@ apt-get update
 ### Controlelr1
 - SSH: umdt/1q	root/1q
 - IP cho controller1
-```sh
-	eth0: 	Hostonly	192.168.11.129		/24		
-	eth1: 	NAT			  172.16.69.210		 /24		172.16.69.1
-	eth2: 	Bridge: 	192.168.100.139		/24
-```
+  ```sh
+  eth0: 	Hostonly	192.168.11.129		/24		
+  eth1: 	NAT			  172.16.69.210		  /24		172.16.69.1
+  eth2: 	Bridge: 	192.168.100.139		/24
+  ```
 
 ### Controlelr2
 - SSH: umdt/1q	root/1q
@@ -38,9 +38,9 @@ apt-get update
 - SSH: `umdt/1q`	`root/1q`
 - IP cho controller3
   ```sh
-	eth0: 	Hostonly	192.168.11.132		/24		
-	eth1: 	NAT			172.16.69.201		/24		172.16.69.1
-	eth2: 	Bridge: 	192.168.100.142		/24
+  eth0: 	Hostonly	192.168.11.132		/24		
+  eth1: 	NAT			172.16.69.201		    /24		172.16.69.1
+  eth2: 	Bridge: 	192.168.100.142		/24
   ```
 
 ## Khai bao repos va dat IP cho cac may CONTROLLER
@@ -48,12 +48,14 @@ apt-get update
 ##########################################
 ### Khai bao  repos & IP tren CONTROLLER1
 ##########################################
-```sh
-apt-get install software-properties-common
-add-apt-repository cloud-archive:mitaka
 
-apt-get update -y && apt-get upgrade -y && apt-get dist-upgrade -y
-```
+- Khai báo repos trên cả 3 node
+  ```sh
+  apt-get install software-properties-common
+  add-apt-repository cloud-archive:mitaka
+
+  apt-get update -y && apt-get upgrade -y && apt-get dist-upgrade -y
+  ```
 
 - Sao luu file cau hinh network
   ```sh 
@@ -106,6 +108,8 @@ apt-get update -y && apt-get upgrade -y && apt-get dist-upgrade -y
 
 
 ### Khai bao  repos & IP tren CONTROLLER2
+
+- Khai báo repos trên node controller2
   ```sh
   apt-get install software-properties-common
   add-apt-repository cloud-archive:mitaka
@@ -502,12 +506,11 @@ apt-get update -y && apt-get upgrade -y && apt-get dist-upgrade -y
   ```
 
 - Tren CTL1 tạo ra nội dung web
-
-```sh
-cat <<EOF> /var/www/html/index.html
-<h1> CTL1 </h1>
-EOF
-```
+  ```sh
+  cat <<EOF> /var/www/html/index.html
+  <h1> CTL1 </h1>
+  EOF
+  ```
 
 - Tren CTL2 tạo ra nội dung web
   ```sh
@@ -531,16 +534,16 @@ EOF
   ```
 
 - Sao luu file cau hinh cua haproxy 
-```sh
-cp /etc/haproxy/haproxy.cfg /etc/haproxy/haproxy.cfg.orig
-```
+  ```sh
+  cp /etc/haproxy/haproxy.cfg /etc/haproxy/haproxy.cfg.orig
+  ```
 
 - Setup cho HAProxy start tu dong
-```sh
-echo "ENABLED=1" >> /etc/default/haproxy
-```
+  ```sh
+  echo "ENABLED=1" >> /etc/default/haproxy
+  ```
 
-- Khai báo cấu hình cho HAproxy trên 03 node 
+- Khai báo cấu hình cho HAproxy trên 03 node  `/etc/haproxy/haproxy.cfg`
   ```sh
   global
     log         127.0.0.1 syslog
