@@ -1,10 +1,21 @@
 #!/bin/bash 
-#############################################
+##############################################################################
 ### Script cai dat rabbitmq
 ### MQ1: bash rabbitmq1-install.sh mq1
 ### MQ1: bash rabbitmq1-install.sh mq2
 ### MQ1: bash rabbitmq1-install.sh mq3
-#############################################
+##############################################################################
+
+##############################################################################
+### Kiem tra cu phap khi thuc hien shell 
+if [ $# -ne 1 ]
+    then
+        echocolor  "Syntax command "
+        echo "Thuc hien tren may chu MQ1: bash $0 mq1"
+        echo "Thuc hien tren may chu MQ2: bash $0 mq2"
+        echo "Thuc hien tren may chu MQ3: bash $0 mq3"
+        exit 1;
+fi
 
 if [ "$1" == "mq1" ]; then
     echo "Khai bao repos"
@@ -115,5 +126,8 @@ if [ "$1" == "mq1" ]; then
     echo "Khoi dong lai may chu"
     sleep 5
     init 6
+  else
+    echo "Sai cu phap roi"
+    exit 1
 fi
 
