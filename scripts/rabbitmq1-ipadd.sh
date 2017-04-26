@@ -34,4 +34,6 @@ echo "192.168.20.21 mq1" >> /etc/hosts
 echo "192.168.20.22 mq2" >> /etc/hosts
 echo "192.168.20.23 mq3" >> /etc/hosts
 
+echo "Khoi dong lai may chu"
+sleep 5
 init 6
