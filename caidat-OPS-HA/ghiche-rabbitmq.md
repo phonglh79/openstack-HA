@@ -256,15 +256,15 @@
   ```
   - Kết quả như bên dưới
     ```sh
-  [root@mq1 ~]# rabbitmqctl cluster_status
-  Cluster status of node rabbit@mq1 ...
-  [{nodes,[{disc,[rabbit@mq1,rabbit@mq2,rabbit@mq3]}]},
-   {running_nodes,[rabbit@mq3,rabbit@mq2,rabbit@mq1]},
-   {cluster_name,<<"rabbit@mq1">>},
-   {partitions,[]},
-   {alarms,[{rabbit@mq3,[]},{rabbit@mq2,[]},{rabbit@mq1,[]}]}]
-  [root@mq1 ~]#
-  ```
+    [root@mq1 ~]# rabbitmqctl cluster_status
+    Cluster status of node rabbit@mq1 ...
+    [{nodes,[{disc,[rabbit@mq1,rabbit@mq2,rabbit@mq3]}]},
+     {running_nodes,[rabbit@mq3,rabbit@mq2,rabbit@mq1]},
+     {cluster_name,<<"rabbit@mq1">>},
+     {partitions,[]},
+     {alarms,[{rabbit@mq3,[]},{rabbit@mq2,[]},{rabbit@mq1,[]}]}]
+    [root@mq1 ~]#
+    ```
 
 
 - 
