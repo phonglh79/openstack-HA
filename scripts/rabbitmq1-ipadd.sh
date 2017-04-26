@@ -10,7 +10,7 @@
 ### Kiem tra cu phap khi thuc hien shell 
 if [ $# -ne 1 ]
     then
-        echocolor  "Syntax command "
+        echo  "Cu phap dung nhu sau "
         echo "Thuc hien tren may chu MQ1: bash $0 mq1"
         echo "Thuc hien tren may chu MQ2: bash $0 mq2"
         echo "Thuc hien tren may chu MQ3: bash $0 mq3"
@@ -127,7 +127,10 @@ if [ "$1" == "mq1" ]; then
     sleep 5
     init 6
   else
-    echo "Sai cu phap roi"
+    echo "Sai cu phap roi, cu phap dung nhu sau "
+    echo "Thuc hien tren may chu MQ1: bash $0 mq1"
+    echo "Thuc hien tren may chu MQ2: bash $0 mq2"
+    echo "Thuc hien tren may chu MQ3: bash $0 mq3"
     exit 1
 fi
 
