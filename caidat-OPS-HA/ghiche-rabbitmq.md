@@ -156,14 +156,13 @@
 yum install -y rabbitmq-server
 ```
 
+### Cấu hình RabbitMQ Cluster trên 1 node bất kỳ, trong ví dụ này chọn node `MQ1`
 - Kích hoạt và khởi động dịch vụ RabbitMQ
   ```sh
   systemctl enable rabbitmq-server.service
   systemctl start rabbitmq-server.service
   ```
-
-### Cấu hình RabbitMQ Cluster trên 1 node bất kỳ, trong ví dụ này chọn node `MQ1`
-
+  
 - Tạo user và phân quyền cho user trong RabbitMQ
   ```sh  
 
@@ -176,13 +175,30 @@ yum install -y rabbitmq-server
   ```sh
   scp /var/lib/rabbitmq/.erlang.cookie root@mq2:/var/lib/rabbitmq/.erlang.cookie
 
-  scp /var/lib/rabbitmq/.erlang.cookie root@mq2:/var/lib/rabbitmq/.erlang.cookie
+  scp /var/lib/rabbitmq/.erlang.cookie root@mq3:/var/lib/rabbitmq/.erlang.cookie
   ```
 
+- Cấu hình policy HA cho RabbitMQ
+  ```sh
+  rabbitmqctl set_policy ha-all '^(?!amq\.).*' '{"ha-mode": "all"}'
+  ```
 
+- Kiểm tra trạng thái cluster trên `MQ1`
+```sh
+rabbitmqctl cluster_status
+```
+
+- Khởi động cluster cho rabbitmq trên MQ1
+```sh
+rabbitmqctl start_app
+```
+
+- Kiểm tra lại trạng thái cluster
+```sh
+rabbitmqctl cluster_status
+```
 
 ### Thực hiện các bước trên 2 node còn lại.
-
 - Phân quyền file `/var/lib/rabbitmq/.erlang.cookie` vừa copy ở `node MQ1` trong bước trên.
 - Thực hiện các bước này trên cả `MQ2` và `MQ3` 
 
@@ -190,8 +206,30 @@ yum install -y rabbitmq-server
   chown rabbitmq:rabbitmq /var/lib/rabbitmq/.erlang.cookie
   chmod 400 /var/lib/rabbitmq/.erlang.cookie
   ````
+  
+- Khởi động rabbitmq trên cả 2 node MQ2 và MQ3 
+  ```sh
+  systemctl enable rabbitmq-server.service
+  systemctl start rabbitmq-server.service
+  ```
+  
+- Đứng trên MQ2 thực hiện join vào cluster đã tạo ở trên.
+```sh
+rabbitmqctl stop_app
+rabbitmqctl join_cluster rabbit@mq2
+```
 
+  
+- Đứng trên MQ3 thực hiện join vào cluster đã tạo ở trên.
+```sh
+rabbitmqctl stop_app
+rabbitmqctl join_cluster rabbit@mq2
+```
 
+- Đứng trên từng node thực hiện lệnh kiểm tra trạng thái cluster
+```sh
+rabbitmqctl cluster_status
+```
 
 
 
