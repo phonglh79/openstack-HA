@@ -142,7 +142,7 @@
 ### Khai báo repos cho RabbitMQ
 - Khai báo repos của OpenStack Newton để có gói rabbitmq phù hợp. Thực hiện trên cả 3 node các bước dưới.
   ```sh
-  yum install y centos-release-openstack-newton
+  yum install -y centos-release-openstack-newton
   yum upgrade
   ```
 
@@ -152,10 +152,24 @@
   ```
 
 - Đăng nhập lại từng máy và thực hiện cài đặt RabbitMQ với quyền `root` trên cả 03 node.
-```sh
-yum install -y rabbitmq-server
-```
+  ```sh
+  yum install -y rabbitmq-server
+  ```
 
+- Kiểm tra version của rabbitmq
+  ```sh
+  sudo rabbitmqctl status|grep rabbit
+  ```
+  - Kết quả: 
+    ```sh
+    [root@mq1 ~]# sudo rabbitmqctl status|grep rabbit
+    Status of node rabbit@mq1 ...
+     {running_applications,[{rabbit,"RabbitMQ","3.6.5"},
+                            {rabbit_common,[],"3.6.5"},
+    [root@mq1 ~]#
+    ````
+
+  
 ### Cấu hình RabbitMQ Cluster trên 1 node bất kỳ, trong ví dụ này chọn node `MQ1`
 - Kích hoạt và khởi động dịch vụ RabbitMQ
   ```sh
@@ -163,10 +177,9 @@ yum install -y rabbitmq-server
   systemctl start rabbitmq-server.service
   ```
   
-- Tạo user và phân quyền cho user trong RabbitMQ
+- Tạo user và phân quyền cho user `openstack` trong RabbitMQ, mật khẩu là `Welcome123`
   ```sh  
-
-  abbitmqctl add_user openstack Welcome123
+  rabbitmqctl add_user openstack Welcome123
 
   rabbitmqctl set_permissions openstack ".*" ".*" ".*"
   ```
@@ -184,19 +197,30 @@ yum install -y rabbitmq-server
   ```
 
 - Kiểm tra trạng thái cluster trên `MQ1`
-```sh
-rabbitmqctl cluster_status
-```
+  ```sh
+  rabbitmqctl cluster_status
+  ```
 
 - Khởi động cluster cho rabbitmq trên MQ1
-```sh
-rabbitmqctl start_app
-```
+  ```sh
+  rabbitmqctl start_app
+  ```
 
 - Kiểm tra lại trạng thái cluster
-```sh
-rabbitmqctl cluster_status
-```
+  ```sh
+  rabbitmqctl cluster_status
+  ```
+  - Kết quả như sau: 
+    ```sh
+    [root@mq1 ~]# rabbitmqctl cluster_status
+    Cluster status of node rabbit@mq1 ...
+    [{nodes,[{disc,[rabbit@mq1]}]},
+     {running_nodes,[rabbit@mq1]},
+     {cluster_name,<<"rabbit@mq1">>},
+     {partitions,[]},
+     {alarms,[{rabbit@mq1,[]}]}]
+    [root@mq1 ~]#
+    ```
 
 ### Thực hiện các bước trên 2 node còn lại.
 - Phân quyền file `/var/lib/rabbitmq/.erlang.cookie` vừa copy ở `node MQ1` trong bước trên.
@@ -214,24 +238,36 @@ rabbitmqctl cluster_status
   ```
   
 - Đứng trên MQ2 thực hiện join vào cluster đã tạo ở trên.
-```sh
-rabbitmqctl stop_app
-rabbitmqctl join_cluster rabbit@mq2
-```
+  ```sh
+  rabbitmqctl stop_app
+  rabbitmqctl join_cluster rabbit@mq1
+  ```
 
   
 - Đứng trên MQ3 thực hiện join vào cluster đã tạo ở trên.
-```sh
-rabbitmqctl stop_app
-rabbitmqctl join_cluster rabbit@mq2
-```
+  ```sh
+  rabbitmqctl stop_app
+  rabbitmqctl join_cluster rabbit@mq1
+  ```
 
 - Đứng trên từng node thực hiện lệnh kiểm tra trạng thái cluster
-```sh
-rabbitmqctl cluster_status
-```
+  ```sh
+  rabbitmqctl cluster_status
+  ```
+  - Kết quả như bên dưới
+    ```sh
+  [root@mq1 ~]# rabbitmqctl cluster_status
+  Cluster status of node rabbit@mq1 ...
+  [{nodes,[{disc,[rabbit@mq1,rabbit@mq2,rabbit@mq3]}]},
+   {running_nodes,[rabbit@mq3,rabbit@mq2,rabbit@mq1]},
+   {cluster_name,<<"rabbit@mq1">>},
+   {partitions,[]},
+   {alarms,[{rabbit@mq3,[]},{rabbit@mq2,[]},{rabbit@mq1,[]}]}]
+  [root@mq1 ~]#
+  ```
 
 
+- 
 
 
 
