@@ -5,8 +5,13 @@
 - 
 
 ## Mô hình
+- Mô hình được dựng trên Vmware Workstations
+![HA_rabbitmq_Topo](../images/HA_rabbitmq_Topo.png)
 
 ## IP Planning 
+- Thiết lập IP như hình dưới
+![HA_rabbitmq_ip_planning](../images/HA_rabbitmq_ip_planning.png)
+
 
 ## Thiết lập hostname, network, firewall cho các máy. 
 ### Cài đặt RabbitMQ trên máy `MQ1`
