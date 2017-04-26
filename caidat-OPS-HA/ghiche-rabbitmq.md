@@ -1,10 +1,10 @@
 # Cài đặt RabbitMQ
 
-## Môi trường
+## Môi trường LAB
 - CentOS Linux release 7.3.1611 (Core)
-- 
+- Giải lập các máy ảo trên Vmware Workstations
 
-## Mô hình
+## Mô hình LAB
 - Mô hình được dựng trên Vmware Workstations
 ![HA_rabbitmq_Topo](../images/HA_rabbitmq_Topo.png)
 
@@ -171,7 +171,6 @@
     Status of node rabbit@mq1 ...
      {running_applications,[{rabbit,"RabbitMQ","3.6.5"},
                             {rabbit_common,[],"3.6.5"},
-    [root@mq1 ~]#
     ````
 
   
@@ -229,8 +228,7 @@
 
 ### Thực hiện các bước trên 2 node còn lại.
 - Phân quyền file `/var/lib/rabbitmq/.erlang.cookie` vừa copy ở `node MQ1` trong bước trên.
-- Thực hiện các bước này trên cả `MQ2` và `MQ3` 
-
+- Thực hiện bước phân quyền này trên cả `MQ2` và `MQ3` 
   ```sh
   chown rabbitmq:rabbitmq /var/lib/rabbitmq/.erlang.cookie
   chmod 400 /var/lib/rabbitmq/.erlang.cookie
@@ -246,13 +244,14 @@
   ```sh
   rabbitmqctl stop_app
   rabbitmqctl join_cluster rabbit@mq1
+  rabbitmqctl start_app
   ```
-
   
 - Đứng trên MQ3 thực hiện join vào cluster đã tạo ở trên.
   ```sh
   rabbitmqctl stop_app
   rabbitmqctl join_cluster rabbit@mq1
+  rabbitmqctl start_app
   ```
 
 - Đứng trên từng node thực hiện lệnh kiểm tra trạng thái cluster
@@ -268,8 +267,8 @@
      {cluster_name,<<"rabbit@mq1">>},
      {partitions,[]},
      {alarms,[{rabbit@mq3,[]},{rabbit@mq2,[]},{rabbit@mq1,[]}]}]
-    [root@mq1 ~]#
     ```
+    - Quan sát thấy dòng `{running_nodes,[rabbit@mq3,rabbit@mq2,rabbit@mq1]},` thể hiện các node đang chạy rabbitmq trong cluster.
 
 
 - 
