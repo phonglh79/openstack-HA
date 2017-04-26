@@ -26,9 +26,9 @@ if [ "$1" == "mq1" ]; then
     hostnamectl set-hostname mq1
 
     echo "Setup IP  System ens160"
-    nmcli c modify "System ens160" ipv4.addresses 10.10.10.21/24
-    nmcli c modify "System ens160" ipv4.method manual
-    nmcli con mod "System ens160" connection.autoconnect yes
+    nmcli c modify ens160 ipv4.addresses 10.10.10.21/24
+    nmcli c modify ens160 ipv4.method manual
+    nmcli con mod ens160 connection.autoconnect yes
 
     echo "Setup IP  ens224"
     nmcli c modify ens224 ipv4.addresses 192.168.20.21/24
@@ -62,10 +62,10 @@ if [ "$1" == "mq1" ]; then
 
     hostnamectl set-hostname mq2
 
-    echo "Setup IP  System ens160"
-    nmcli c modify "System ens160" ipv4.addresses 10.10.10.22/24
-    nmcli c modify "System ens160" ipv4.method manual
-    nmcli con mod "System ens160" connection.autoconnect yes
+    echo "Setup IP  ens160"
+    nmcli c modify ens160 ipv4.addresses 10.10.10.22/24
+    nmcli c modify ens160 ipv4.method manual
+    nmcli con mod ens160 connection.autoconnect yes
 
     echo "Setup IP  ens224"
     nmcli c modify ens224 ipv4.addresses 192.168.20.22/24
@@ -99,9 +99,9 @@ if [ "$1" == "mq1" ]; then
     hostnamectl set-hostname mq3
 
     echo "Setup IP  System ens160"
-    nmcli c modify "System ens160" ipv4.addresses 10.10.10.23/24
-    nmcli c modify "System ens160" ipv4.method manual
-    nmcli con mod "System ens160" connection.autoconnect yes
+    nmcli c modify ens160 ipv4.addresses 10.10.10.23/24
+    nmcli c modify ens160 ipv4.method manual
+    nmcli con mod ens160 connection.autoconnect yes
 
     echo "Setup IP  ens224"
     nmcli c modify ens224 ipv4.addresses 192.168.20.23/24
