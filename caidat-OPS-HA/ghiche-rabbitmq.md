@@ -1,4 +1,9 @@
 # Cài đặt RabbitMQ
+
+## Môi trường
+- CentOS Linux release 7.3.1611 (Core)
+- 
+
 ## Mô hình
 
 ## IP Planning 
@@ -39,6 +44,10 @@
   sudo systemctl start network
 
   sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux
+  
+  echo "172.16.69.41 mq1" >> /etc/hosts
+  echo "172.16.69.42 mq2" >> /etc/hosts
+  echo "172.16.69.43 mq3" >> /etc/hosts
 
   init 6
   ```
@@ -78,10 +87,13 @@
   sudo systemctl start network
 
   sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux
+  
+  echo "172.16.69.41 mq1" >> /etc/hosts
+  echo "172.16.69.42 mq2" >> /etc/hosts
+  echo "172.16.69.43 mq3" >> /etc/hosts
 
   init 6
   ```
-
 
 ### Cài đặt httpd trên máy MQ3
 
@@ -118,6 +130,77 @@
   sudo systemctl start network
 
   sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux
+  
+  echo "172.16.69.41 mq1" >> /etc/hosts
+  echo "172.16.69.42 mq2" >> /etc/hosts
+  echo "172.16.69.43 mq3" >> /etc/hosts
 
   init 6
   ```
+
+## Cài đăt RabbitMQ
+### Khai báo repos cho RabbitMQ
+- Khai báo repos của OpenStack Newton để có gói rabbitmq phù hợp. Thực hiện trên cả 3 node các bước dưới.
+  ```sh
+  yum install y centos-release-openstack-newton
+  yum upgrade
+  ```
+
+- Nếu cần thì reboot lại các máy sau khi khai báo repos và update để đảm bảo cài đặt thành công.
+  ```sh
+  init 6
+  ```
+
+- Đăng nhập lại từng máy và thực hiện cài đặt RabbitMQ với quyền `root` trên cả 03 node.
+```sh
+yum install -y rabbitmq-server
+```
+
+- Kích hoạt và khởi động dịch vụ RabbitMQ
+  ```sh
+  systemctl enable rabbitmq-server.service
+  systemctl start rabbitmq-server.service
+  ```
+
+### Cấu hình RabbitMQ Cluster trên 1 node bất kỳ, trong ví dụ này chọn node `MQ1`
+
+- Tạo user và phân quyền cho user trong RabbitMQ
+  ```sh  
+
+  abbitmqctl add_user openstack Welcome123
+
+  rabbitmqctl set_permissions openstack ".*" ".*" ".*"
+  ```
+
+- Copy file `/var/lib/rabbitmq/.erlang.cookie` từ node1 sang các node còn lại. Thực hiện từng lệnh 1 và nhập mật khẩu của các node còn lại.
+  ```sh
+  scp /var/lib/rabbitmq/.erlang.cookie root@mq2:/var/lib/rabbitmq/.erlang.cookie
+
+  scp /var/lib/rabbitmq/.erlang.cookie root@mq2:/var/lib/rabbitmq/.erlang.cookie
+  ```
+
+
+
+### Thực hiện các bước trên 2 node còn lại.
+
+- Phân quyền file `/var/lib/rabbitmq/.erlang.cookie` vừa copy ở `node MQ1` trong bước trên.
+- Thực hiện các bước này trên cả `MQ2` và `MQ3` 
+
+  ```sh
+  chown rabbitmq:rabbitmq /var/lib/rabbitmq/.erlang.cookie
+  chmod 400 /var/lib/rabbitmq/.erlang.cookie
+  ````
+
+
+
+
+
+
+
+
+
+
+
+
+
+
