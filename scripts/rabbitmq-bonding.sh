@@ -19,3 +19,7 @@ echo "Setup IP  $NIC_BOND0"
 nmcli c modify $NIC_BOND0 ipv4.addresses 10.10.10.22/24
 nmcli c modify $NIC_BOND0 ipv4.method manual
 nmcli con mod $NIC_BOND0 connection.autoconnect yes
+
+nmcli con reload
+service network restart
+echo "XONG"

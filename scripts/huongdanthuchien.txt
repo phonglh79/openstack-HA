@@ -23,3 +23,6 @@ sudo systemctl enable NetworkManager
 sudo systemctl start NetworkManager
 
 curl -O https://raw.githubusercontent.com/congto/openstack-HA/master/scripts/rabbitmq1-ipadd.sh && bash rabbitmq1-ipadd.sh
+
+- Đổi tên connection 
+nmcli c modify "System ens160" connection.id ens160
