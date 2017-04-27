@@ -21,5 +21,7 @@ nmcli c modify $NIC_BOND0 ipv4.method manual
 nmcli con mod $NIC_BOND0 connection.autoconnect yes
 
 nmcli con reload
-service network restart
+systemctl restart network
 echo "XONG"
+
+
