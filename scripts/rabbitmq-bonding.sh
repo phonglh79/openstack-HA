@@ -55,9 +55,18 @@ nmcli con modify $NIC_BOND1 connection.autoconnect yes
 # mkdir /root/backup-file
 # mv /etc/sysconfig/network-scripts/ifcfg-ens* /root/backup-file
 
-echo "Reload network"
-nmcli con reload
-systemctl restart network
-echo "XONG"
+#echo "Reload network"
+#nmcli con reload
+#systemctl restart network
+
+echo "Vo hieu hoa firewall va reboot may"
+sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux
+sudo systemctl disable firewalld
+sudo systemctl stop firewalld
+sudo systemctl disable NetworkManager
+sudo systemctl stop NetworkManager
+sudo systemctl enable network
+sudo systemctl start network
+init 6
 
 
