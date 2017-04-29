@@ -51,10 +51,6 @@ nmcli con modify $NIC_BOND1 ipv4.gateway $BOND1_DEAFAUL_GATEWAY
 nmcli con modify $NIC_BOND1 ipv4.method manual
 nmcli con modify $NIC_BOND1 connection.autoconnect yes
 
-## Sao luu file cau hinh network 
-# mkdir /root/backup-file
-# mv /etc/sysconfig/network-scripts/ifcfg-ens* /root/backup-file
-
 #echo "Reload network"
 #nmcli con reload
 #systemctl restart network
