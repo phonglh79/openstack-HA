@@ -20,6 +20,7 @@ BOND1_DEAFAUL_GATEWAY=192.168.20.254
 BOND1_DNS=8.8.8.8
 
 echo "Cau hinh bond0"
+nmcli c del $NIC1 $NIC2
 nmcli con add type bond con-name $NIC_BOND0 ifname $NIC_BOND0 mode active-backup
 nmcli con add type bond-slave con-name $NIC_BOND0-$NIC1  ifname $NIC1 master $NIC_BOND0
 nmcli con add type bond-slave con-name $NIC_BOND0-$NIC2 ifname $NIC2 master $NIC_BOND0
@@ -32,6 +33,7 @@ nmcli con modify $NIC_BOND0 ipv4.method manual
 nmcli con modify $NIC_BOND0 connection.autoconnect yes
 
 echo "Cau hinh BOND1"
+nmcli c del $NIC2 $NIC4
 nmcli con add type bond con-name $NIC_BOND1 ifname $NIC_BOND1 mode active-backup
 nmcli con add type bond-slave con-name $NIC_BOND1-$NIC3  ifname $NIC3 master $NIC_BOND1
 nmcli con add type bond-slave con-name $NIC_BOND1-$NIC4 ifname $NIC4 master $NIC_BOND1
@@ -45,9 +47,9 @@ nmcli con modify $NIC_BOND1 ipv4.gateway $BOND1_DEAFAUL_GATEWAY
 nmcli con modify $NIC_BOND1 ipv4.method manual
 nmcli con modify $NIC_BOND1 connection.autoconnect yes
 
-# Sao luu file cau hinh network 
-mkdir /root/backup-file
-mv /etc/sysconfig/network-scripts/ifcfg-ens* /root/backup-file
+## Sao luu file cau hinh network 
+# mkdir /root/backup-file
+# mv /etc/sysconfig/network-scripts/ifcfg-ens* /root/backup-file
 
 echo "Reload network"
 nmcli con reload
