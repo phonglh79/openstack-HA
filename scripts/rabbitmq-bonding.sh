@@ -4,20 +4,28 @@
 
 #Khai bao cac bien su dung trong script
 ## Bien cho bond0
+echo "Nhap ip cho BOND0: "
+read -e IP_BOND0
+
+echo "Nhap ip cho BOND1: "
+read -e IP_BOND1
+
+
 NIC1=ens160
 NIC2=ens192
 NIC_BOND0=bond0
-IP_BOND0=10.10.10.21
+IP_BOND0=${IP_BOND0:-10.10.10.21}
 NETMASK_BOND0=24
 
 ## Bien cho bond1
 NIC3=ens224
 NIC4=ens256
 NIC_BOND1=bond1
-IP_BOND1=192.168.20.21
+IP_BOND1=${IP_BOND1:-192.168.20.21}
 NETMASK_BOND1=24
 BOND1_DEAFAUL_GATEWAY=192.168.20.254
 BOND1_DNS=8.8.8.8
+
 
 echo "Cau hinh bond0"
 nmcli c del $NIC1 $NIC2
