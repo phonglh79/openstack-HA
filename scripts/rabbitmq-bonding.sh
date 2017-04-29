@@ -16,6 +16,8 @@ NIC4=ens256
 NIC_BOND1=bond1
 IP_BOND1=192.168.20.21
 NETMASK_BOND1=24
+BOND1_DEAFAUL_GATEWAY=192.168.20.254
+BOND1_DNS=8.8.8.8
 
 echo "Cau hinh bond0"
 nmcli con add type bond con-name $NIC_BOND0 ifname $NIC_BOND0 mode active-backup
@@ -25,8 +27,8 @@ nmcli con up $NIC_BOND0-$NIC1
 nmcli con up $NIC_BOND0-$NIC2
 nmcli con up $NIC_BOND0
 
-nmcli c modify $NIC_BOND0 ipv4.addresses $IP_BOND0/$NETMASK_BOND0
-nmcli c modify $NIC_BOND0 ipv4.method manual
+nmcli con modify $NIC_BOND0 ipv4.addresses $IP_BOND0/$NETMASK_BOND0
+nmcli con modify $NIC_BOND0 ipv4.method manual
 nmcli con mod $NIC_BOND0 connection.autoconnect yes
 
 
@@ -38,8 +40,10 @@ nmcli con up $NIC_BOND1-$NIC3
 nmcli con up $NIC_BOND1-$NIC4
 nmcli con up $NIC_BOND1
 
-nmcli c modify $NIC_BOND1 ipv4.addresses $IP_BOND1/$NETMASK_BOND1
-nmcli c modify $NIC_BOND1 ipv4.method manual
+nmcli con modify $NIC_BOND1 ipv4.addresses $IP_BOND1/$NETMASK_BOND1
+nmcli con modify $NIC_BOND1 ipv4.dns $BOND1_DNS
+nmcli con modify $NIC_BOND1 ipv4.gateway $BOND1_DEAFAUL_GATEWAY
+imcli con modify $NIC_BOND1 ipv4.method manual
 nmcli con mod $NIC_BOND1 connection.autoconnect yes
 
 echo "Reload network"
