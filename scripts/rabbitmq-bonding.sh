@@ -4,12 +4,8 @@
 
 #Khai bao cac bien su dung trong script
 ## Bien cho bond0
-echo "Nhap ip cho BOND0: "
-read -e IP_BOND0
-
-echo "Nhap ip cho BOND1: "
-read -e IP_BOND1
-
+read -p "Nhap ip cho BOND0: " IP_BOND0
+read -p "Nhap ip cho BOND1: " IP_BOND1
 
 NIC1=ens160
 NIC2=ens192
