@@ -43,7 +43,7 @@ nmcli con up $NIC_BOND1
 nmcli con modify $NIC_BOND1 ipv4.addresses $IP_BOND1/$NETMASK_BOND1
 nmcli con modify $NIC_BOND1 ipv4.dns $BOND1_DNS
 nmcli con modify $NIC_BOND1 ipv4.gateway $BOND1_DEAFAUL_GATEWAY
-imcli con modify $NIC_BOND1 ipv4.method manual
+nmcli con modify $NIC_BOND1 ipv4.method manual
 nmcli con mod $NIC_BOND1 connection.autoconnect yes
 
 echo "Reload network"
