@@ -8,6 +8,16 @@ MQ1_IP_BOND1=192.168.20.21
 MQ2_IP_BOND1=192.168.20.22
 MQ3_IP_BOND1=192.168.20.23
 
+### Kiem tra cu phap khi thuc hien shell 
+if [ $# -ne 1 ]
+    then
+        echo  "Cu phap dung nhu sau "
+        echo "Thuc hien tren may chu MQ1: bash $0 mq1"
+        echo "Thuc hien tren may chu MQ2: bash $0 mq2"
+        echo "Thuc hien tren may chu MQ3: bash $0 mq3"
+        exit 1;
+fi
+
 echo "Cai dat rabbitmq"
 sleep 5
 
