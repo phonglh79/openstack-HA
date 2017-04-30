@@ -14,7 +14,7 @@ if [ $# -ne 1 ]
         exit 1;
 fi
 
-read -p "Nhap ten host: " HOST_NAME
+# read -p "Nhap ten host: " HOST_NAME
 read -p "Nhap ip cho BOND0: " BOND0_IP
 read -p "Nhap ip cho BOND1: " BOND1_IP
 
@@ -35,10 +35,10 @@ BOND1_DEAFAUL_GATEWAY=192.168.20.254
 BOND1_DNS=8.8.8.8
 
 echo "Dat hostname"
-hostnamectl set-hostname $HOST_NAME
+hostnamectl set-hostname $1
 
 echo "Cau hinh bond0"
-nmcli c del $NIC1 $NIC2
+nmcli con del $NIC1 $NIC2
 nmcli con add type bond con-name $BOND0_NIC ifname $BOND0_NIC mode active-backup
 nmcli con add type bond-slave con-name $BOND0_NIC-$NIC1  ifname $NIC1 master $BOND0_NIC
 nmcli con add type bond-slave con-name $BOND0_NIC-$NIC2 ifname $NIC2 master $BOND0_NIC
@@ -51,7 +51,7 @@ nmcli con modify $BOND0_NIC ipv4.method manual
 nmcli con modify $BOND0_NIC connection.autoconnect yes
 
 echo "Cau hinh BOND1"
-nmcli c del $NIC3 $NIC4
+nmcli con del $NIC3 $NIC4
 nmcli con add type bond con-name $BOND1_NIC ifname $BOND1_NIC mode active-backup
 nmcli con add type bond-slave con-name $BOND1_NIC-$NIC3  ifname $NIC3 master $BOND1_NIC
 nmcli con add type bond-slave con-name $BOND1_NIC-$NIC4 ifname $NIC4 master $BOND1_NIC
