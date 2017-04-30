@@ -16,7 +16,8 @@ if [ "$1" == "controller" ]; then
 fi
 
 echo "NAME=ens160" >> /etc/sysconfig/network-scripts/ifcfg-ens160
-nmcli connection reload
+nmcli con reload
+nmcli con show
 
 
 sudo systemctl enable NetworkManager
