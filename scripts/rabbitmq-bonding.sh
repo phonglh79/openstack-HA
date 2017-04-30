@@ -2,8 +2,6 @@
 ##############################################################################
 ### Script cai dat bonding
 
-#Khai bao cac bien su dung trong script
-## Bien cho bond0
 ### Kiem tra cu phap khi thuc hien shell 
 if [ $# -ne 1 ]
     then
@@ -18,7 +16,8 @@ fi
 read -p "Nhap ip cho BOND0: " BOND0_IP
 read -p "Nhap ip cho BOND1: " BOND1_IP
 
-
+#Khai bao cac bien su dung trong script
+##Bien cho bond0
 NIC1=ens160
 NIC2=ens192
 BOND0_NIC=bond0
