@@ -65,12 +65,6 @@ nmcli con modify $BOND1_NIC ipv4.gateway $BOND1_DEAFAUL_GATEWAY
 nmcli con modify $BOND1_NIC ipv4.method manual
 nmcli con modify $BOND1_NIC connection.autoconnect yes
 
-#echo "Reload network"
-#nmcli con reload
-#systemctl restart network
-
-
-
 echo "Vo hieu hoa firewall va reboot may"
 sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux
 sudo systemctl disable firewalld
