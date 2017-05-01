@@ -8,6 +8,11 @@ MQ1_IP_BOND1=192.168.20.21
 MQ2_IP_BOND1=192.168.20.22
 MQ3_IP_BOND1=192.168.20.23
 
+##Bien cho hostname
+MQ1_HOSTNAME=mq1
+MQ2_HOSTNAME=mq2
+MQ3_HOSTNAME=mq3
+
 ### Kiem tra cu phap khi thuc hien shell 
 if [ $# -ne 1 ]; then
         echo  "Cu phap dung nhu sau "
@@ -16,6 +21,15 @@ if [ $# -ne 1 ]; then
         echo "Thuc hien tren may chu MQ3: bash $0 mq3"
         exit 1;
 fi
+
+function copykey {
+        ssh-keygen -t rsa -f /root/.ssh/id_rsa -q -P ""
+        for IP_ADD in $MQ1_IP_BOND1 $MQ1_IP_BOND1 $MQ1_IP_BOND1
+        do
+        ssh-copy-id -o StrictHostKeyChecking=no -i /root/.ssh/id_rsa.pub root@$IP_ADD
+        done
+}
+
 
 function install_proxy {
         echo "proxy=http://123.30.178.220:3142" >> /etc/yum.conf 
@@ -41,17 +55,17 @@ function khai_bao_host {
 
 function install_rabbitmq {
         yum -y install rabbitmq-server
-
         systemctl enable rabbitmq-server.service
         systemctl start rabbitmq-server.service
+}
 
+
+function config_rabbitmq {
         if [ "$1" == "mq1" ]; then
                 rabbitmqctl add_user openstack Welcome123
                 rabbitmqctl set_permissions openstack ".*" ".*" ".*"
                 rabbitmqctl set_policy ha-all '^(?!amq\.).*' '{"ha-mode": "all"}'          
                 echo "Da cai dat xong rabbitmq tren MQ1"
-                ssh root@$MQ2_IP_BOND1 'yum -y install rabbitmq-server'
-                ssh root@$MQ3_IP_BOND1 'yum -y install rabbitmq-server'
                 scp /var/lib/rabbitmq/.erlang.cookie root@$MQ2_IP_BOND1:/var/lib/rabbitmq/.erlang.cookie
                 scp /var/lib/rabbitmq/.erlang.cookie root@$MQ3_IP_BOND1:/var/lib/rabbitmq/.erlang.cookie
                 rabbitmqctl start_app
@@ -61,23 +75,13 @@ function install_rabbitmq {
 }
 
 function install_rabbitmq_join {
-        if [ "$1" == "mq2" || "$1" == "mq3" ]; then
-        ssh root@$MQ2_IP_BOND1
+        ssh root@$IP_ADD
         chown rabbitmq:rabbitmq /var/lib/rabbitmq/.erlang.cookie
         chmod 400 /var/lib/rabbitmq/.erlang.cookie
         systemctl enable rabbitmq-server.service
         systemctl start rabbitmq-server.service
         rabbitmqctl stop_app
-        rabbitmqctl join_cluster rabbit@mq1
-        rabbitmqctl start_app
-
-        ssh root@$MQ3_IP_BOND1
-        chown rabbitmq:rabbitmq /var/lib/rabbitmq/.erlang.cookie
-        chmod 400 /var/lib/rabbitmq/.erlang.cookie
-        systemctl enable rabbitmq-server.service
-        systemctl start rabbitmq-server.service
-        rabbitmqctl stop_app
-        rabbitmqctl join_cluster rabbit@mq1
+        rabbitmqctl join_cluster rabbit@$MQ1_HOSTNAME
         rabbitmqctl start_app
         fi         
 }
@@ -88,25 +92,9 @@ function install_rabbitmq_join {
 ############################
 echo "Cai dat rabbitmq"
 sleep 5
-#######
-echo "Cai dat proxy"
-sleep 5
-install_proxy 
-#######
-echo "Cai dat repo"
-sleep 5
-install_repo 
-#######
-echo "Khai bao host"
-sleep 5
-khai_bao_host $1
-#######
-echo "Cai dat rabbitmq"
-sleep 5
-install_rabbitmq_mq1 $1
-install_rabbitmq_join $1
 
-#######
-echo "Kiem tra trang thai cluster"
+###
+echo "Tao key va copy key sang cac node"
 sleep 5
-rabbitmqctl cluster_status
+copykey
+
