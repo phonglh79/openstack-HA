@@ -1,9 +1,7 @@
 #!/bin/bash -ex
 ### Script cai dat rabbitmq tren mq1
 
-
 #Khai bao cac bien su dung trong script
-##Bien cho bond0
 cat << EOF > /root/config.cfg
 MQ1_HOSTNAME=mq1
 MQ2_HOSTNAME=mq2
@@ -26,9 +24,6 @@ function setup_config {
 function echocolor {
     echo "$(tput setaf 3)##### $1 #####$(tput sgr0)"
 }
-
-
-### Kiem tra cu phap khi thuc hien shell 
 
 function copykey() {
         ssh-keygen -t rsa -f /root/.ssh/id_rsa -q -P ""
@@ -134,15 +129,11 @@ do
       echocolor "Cai dat config_rabbitmq tren $IP_ADD"
       sleep 3
       ssh root@$IP_ADD "$(typeset -f); config_rabbitmq"    
-    elif [ "$IP_ADD" == "$MQ2_IP_BOND1" ]; then
+    elif [ "$IP_ADD" == "$MQ2_IP_BOND1" || "$IP_ADD" == "$MQ3_IP_BOND1" ]; then
       echocolor "Cai dat rabbitmq_join_cluster tren $IP_ADD"
       sleep 3
       ssh root@$IP_ADD "$(typeset -f); rabbitmq_join_cluster"
-      
-    elif [ "$IP_ADD" == "$MQ3_IP_BOND1" ]; then
-      echocolor "Cai dat rabbitmq_join_cluster tren $IP_ADD"
-      sleep 3
-      ssh root@$IP_ADD "$(typeset -f); rabbitmq_join_cluster"
+
     fi 
 done 
 
