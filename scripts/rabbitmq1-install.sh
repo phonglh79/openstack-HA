@@ -27,8 +27,8 @@ function install_proxy {
 }
 
 function install_repo {
-        yum install -y centos-release-openstack-newton
-        yum upgrade
+        yum -y install centos-release-openstack-newton
+        yum -y upgrade
 }
 
 function khai_bao_host {
@@ -36,7 +36,6 @@ function khai_bao_host {
                 echo "$MQ1_IP_BOND1 mq1" >> /etc/hosts
                 echo "$MQ2_IP_BOND1 mq2" >> /etc/hosts
                 echo "$MQ3_IP_BOND1 mq3" >> /etc/hosts
-
                 scp /etc/hosts root@$MQ2_IP_BOND1:/etc/
                 scp /etc/hosts root@$MQ3_IP_BOND1:/etc/
         else 
@@ -45,7 +44,7 @@ function khai_bao_host {
 }
 
 function install_rabbitmq {
-        yum install -y rabbitmq-server
+        yum -y install rabbitmq-server
 
         systemctl enable rabbitmq-server.service
         systemctl start rabbitmq-server.service
@@ -53,21 +52,12 @@ function install_rabbitmq {
         if [ "$1" == "mq1" ]; then
                 rabbitmqctl add_user openstack Welcome123
                 rabbitmqctl set_permissions openstack ".*" ".*" ".*"
-                rabbitmqctl set_policy ha-all '^(?!amq\.).*' '{"ha-mode": "all"}'
-                
-                scp /var/lib/rabbitmq/.erlang.cookie root@mq2:/var/lib/rabbitmq/.erlang.cookie
-                scp /var/lib/rabbitmq/.erlang.cookie root@mq3:/var/lib/rabbitmq/.erlang.cookie
-                
+                rabbitmqctl set_policy ha-all '^(?!amq\.).*' '{"ha-mode": "all"}'          
                 rabbitmqctl start_app
-        elif [ "$1" == "mq2" ] || [ "$1" == "mq3" ]; then
-                chown rabbitmq:rabbitmq /var/lib/rabbitmq/.erlang.cookie
-                chmod 400 /var/lib/rabbitmq/.erlang.cookie
-                systemctl enable rabbitmq-server.service
-                systemctl start rabbitmq-server.service
                 
-                rabbitmqctl stop_app
-                rabbitmqctl join_cluster rabbit@mq1 
-                rabbitmqctl start_app
+        else 
+        
+        
         fi
         
                 
