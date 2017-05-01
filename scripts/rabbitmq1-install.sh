@@ -4,14 +4,18 @@
 
 #Khai bao cac bien su dung trong script
 ##Bien cho bond0
-MQ1_IP_BOND1=192.168.20.21
-MQ2_IP_BOND1=192.168.20.22
-MQ3_IP_BOND1=192.168.20.23
-
-##Bien cho hostname
+source config.cfg
+cat << EOF > /root/config.cfg
 MQ1_HOSTNAME=mq1
 MQ2_HOSTNAME=mq2
 MQ3_HOSTNAME=mq3
+
+MQ1_IP_BOND1=192.168.20.21
+MQ2_IP_BOND1=192.168.20.22
+MQ3_IP_BOND1=192.168.20.23
+EOF
+##Bien cho hostname
+
 
 ### Kiem tra cu phap khi thuc hien shell 
 
@@ -35,6 +39,7 @@ function install_repo() {
 }
 
 function khai_bao_host() {
+                source config.cfg
                 echo "$MQ1_IP_BOND1 mq1" >> /etc/hosts
                 echo "$MQ2_IP_BOND1 mq2" >> /etc/hosts
                 echo "$MQ3_IP_BOND1 mq3" >> /etc/hosts
@@ -49,6 +54,7 @@ function install_rabbitmq() {
 }
 
 function config_rabbitmq() {
+        source config.cfg
         rabbitmqctl add_user openstack Welcome123
         rabbitmqctl set_permissions openstack ".*" ".*" ".*"
         rabbitmqctl set_policy ha-all '^(?!amq\.).*' '{"ha-mode": "all"}'          
@@ -60,6 +66,7 @@ function config_rabbitmq() {
 }
 
 function rabbitmq_join_cluster() {
+        source config.cfg
         chown rabbitmq:rabbitmq /var/lib/rabbitmq/.erlang.cookie
         chmod 400 /var/lib/rabbitmq/.erlang.cookie
         rabbitmqctl stop_app
@@ -67,6 +74,9 @@ function rabbitmq_join_cluster() {
         rabbitmqctl start_app
      
 }
+
+chmox +x config.cfg
+source config.cfg
 
 ############################
 # Thuc thi cac functions
@@ -85,6 +95,7 @@ echo "######################################"
 echo " install_proxy, install_repo "
 echo "######################################"
 sleep 3
+
 for IP_ADD in $MQ1_IP_BOND1 $MQ2_IP_BOND1 $MQ3_IP_BOND1
 do 
     ssh root@$IP_ADD "$(typeset -f); install_proxy"
