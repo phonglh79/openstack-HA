@@ -54,10 +54,11 @@ function install_rabbitmq {
                 rabbitmqctl set_permissions openstack ".*" ".*" ".*"
                 rabbitmqctl set_policy ha-all '^(?!amq\.).*' '{"ha-mode": "all"}'          
                 rabbitmqctl start_app
+                echo "Da cai dat xong rabbitmq tren MQ1"
                 
         else 
-        
-        
+              echo "Da cai dat xong rabbitmq tren MQ2 va MQ3"
+                
         fi
         
                 
