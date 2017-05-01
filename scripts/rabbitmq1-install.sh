@@ -56,12 +56,19 @@ function install_rabbitmq() {
         yum -y install rabbitmq-server
         systemctl enable rabbitmq-server.service
         systemctl start rabbitmq-server.service
+        rabbitmq-plugins enable rabbitmq_management
+        systemctl restart rabbitmq-server
+        curl -O http://localhost:15672/cli/rabbitmqadmin
+        chmod a+x rabbitmqadmin
+        mv rabbitmqadmin /usr/sbin/
 }
 
 function config_rabbitmq() {
         source config.cfg
         rabbitmqctl add_user openstack Welcome123
         rabbitmqctl set_permissions openstack ".*" ".*" ".*"
+        rabbitmqctl set_user_tags openstack administrator
+        rabbitmqadmin list users
         rabbitmqctl set_policy ha-all '^(?!amq\.).*' '{"ha-mode": "all"}'          
         echo "Da cai dat xong rabbitmq tren MQ1"
         scp /var/lib/rabbitmq/.erlang.cookie root@$MQ2_IP_BOND1:/var/lib/rabbitmq/.erlang.cookie
@@ -89,7 +96,7 @@ function rabbitmq_join_cluster() {
 ## Goi cac functions
 ############################
 echo "Cai dat rabbitmq"
-sleep 5
+sleep 3
 
 echo "######################################"
 echo "Tao key va copy key, bien khai bao sang cac node"
@@ -129,7 +136,7 @@ do
       echocolor "Cai dat config_rabbitmq tren $IP_ADD"
       sleep 3
       ssh root@$IP_ADD "$(typeset -f); config_rabbitmq"    
-    elif [ "$IP_ADD" == "$MQ2_IP_BOND1" || "$IP_ADD" == "$MQ3_IP_BOND1" ]; then
+    elif [ "$IP_ADD" == "$MQ2_IP_BOND1" ] || [ "$IP_ADD" == "$MQ3_IP_BOND1" ]; then
       echocolor "Cai dat rabbitmq_join_cluster tren $IP_ADD"
       sleep 3
       ssh root@$IP_ADD "$(typeset -f); rabbitmq_join_cluster"
