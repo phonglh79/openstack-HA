@@ -4,7 +4,6 @@
 
 #Khai bao cac bien su dung trong script
 ##Bien cho bond0
-source config.cfg
 cat << EOF > /root/config.cfg
 MQ1_HOSTNAME=mq1
 MQ2_HOSTNAME=mq2
@@ -14,7 +13,14 @@ MQ1_IP_BOND1=192.168.20.21
 MQ2_IP_BOND1=192.168.20.22
 MQ3_IP_BOND1=192.168.20.23
 EOF
+
+chmod +x config.cfg
+source config.cfg
 ##Bien cho hostname
+
+function echocolor {
+    echo "$(tput setaf 3)##### $1 #####$(tput sgr0)"
+}
 
 
 ### Kiem tra cu phap khi thuc hien shell 
@@ -62,6 +68,7 @@ function config_rabbitmq() {
         scp /var/lib/rabbitmq/.erlang.cookie root@$MQ2_IP_BOND1:/var/lib/rabbitmq/.erlang.cookie
         scp /var/lib/rabbitmq/.erlang.cookie root@$MQ3_IP_BOND1:/var/lib/rabbitmq/.erlang.cookie
         rabbitmqctl start_app
+        echo "Hoan thanh cai dat "
 
 }
 
@@ -69,14 +76,14 @@ function rabbitmq_join_cluster() {
         source config.cfg
         chown rabbitmq:rabbitmq /var/lib/rabbitmq/.erlang.cookie
         chmod 400 /var/lib/rabbitmq/.erlang.cookie
-        rabbitmqctl stop_app
+        systemctl restart rabbitmq-server
+        rabbitmqctl stop_app 
+        rabbitmqctl reset
         rabbitmqctl join_cluster rabbit@$MQ1_HOSTNAME
         rabbitmqctl start_app
+        rabbitmqctl cluster_status
      
 }
-
-chmox +x config.cfg
-source config.cfg
 
 ############################
 # Thuc thi cac functions
@@ -98,22 +105,38 @@ sleep 3
 
 for IP_ADD in $MQ1_IP_BOND1 $MQ2_IP_BOND1 $MQ3_IP_BOND1
 do 
+    echocolor "Cai dat proxy tren $IP_ADD"
+    sleep 3
     ssh root@$IP_ADD "$(typeset -f); install_proxy"
+    
+    echocolor "Cai dat install_repo tren $IP_ADD"
+    sleep 3
+    
     ssh root@$IP_ADD "$(typeset -f); install_repo"
-    if [ "$IP_ADD" == "$MQ1_IP_BOND1" ]; then 
+    if [ "$IP_ADD" == "$MQ1_IP_BOND1" ]; then
+      echocolor "Cai dat khai_bao_host tren $IP_ADD"
+      sleep 3
       ssh root@$IP_ADD "$(typeset -f); khai_bao_host"
     fi 
+    echocolor "Cai dat install_rabbitmq tren $IP_ADD"
+    sleep 3
     ssh root@$IP_ADD "$(typeset -f); install_rabbitmq"
 done 
 
 for IP_ADD in $MQ1_IP_BOND1 $MQ2_IP_BOND1 $MQ3_IP_BOND1
 do 
     if [ "$IP_ADD" == "$MQ1_IP_BOND1" ]; then 
+      echocolor "Cai dat config_rabbitmq tren $IP_ADD"
+      sleep 3
       ssh root@$IP_ADD "$(typeset -f); config_rabbitmq"    
     elif [ "$IP_ADD" == "$MQ2_IP_BOND1" ]; then
+      echocolor "Cai dat rabbitmq_join_cluster tren $IP_ADD"
+      sleep 3
       ssh root@$IP_ADD "$(typeset -f); rabbitmq_join_cluster"
       
     elif [ "$IP_ADD" == "$MQ3_IP_BOND1" ]; then
+      echocolor "Cai dat rabbitmq_join_cluster tren $IP_ADD"
+      sleep 3
       ssh root@$IP_ADD "$(typeset -f); rabbitmq_join_cluster"
     fi 
 done 
