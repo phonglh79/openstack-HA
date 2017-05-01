@@ -35,7 +35,7 @@ function khai_bao_host {
                 scp /etc/hosts root@$MQ2_IP_BOND1:/etc/
                 scp /etc/hosts root@$MQ3_IP_BOND1:/etc/
         else 
-                echo "khong khai bao"
+                echo "Khong can khai bao"
         fi 
 }
 
@@ -49,16 +49,39 @@ function install_rabbitmq {
                 rabbitmqctl add_user openstack Welcome123
                 rabbitmqctl set_permissions openstack ".*" ".*" ".*"
                 rabbitmqctl set_policy ha-all '^(?!amq\.).*' '{"ha-mode": "all"}'          
-                rabbitmqctl start_app
                 echo "Da cai dat xong rabbitmq tren MQ1"
-                
+                ssh root@$MQ2_IP_BOND1 'yum -y install rabbitmq-server'
+                ssh root@$MQ3_IP_BOND1 'yum -y install rabbitmq-server'
+                scp /var/lib/rabbitmq/.erlang.cookie root@$MQ2_IP_BOND1:/var/lib/rabbitmq/.erlang.cookie
+                scp /var/lib/rabbitmq/.erlang.cookie root@$MQ3_IP_BOND1:/var/lib/rabbitmq/.erlang.cookie
+                rabbitmqctl start_app
         else 
-              echo "Da cai dat xong rabbitmq tren MQ2 va MQ3"
-                
+                echo "Khong phai node rabbitmq1"
         fi
-        
-                
 }
+
+function install_rabbitmq_join {
+        if [ "$1" == "mq2" || "$1" == "mq3" ]; then
+        ssh root@$MQ2_IP_BOND1
+        chown rabbitmq:rabbitmq /var/lib/rabbitmq/.erlang.cookie
+        chmod 400 /var/lib/rabbitmq/.erlang.cookie
+        systemctl enable rabbitmq-server.service
+        systemctl start rabbitmq-server.service
+        rabbitmqctl stop_app
+        rabbitmqctl join_cluster rabbit@mq1
+        rabbitmqctl start_app
+
+        ssh root@$MQ3_IP_BOND1
+        chown rabbitmq:rabbitmq /var/lib/rabbitmq/.erlang.cookie
+        chmod 400 /var/lib/rabbitmq/.erlang.cookie
+        systemctl enable rabbitmq-server.service
+        systemctl start rabbitmq-server.service
+        rabbitmqctl stop_app
+        rabbitmqctl join_cluster rabbit@mq1
+        rabbitmqctl start_app
+        fi         
+}
+
 ############################
 # Thuc thi cac functions
 ## Goi cac functions
@@ -80,7 +103,9 @@ khai_bao_host $1
 #######
 echo "Cai dat rabbitmq"
 sleep 5
-install_rabbitmq $1
+install_rabbitmq_mq1 $1
+install_rabbitmq_join $1
+
 #######
 echo "Kiem tra trang thai cluster"
 sleep 5
