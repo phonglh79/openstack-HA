@@ -16,6 +16,11 @@ EOF
 
 chmod +x config.cfg
 source config.cfg
+
+function setup_config {
+  scp /root/config.cfg root@$IP_ADD:/root/
+}
+
 ##Bien cho hostname
 
 function echocolor {
@@ -32,7 +37,6 @@ function copykey() {
         ssh-copy-id -o StrictHostKeyChecking=no -i /root/.ssh/id_rsa.pub root@$IP_ADD
         done
 }
-
 
 function install_proxy() {
         echo "proxy=http://123.30.178.220:3142" >> /etc/yum.conf 
@@ -93,7 +97,7 @@ echo "Cai dat rabbitmq"
 sleep 5
 
 echo "######################################"
-echo "Tao key va copy key sang cac node"
+echo "Tao key va copy key, bien khai bao sang cac node"
 echo "######################################"
 sleep 3
 copykey
@@ -105,14 +109,15 @@ sleep 3
 
 for IP_ADD in $MQ1_IP_BOND1 $MQ2_IP_BOND1 $MQ3_IP_BOND1
 do 
+    scp /root/config.cfg root@$IP_ADD:/root/
     echocolor "Cai dat proxy tren $IP_ADD"
     sleep 3
     ssh root@$IP_ADD "$(typeset -f); install_proxy"
     
     echocolor "Cai dat install_repo tren $IP_ADD"
     sleep 3
-    
     ssh root@$IP_ADD "$(typeset -f); install_repo"
+    
     if [ "$IP_ADD" == "$MQ1_IP_BOND1" ]; then
       echocolor "Cai dat khai_bao_host tren $IP_ADD"
       sleep 3

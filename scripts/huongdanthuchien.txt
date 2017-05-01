@@ -18,6 +18,7 @@ fi
 echo "NAME=ens160" >> /etc/sysconfig/network-scripts/ifcfg-ens160
 nmcli con reload
 nmcli con show
+curl -O https://raw.githubusercontent.com/congto/openstack-HA/master/scripts/rabbitmq-bonding.sh
 
 
 sudo systemctl enable NetworkManager
