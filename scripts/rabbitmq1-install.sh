@@ -90,17 +90,17 @@ for IP_ADD in $MQ1_IP_BOND1 $MQ2_IP_BOND1 $MQ3_IP_BOND1
 do 
     ssh root@$IP_ADD "$(typeset -f); install_proxy"
     ssh root@$IP_ADD "$(typeset -f); install_repo"
-    if [ "$IP_ADD" == "MQ1_IP_BOND1" ]; then 
+    if [ "$IP_ADD" == "$MQ1_IP_BOND1" ]; then 
       ssh root@$IP_ADD "$(typeset -f); khai_bao_host"
     fi 
     
     ssh root@$IP_ADD "$(typeset -f); install_rabbitmq"
     
-    if [ "$IP_ADD" == "MQ1_IP_BOND1" ]; then 
+    if [ "$IP_ADD" == "$MQ1_IP_BOND1" ]; then 
       ssh root@$IP_ADD "$(typeset -f); config_rabbitmq"
     fi
     
-    if [ "$IP_ADD" == "MQ2_IP_BOND1" || "$IP_ADD" == "MQ3_IP_BOND1"]; then
+    if [ "$IP_ADD" == "$MQ2_IP_BOND1" || "$IP_ADD" == "$MQ3_IP_BOND1"]; then
       ssh root@$IP_ADD "$(typeset -f); rabbitmq_join_cluster"
     fi 
 done 
