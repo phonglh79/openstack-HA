@@ -48,7 +48,6 @@ function install_rabbitmq() {
         systemctl start rabbitmq-server.service
 }
 
-
 function config_rabbitmq() {
         rabbitmqctl add_user openstack Welcome123
         rabbitmqctl set_permissions openstack ".*" ".*" ".*"
@@ -77,17 +76,16 @@ function rabbitmq_join_cluster() {
 echo "Cai dat rabbitmq"
 sleep 5
 
-
 echo "######################################"
 echo "Tao key va copy key sang cac node"
 echo "######################################"
-sleep 5
+sleep 3
 copykey
 
 echo "######################################"
 echo " install_proxy, install_repo "
 echo "######################################"
-sleep 5
+sleep 3
 for IP_ADD in $MQ1_IP_BOND1 $MQ2_IP_BOND1 $MQ3_IP_BOND1
 do 
     ssh root@$IP_ADD "$(typeset -f); install_proxy"
