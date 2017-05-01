@@ -24,7 +24,7 @@ fi
 
 function copykey {
         ssh-keygen -t rsa -f /root/.ssh/id_rsa -q -P ""
-        for IP_ADD in $MQ1_IP_BOND1 $MQ1_IP_BOND1 $MQ1_IP_BOND1
+        for IP_ADD in $MQ1_IP_BOND1 $MQ2_IP_BOND1 $MQ3_IP_BOND1
         do
         ssh-copy-id -o StrictHostKeyChecking=no -i /root/.ssh/id_rsa.pub root@$IP_ADD
         done
@@ -42,15 +42,11 @@ function install_repo {
 }
 
 function khai_bao_host {
-        if [ "$1" == "mq1" ]; then
                 echo "$MQ1_IP_BOND1 mq1" >> /etc/hosts
                 echo "$MQ2_IP_BOND1 mq2" >> /etc/hosts
                 echo "$MQ3_IP_BOND1 mq3" >> /etc/hosts
                 scp /etc/hosts root@$MQ2_IP_BOND1:/etc/
                 scp /etc/hosts root@$MQ3_IP_BOND1:/etc/
-        else 
-                echo "Khong can khai bao"
-        fi 
 }
 
 function install_rabbitmq {
@@ -61,17 +57,14 @@ function install_rabbitmq {
 
 
 function config_rabbitmq {
-        if [ "$1" == "mq1" ]; then
-                rabbitmqctl add_user openstack Welcome123
-                rabbitmqctl set_permissions openstack ".*" ".*" ".*"
-                rabbitmqctl set_policy ha-all '^(?!amq\.).*' '{"ha-mode": "all"}'          
-                echo "Da cai dat xong rabbitmq tren MQ1"
-                scp /var/lib/rabbitmq/.erlang.cookie root@$MQ2_IP_BOND1:/var/lib/rabbitmq/.erlang.cookie
-                scp /var/lib/rabbitmq/.erlang.cookie root@$MQ3_IP_BOND1:/var/lib/rabbitmq/.erlang.cookie
-                rabbitmqctl start_app
-        else 
-                echo "Khong phai node rabbitmq1"
-        fi
+        rabbitmqctl add_user openstack Welcome123
+        rabbitmqctl set_permissions openstack ".*" ".*" ".*"
+        rabbitmqctl set_policy ha-all '^(?!amq\.).*' '{"ha-mode": "all"}'          
+        echo "Da cai dat xong rabbitmq tren MQ1"
+        scp /var/lib/rabbitmq/.erlang.cookie root@$MQ2_IP_BOND1:/var/lib/rabbitmq/.erlang.cookie
+        scp /var/lib/rabbitmq/.erlang.cookie root@$MQ3_IP_BOND1:/var/lib/rabbitmq/.erlang.cookie
+        rabbitmqctl start_app
+
 }
 
 function install_rabbitmq_join {
@@ -93,8 +86,23 @@ function install_rabbitmq_join {
 echo "Cai dat rabbitmq"
 sleep 5
 
-###
+
+echo "######################################"
 echo "Tao key va copy key sang cac node"
+echo "######################################"
 sleep 5
 copykey
 
+echo "######################################"
+echo " install_proxy, install_repo "
+echo "######################################"
+sleep 5
+for IP_ADD for IP_ADD in $MQ1_IP_BOND1 $MQ2_IP_BOND1 $MQ3_IP_BOND1
+do 
+    ssh root@$IP_ADD "$(typeset -f); install_proxy"
+    ssh root@$IP_ADD "$(typeset -f); install_repo"
+    if [ "$IP_ADD" == "MQ1_IP_BOND1" ]; then 
+      ssh root@$IP_ADD "$(typeset -f); khai_bao_host"
+    fi 
+
+done 
