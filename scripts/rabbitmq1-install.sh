@@ -68,19 +68,19 @@ sleep 5
 #######
 echo "Cai dat proxy"
 sleep 5
-install_proxy
+install_proxy 
 #######
 echo "Cai dat repo"
 sleep 5
-install_repo
+install_repo 
 #######
 echo "Khai bao host"
 sleep 5
-khai_bao_host
+khai_bao_host $1
 #######
 echo "Cai dat rabbitmq"
 sleep 5
-install_rabbitmq
+install_rabbitmq $1
 #######
 echo "Kiem tra trang thai cluster"
 sleep 5
