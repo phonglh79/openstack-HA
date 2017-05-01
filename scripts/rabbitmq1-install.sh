@@ -64,8 +64,6 @@ function rabbitmq_join_cluster() {
         ssh root@$IP_ADD
         chown rabbitmq:rabbitmq /var/lib/rabbitmq/.erlang.cookie
         chmod 400 /var/lib/rabbitmq/.erlang.cookie
-        systemctl enable rabbitmq-server.service
-        systemctl start rabbitmq-server.service
         rabbitmqctl stop_app
         rabbitmqctl join_cluster rabbit@$MQ1_HOSTNAME
         rabbitmqctl start_app
