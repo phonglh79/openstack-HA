@@ -9,17 +9,13 @@ MQ2_IP_BOND1=192.168.20.22
 MQ3_IP_BOND1=192.168.20.23
 
 ### Kiem tra cu phap khi thuc hien shell 
-if [ $# -ne 1 ]
-    then
+if [ $# -ne 1 ]; then
         echo  "Cu phap dung nhu sau "
         echo "Thuc hien tren may chu MQ1: bash $0 mq1"
         echo "Thuc hien tren may chu MQ2: bash $0 mq2"
         echo "Thuc hien tren may chu MQ3: bash $0 mq3"
         exit 1;
 fi
-
-echo "Cai dat rabbitmq"
-sleep 5
 
 function install_proxy {
         echo "proxy=http://123.30.178.220:3142" >> /etc/yum.conf 
@@ -63,12 +59,29 @@ function install_rabbitmq {
         
                 
 }
-
+############################
 # Thuc thi cac functions
 ## Goi cac functions
+############################
+echo "Cai dat rabbitmq"
+sleep 5
+#######
+echo "Cai dat proxy"
+sleep 5
 install_proxy
+#######
+echo "Cai dat repo"
+sleep 5
 install_repo
+#######
+echo "Khai bao host"
+sleep 5
 khai_bao_host
+#######
+echo "Cai dat rabbitmq"
+sleep 5
 install_rabbitmq
-
+#######
+echo "Kiem tra trang thai cluster"
+sleep 5
 rabbitmqctl cluster_status
