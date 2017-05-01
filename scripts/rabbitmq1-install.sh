@@ -60,7 +60,6 @@ function config_rabbitmq() {
 }
 
 function rabbitmq_join_cluster() {
-        ssh root@$IP_ADD
         chown rabbitmq:rabbitmq /var/lib/rabbitmq/.erlang.cookie
         chmod 400 /var/lib/rabbitmq/.erlang.cookie
         rabbitmqctl stop_app
@@ -99,10 +98,11 @@ done
 for IP_ADD in $MQ1_IP_BOND1 $MQ2_IP_BOND1 $MQ3_IP_BOND1
 do 
     if [ "$IP_ADD" == "$MQ1_IP_BOND1" ]; then 
-      ssh root@$IP_ADD "$(typeset -f); config_rabbitmq"
-    fi
-    
-    if [ "$IP_ADD" == "$MQ2_IP_BOND1" || "$IP_ADD" == "$MQ3_IP_BOND1"]; then
+      ssh root@$IP_ADD "$(typeset -f); config_rabbitmq"    
+    elif [ "$IP_ADD" == "$MQ2_IP_BOND1" ]; then
+      ssh root@$IP_ADD "$(typeset -f); rabbitmq_join_cluster"
+      
+    elif [ "$IP_ADD" == "$MQ3_IP_BOND1" ]; then
       ssh root@$IP_ADD "$(typeset -f); rabbitmq_join_cluster"
     fi 
 done 
