@@ -124,7 +124,6 @@ sleep 3
 
 for IP_ADD in $MQ1_IP_NIC2 $MQ2_IP_NIC2 $MQ3_IP_NIC2
 do 
-    scp /root/config.cfg root@$IP_ADD:/root/
     echocolor "Cai dat proxy tren $IP_ADD"
     sleep 3
     ssh root@$IP_ADD "$(typeset -f); install_proxy"
