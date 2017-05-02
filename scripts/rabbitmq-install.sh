@@ -1,5 +1,6 @@
 #!/bin/bash -ex
 ### Script cai dat rabbitmq tren mq1
+source config.cfg 
 
 function setup_config {
   scp /root/config.cfg root@$IP_ADD:/root/
