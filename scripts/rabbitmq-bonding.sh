@@ -10,9 +10,9 @@ source config.cfg
 if [ $# -ne 1 ]
     then
         echo  "Cu phap dung nhu sau "
-        echo "Thuc hien tren may chu MQ1: bash $0 mq1 MQ1_BOND0_IP MQ1_BOND1_IP"
-        echo "Thuc hien tren may chu MQ2: bash $0 mq2 MQ2_BOND0_IP MQ2_BOND1_IP"
-        echo "Thuc hien tren may chu MQ3: bash $0 mq3 MQ3_BOND0_IP MQ1_BOND3_IP"
+        echo -e "Thuc hien tren may chu MQ1: \e[31m bash $0 mq1 MQ1_BOND0_IP MQ1_BOND1_IP \e[0m"
+        echo -e "Thuc hien tren may chu MQ2: \e[31m bash $0 mq2 MQ2_BOND0_IP MQ2_BOND1_IP \e[0m"
+        echo -e "Thuc hien tren may chu MQ3: \e[31m bash $0 mq3 MQ3_BOND0_IP MQ1_BOND3_IP \e[0m"
         exit 1;
 fi
 
