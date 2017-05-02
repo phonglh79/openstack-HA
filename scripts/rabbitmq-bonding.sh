@@ -10,29 +10,29 @@ source config.cfg
 if [ $# -ne 1 ]
     then
         echo  "Cu phap dung nhu sau "
-        echo "Thuc hien tren may chu MQ1: bash $0 mq1"
-        echo "Thuc hien tren may chu MQ2: bash $0 mq2"
-        echo "Thuc hien tren may chu MQ3: bash $0 mq3"
+        echo "Thuc hien tren may chu MQ1: bash $0 mq1 MQ1_BOND0_IP MQ1_BOND1_IP"
+        echo "Thuc hien tren may chu MQ2: bash $0 mq2 MQ2_BOND0_IP MQ2_BOND1_IP"
+        echo "Thuc hien tren may chu MQ3: bash $0 mq3 MQ3_BOND0_IP MQ1_BOND3_IP"
         exit 1;
 fi
 
 # read -p "Nhap ten host: " HOST_NAME
-read -p "Nhap ip cho BOND0: " BOND0_IP
-read -p "Nhap ip cho BOND1: " BOND1_IP
+# read -p "Nhap ip cho BOND0: " BOND0_IP
+# read -p "Nhap ip cho BOND1: " BOND1_IP
 
 #Khai bao cac bien su dung trong script
 ##Bien cho bond0
 NIC1=ens160
 NIC2=ens192
 BOND0_NIC=bond0
-BOND0_IP=${BOND0_IP:-10.10.10.21}
+BOND0_IP=$2
 BOND0_NETMASK=24
 
 ## Bien cho bond1
 NIC3=ens224
 NIC4=ens256
 BOND1_NIC=bond1
-BOND1_IP=${BOND1_IP:-192.168.20.21}
+BOND1_IP=$3
 BOND1_NETMASK=24
 BOND1_DEAFAUL_GATEWAY=192.168.20.254
 BOND1_DNS=8.8.8.8
