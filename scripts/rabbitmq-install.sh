@@ -62,7 +62,7 @@ function config_rabbitmq() {
         mv rabbitmqadmin /usr/sbin/
         rabbitmqadmin list users
         rabbitmqctl set_policy ha-all '^(?!amq\.).*' '{"ha-mode": "all"}'          
-        echocolor "Da cai dat xong rabbitmq tren MQ1"
+        echo "Da cai dat xong rabbitmq tren MQ1"
         scp /var/lib/rabbitmq/.erlang.cookie root@$MQ2_IP_BOND1:/var/lib/rabbitmq/.erlang.cookie
         scp /var/lib/rabbitmq/.erlang.cookie root@$MQ3_IP_BOND1:/var/lib/rabbitmq/.erlang.cookie
         rabbitmqctl start_app
