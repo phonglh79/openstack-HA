@@ -23,8 +23,11 @@ EOF
 source config.cfg 
 
 function setup_config {
-  scp /root/config.cfg root@$IP_ADD:/root/
-  chmod +x config.cfg 
+        for IP_ADD in $MQ1_IP_NIC2 $MQ2_IP_NIC2 $MQ3_IP_NIC2
+        do
+                scp /root/config.cfg root@$IP_ADD:/root/
+                chmod +x config.cfg 
+        done
 }
 
 ##Bien cho hostname
@@ -40,7 +43,7 @@ function copykey() {
         ssh-keygen -t rsa -f /root/.ssh/id_rsa -q -P ""
         for IP_ADD in $MQ1_IP_NIC2 $MQ2_IP_NIC2 $MQ3_IP_NIC2
         do
-        ssh-copy-id -o StrictHostKeyChecking=no -i /root/.ssh/id_rsa.pub root@$IP_ADD
+                ssh-copy-id -o StrictHostKeyChecking=no -i /root/.ssh/id_rsa.pub root@$IP_ADD
         done
 }
 
@@ -67,6 +70,12 @@ function install_rabbitmq() {
         yum -y install rabbitmq-server
         systemctl enable rabbitmq-server.service
         systemctl start rabbitmq-server.service
+        rabbitmq-plugins enable rabbitmq_management
+        systemctl restart rabbitmq-server
+        curl -O http://localhost:15672/cli/rabbitmqadmin
+        chmod a+x rabbitmqadmin
+        mv rabbitmqadmin /usr/sbin/
+        rabbitmqadmin list users
     
 }
 
@@ -75,12 +84,6 @@ function config_rabbitmq() {
         rabbitmqctl add_user openstack Welcome123
         rabbitmqctl set_permissions openstack ".*" ".*" ".*"
         rabbitmqctl set_user_tags openstack administrator
-        rabbitmq-plugins enable rabbitmq_management
-        systemctl restart rabbitmq-server
-        curl -O http://localhost:15672/cli/rabbitmqadmin
-        chmod a+x rabbitmqadmin
-        mv rabbitmqadmin /usr/sbin/
-        rabbitmqadmin list users
         rabbitmqctl set_policy ha-all '^(?!amq\.).*' '{"ha-mode": "all"}'          
         echo "Da cai dat xong rabbitmq tren MQ1"
         scp /var/lib/rabbitmq/.erlang.cookie root@$MQ2_IP_NIC2:/var/lib/rabbitmq/.erlang.cookie
