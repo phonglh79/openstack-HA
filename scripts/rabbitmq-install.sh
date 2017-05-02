@@ -1,20 +1,6 @@
 #!/bin/bash -ex
 ### Script cai dat rabbitmq tren mq1
 
-#Khai bao cac bien su dung trong script
-cat << EOF > /root/config.cfg
-MQ1_HOSTNAME=mq1
-MQ2_HOSTNAME=mq2
-MQ3_HOSTNAME=mq3
-
-MQ1_IP_BOND1=192.168.20.21
-MQ2_IP_BOND1=192.168.20.22
-MQ3_IP_BOND1=192.168.20.23
-EOF
-
-chmod +x config.cfg
-source config.cfg
-
 function setup_config {
   scp /root/config.cfg root@$IP_ADD:/root/
 }

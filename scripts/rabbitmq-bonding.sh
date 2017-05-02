@@ -2,6 +2,10 @@
 ##############################################################################
 ### Script cai dat bonding
 
+### Khai bao bien de thuc hien
+
+source config.cfg
+
 ### Kiem tra cu phap khi thuc hien shell 
 if [ $# -ne 1 ]
     then
@@ -13,8 +17,8 @@ if [ $# -ne 1 ]
 fi
 
 # read -p "Nhap ten host: " HOST_NAME
-read -p "Nhap ip cho BOND0: " BOND0_IP
-read -p "Nhap ip cho BOND1: " BOND1_IP
+# read -p "Nhap ip cho BOND0: " BOND0_IP
+# read -p "Nhap ip cho BOND1: " BOND1_IP
 
 #Khai bao cac bien su dung trong script
 ##Bien cho bond0

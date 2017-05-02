@@ -1,9 +1,9 @@
 #!/bin/bash 
 ##############################################################################
 ### Script cai dat rabbitmq
-### MQ1: bash rabbitmq1-install.sh mq1
-### MQ1: bash rabbitmq1-install.sh mq2
-### MQ1: bash rabbitmq1-install.sh mq3
+### MQ1: bash rabbitmq-install.sh mq1
+### MQ1: bash rabbitmq-install.sh mq2
+### MQ1: bash rabbitmq-install.sh mq3
 ##############################################################################
 
 ##############################################################################
