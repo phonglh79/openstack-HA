@@ -1,5 +1,25 @@
 #!/bin/bash -ex
 ### Script cai dat rabbitmq tren mq1
+# Khai bao bien cho cac script 
+cat <<EOF> /root/config.cfg
+## Hostname
+### Hostname cho cac may rabbitmq
+MQ1_HOSTNAME=mq1
+MQ2_HOSTNAME=mq2
+MQ3_HOSTNAME=mq3
+
+## IP Address
+### IP cho bond0 cho cac may rabbitmq
+MQ1_IP_BOND0=10.10.10.21
+MQ2_IP_BOND0=10.10.10.22
+MQ3_IP_BOND0=10.10.10.23
+
+### IP cho bond1 cho cac may rabbitmq
+MQ1_IP_BOND1=192.168.20.21
+MQ2_IP_BOND1=192.168.20.22
+MQ3_IP_BOND1=192.168.20.23
+EOF
+
 source config.cfg 
 
 function setup_config {
