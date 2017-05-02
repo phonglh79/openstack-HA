@@ -9,10 +9,10 @@ source config.cfg
 ### Kiem tra cu phap khi thuc hien shell 
 if [ $# -ne 1 ]
     then
-        echo  "Cu phap dung nhu sau "
-        echo -e "Thuc hien tren may chu MQ1: \e[31m bash $0 mq1 MQ1_BOND0_IP MQ1_BOND1_IP \e[0m"
-        echo -e "Thuc hien tren may chu MQ2: \e[31m bash $0 mq2 MQ2_BOND0_IP MQ2_BOND1_IP \e[0m"
-        echo -e "Thuc hien tren may chu MQ3: \e[31m bash $0 mq3 MQ3_BOND0_IP MQ1_BOND3_IP \e[0m"
+        echo -e "Cu phap dung nhu sau, nhap du 3 thong so: \e[31m MQ1_HOSTNAME MQ1_BOND0_IP MQ1_BOND1_IP \e[0m"
+        echo -e "Thuc hien tren may chu MQ1: \e[31m bash $0 MQ1_HOSTNAME MQ1_BOND0_IP MQ1_BOND1_IP \e[0m"
+        echo -e "Thuc hien tren may chu MQ2: \e[31m bash $0 MQ2_HOSTNAME MQ2_BOND0_IP MQ2_BOND1_IP \e[0m"
+        echo -e "Thuc hien tren may chu MQ3: \e[31m bash $0 MQ3_HOSTNAME_IP MQ1_BOND3_IP \e[0m"
         exit 1;
 fi
 
