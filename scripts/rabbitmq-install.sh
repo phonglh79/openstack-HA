@@ -10,14 +10,14 @@ MQ3_HOSTNAME=mq3
 
 ## IP Address
 ### IP cho bond0 cho cac may rabbitmq
-MQ1_IP_BOND0=10.10.10.21
-MQ2_IP_BOND0=10.10.10.22
-MQ3_IP_BOND0=10.10.10.23
+MQ1_IP_NIC1=10.10.10.21
+MQ2_IP_NIC1=10.10.10.22
+MQ3_IP_NIC1=10.10.10.23
 
 ### IP cho bond1 cho cac may rabbitmq
-MQ1_IP_BOND1=192.168.20.21
-MQ2_IP_BOND1=192.168.20.22
-MQ3_IP_BOND1=192.168.20.23
+MQ1_IP_NIC2=192.168.20.21
+MQ2_IP_NIC2=192.168.20.22
+MQ3_IP_NIC2=192.168.20.23
 EOF
 
 source config.cfg 
@@ -30,15 +30,15 @@ function setup_config {
 ##Bien cho hostname
 
 function echocolor {
-    echo "#######################################################"
+    echo "#######################################################################"
     echo "$(tput setaf 3)##### $1 #####$(tput sgr0)"
-    echo "#######################################################"
+    echo "#######################################################################"
 
 }
 
 function copykey() {
         ssh-keygen -t rsa -f /root/.ssh/id_rsa -q -P ""
-        for IP_ADD in $MQ1_IP_BOND1 $MQ2_IP_BOND1 $MQ3_IP_BOND1
+        for IP_ADD in $MQ1_IP_NIC2 $MQ2_IP_NIC2 $MQ3_IP_NIC2
         do
         ssh-copy-id -o StrictHostKeyChecking=no -i /root/.ssh/id_rsa.pub root@$IP_ADD
         done
@@ -56,11 +56,11 @@ function install_repo() {
 
 function khai_bao_host() {
                 source config.cfg
-                echo "$MQ1_IP_BOND1 mq1" >> /etc/hosts
-                echo "$MQ2_IP_BOND1 mq2" >> /etc/hosts
-                echo "$MQ3_IP_BOND1 mq3" >> /etc/hosts
-                scp /etc/hosts root@$MQ2_IP_BOND1:/etc/
-                scp /etc/hosts root@$MQ3_IP_BOND1:/etc/
+                echo "$MQ1_IP_NIC2 mq1" >> /etc/hosts
+                echo "$MQ2_IP_NIC2 mq2" >> /etc/hosts
+                echo "$MQ3_IP_NIC2 mq3" >> /etc/hosts
+                scp /etc/hosts root@$MQ2_IP_NIC2:/etc/
+                scp /etc/hosts root@$MQ3_IP_NIC2:/etc/
 }
 
 function install_rabbitmq() {
@@ -83,10 +83,10 @@ function config_rabbitmq() {
         rabbitmqadmin list users
         rabbitmqctl set_policy ha-all '^(?!amq\.).*' '{"ha-mode": "all"}'          
         echo "Da cai dat xong rabbitmq tren MQ1"
-        scp /var/lib/rabbitmq/.erlang.cookie root@$MQ2_IP_BOND1:/var/lib/rabbitmq/.erlang.cookie
-        scp /var/lib/rabbitmq/.erlang.cookie root@$MQ3_IP_BOND1:/var/lib/rabbitmq/.erlang.cookie
+        scp /var/lib/rabbitmq/.erlang.cookie root@$MQ2_IP_NIC2:/var/lib/rabbitmq/.erlang.cookie
+        scp /var/lib/rabbitmq/.erlang.cookie root@$MQ3_IP_NIC2:/var/lib/rabbitmq/.erlang.cookie
         rabbitmqctl start_app
-        echocolor "Hoan thanh cai dat "
+        echo "Hoan thanh cai dat "
 
 }
 
@@ -119,7 +119,7 @@ setup_config
 echocolor " install_proxy, install_repo "
 sleep 3
 
-for IP_ADD in $MQ1_IP_BOND1 $MQ2_IP_BOND1 $MQ3_IP_BOND1
+for IP_ADD in $MQ1_IP_NIC2 $MQ2_IP_NIC2 $MQ3_IP_NIC2
 do 
     scp /root/config.cfg root@$IP_ADD:/root/
     echocolor "Cai dat proxy tren $IP_ADD"
@@ -130,7 +130,7 @@ do
     sleep 3
     ssh root@$IP_ADD "$(typeset -f); install_repo"
     
-    if [ "$IP_ADD" == "$MQ1_IP_BOND1" ]; then
+    if [ "$IP_ADD" == "$MQ1_IP_NIC2" ]; then
       echocolor "Cai dat khai_bao_host tren $IP_ADD"
       sleep 3
       ssh root@$IP_ADD "$(typeset -f); khai_bao_host"
@@ -140,13 +140,13 @@ do
     ssh root@$IP_ADD "$(typeset -f); install_rabbitmq"
 done 
 
-for IP_ADD in $MQ1_IP_BOND1 $MQ2_IP_BOND1 $MQ3_IP_BOND1
+for IP_ADD in $MQ1_IP_NIC2 $MQ2_IP_NIC2 $MQ3_IP_NIC2
 do 
-    if [ "$IP_ADD" == "$MQ1_IP_BOND1" ]; then 
+    if [ "$IP_ADD" == "$MQ1_IP_NIC2" ]; then 
       echocolor "Cai dat config_rabbitmq tren $IP_ADD"
       sleep 3
       ssh root@$IP_ADD "$(typeset -f); config_rabbitmq"    
-    elif [ "$IP_ADD" == "$MQ2_IP_BOND1" ] || [ "$IP_ADD" == "$MQ3_IP_BOND1" ]; then
+    elif [ "$IP_ADD" == "$MQ2_IP_NIC2" ] || [ "$IP_ADD" == "$MQ3_IP_NIC2" ]; then
       echocolor "Cai dat rabbitmq_join_cluster tren $IP_ADD"
       sleep 3
       ssh root@$IP_ADD "$(typeset -f); rabbitmq_join_cluster"
