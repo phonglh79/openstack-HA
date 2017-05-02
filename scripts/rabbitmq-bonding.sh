@@ -12,7 +12,9 @@ if [ $# -ne 1 ]
         echo -e "Cu phap dung nhu sau, nhap du 3 thong so: \e[31m MQ1_HOSTNAME MQ1_BOND0_IP MQ1_BOND1_IP \e[0m"
         echo -e "Thuc hien tren may chu MQ1: \e[31m bash $0 MQ1_HOSTNAME MQ1_BOND0_IP MQ1_BOND1_IP \e[0m"
         echo -e "Thuc hien tren may chu MQ2: \e[31m bash $0 MQ2_HOSTNAME MQ2_BOND0_IP MQ2_BOND1_IP \e[0m"
-        echo -e "Thuc hien tren may chu MQ3: \e[31m bash $0 MQ3_HOSTNAME_IP MQ1_BOND3_IP \e[0m"
+        echo -e "Thuc hien tren may chu MQ3: \e[31m bash $0 MQ3_HOSTNAME MQ3_BOND0_IP MQ3_BOND1_IP \e[0m"
+        echo ""
+        echo -e "Vi du: \e[31m bash $0 mq1 10.10.10.21 192.168.20.21 \e[0m"
         exit 1;
 fi
 
