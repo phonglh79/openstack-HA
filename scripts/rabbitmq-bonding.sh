@@ -6,7 +6,7 @@
 ### Kiem tra cu phap khi thuc hien shell 
 if [ $# -ne 3 ]
     then
-        echo -e "Nhap du 3 thong so: \e[38;5;82m MQ1_HOSTNAME, \e[38;5;31m MQ1_BOND0_IP,\e[38;5;11m MQ1_BOND1_IP \e[0m"
+        echo -e "Nhap du 3 thong so: \e[38;5;82m MQ1_HOSTNAME, \e[38;5;31m MQ1_IP_NIC1,\e[38;5;11m MQ1_IP_NIC2 \e[0m"
         echo ""
         echo -e "Thuc hien tren may chu MQ1: \e[31m bash $0 MQ1_HOSTNAME MQ1_IP_NIC1 MQ1_IP_NIC2 \e[0m"
         echo -e "Thuc hien tren may chu MQ2: \e[31m bash $0 MQ2_HOSTNAME MQ2_IP_NIC1 MQ2_IP_NIC2 \e[0m"
