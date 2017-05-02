@@ -4,12 +4,16 @@ source config.cfg
 
 function setup_config {
   scp /root/config.cfg root@$IP_ADD:/root/
+  chmod +x config.cfg 
 }
 
 ##Bien cho hostname
 
 function echocolor {
+    echo "#######################################################"
     echo "$(tput setaf 3)##### $1 #####$(tput sgr0)"
+    echo "#######################################################"
+
 }
 
 function copykey() {
@@ -43,11 +47,7 @@ function install_rabbitmq() {
         yum -y install rabbitmq-server
         systemctl enable rabbitmq-server.service
         systemctl start rabbitmq-server.service
-        rabbitmq-plugins enable rabbitmq_management
-        systemctl restart rabbitmq-server
-        curl -O http://localhost:15672/cli/rabbitmqadmin
-        chmod a+x rabbitmqadmin
-        mv rabbitmqadmin /usr/sbin/
+    
 }
 
 function config_rabbitmq() {
@@ -55,13 +55,18 @@ function config_rabbitmq() {
         rabbitmqctl add_user openstack Welcome123
         rabbitmqctl set_permissions openstack ".*" ".*" ".*"
         rabbitmqctl set_user_tags openstack administrator
+        rabbitmq-plugins enable rabbitmq_management
+        systemctl restart rabbitmq-server
+        curl -O http://localhost:15672/cli/rabbitmqadmin
+        chmod a+x rabbitmqadmin
+        mv rabbitmqadmin /usr/sbin/
         rabbitmqadmin list users
         rabbitmqctl set_policy ha-all '^(?!amq\.).*' '{"ha-mode": "all"}'          
-        echo "Da cai dat xong rabbitmq tren MQ1"
+        echocolor "Da cai dat xong rabbitmq tren MQ1"
         scp /var/lib/rabbitmq/.erlang.cookie root@$MQ2_IP_BOND1:/var/lib/rabbitmq/.erlang.cookie
         scp /var/lib/rabbitmq/.erlang.cookie root@$MQ3_IP_BOND1:/var/lib/rabbitmq/.erlang.cookie
         rabbitmqctl start_app
-        echo "Hoan thanh cai dat "
+        echocolor "Hoan thanh cai dat "
 
 }
 
@@ -82,18 +87,16 @@ function rabbitmq_join_cluster() {
 # Thuc thi cac functions
 ## Goi cac functions
 ############################
-echo "Cai dat rabbitmq"
+echocolor "Cai dat rabbitmq"
 sleep 3
 
-echo "######################################"
-echo "Tao key va copy key, bien khai bao sang cac node"
-echo "######################################"
+echocolor "Tao key va copy key, bien khai bao sang cac node"
 sleep 3
 copykey
+setup_config
 
-echo "######################################"
-echo " install_proxy, install_repo "
-echo "######################################"
+
+echocolor " install_proxy, install_repo "
 sleep 3
 
 for IP_ADD in $MQ1_IP_BOND1 $MQ2_IP_BOND1 $MQ3_IP_BOND1
@@ -132,4 +135,4 @@ do
 done 
 
 rabbitmqctl cluster_status
-echo done
+echocolor DONE
