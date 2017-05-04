@@ -328,7 +328,19 @@
 - Chuyển sang máy chủ `LoadBalancer2` và thực hiện các bước cài như trên. Sau khi hoàn thành sẽ xuống bước dưới để thực hiện cấu hình cluster trên một trong các máy chủ trong cụm Cluster. Trong ví dụ này tôi sẽ thực hiện trên máy chủ `LoadBalancer1`
 - Khi đăng nhập bằng user `hacluster` vào địa chỉ `https://172.16.69.51:2224` ta sẽ có giao diện sau: http://prntscr.com/f42yvc
 - Ta có thể sử dụng giao diện này để quản lý, xem thông tin của cluster. Việc dùng giao diện này để quản lý Cluster sẽ được kiểm chứng sau. 
+- Có thể sử dụng các lệnh sau để kiểm tra phiên bản của pacemaker, corosync
+  ```sh
+  [root@lb1 ~]# corosync -v
+  Corosync Cluster Engine, version '2.4.0'
+  Copyright (c) 2006-2009 Red Hat, Inc.
+  ```
+  hoặc
 
+  ```sh
+  [root@lb1 ~]# pacemakerd --version
+  Pacemaker 1.1.15-11.el7_3.4
+  Written by Andrew Beekhof
+  ```
 
 ### Tạo cluster 
 - Đứng trên 1 trong 2 máy chủ để thực hiện các bước dưới. Lưu ý: chỉ đứng trên 1 trong các máy chủ thực hiện bước này. Ví dụ này tôi sẽ đứng trên máy chủ `LoadBalancer1` để thực hiện việc tạo cluster. 
