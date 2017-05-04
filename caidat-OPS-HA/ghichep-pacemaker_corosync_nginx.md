@@ -1,4 +1,11 @@
 # Cài đặt httpd, pacemaker, corosync
+
+## Môi trường
+- OS: CentOS7.3 1611 64 bit
+- Nginx: nginx/1.10.2
+- Pacemaker: pacemaker-1.1.15-11.el7_3.4.x86_64
+- Corosync: corosync-2.4.0-4.el7.x86_64
+
 ## Mô hình
 ![LB_Pacemaker_Corosync_Nginx_Topo.png](../images/LB_Pacemaker_Corosync_Nginx_Topo.png)
 
@@ -6,7 +13,7 @@
 ![LB_NGINX_planning.png](../images/LB_NGINX_planning.png)
 
 # Cài đặt NIGNX
-### Cài đặt NGINX trên LoadBlancing1
+### Cài đặt NGINX trên LoadBalancer1
 
 - Khaibáo repos để tăng tốc độ cài đặt
   ```
@@ -14,7 +21,7 @@
   yum -y update
   ```
 
-- Đặt hostname cho LoadBlancing1
+- Đặt hostname cho LoadBalancer1
   ```sh
   hostnamectl set-hostname lb1
   
@@ -50,7 +57,7 @@
   init 6
   ```
 
-- Đăng nhập lại vào máy LoadBlancing1 với địa chỉ ở trên và cài nginx
+- Đăng nhập lại vào máy LoadBalancer1 với địa chỉ ở trên và cài nginx
   ```sh
   yum install -y wget 
   yum install -y epel-release
@@ -75,7 +82,7 @@
   nginx version: nginx/1.10.2
   ```
   
-- Tạo 1 trang html trên LoadBlancing1 để test 
+- Tạo 1 trang html trên LoadBalancer1 để test 
   ```sh
   cat << EOF > /usr/share/nginx/html/index.html
   <html>
@@ -92,15 +99,15 @@
   systemctl restart nginx 
   ```
   
-- Truy cập vào IP của LoadBlancing1, sẽ thấy hostname của LoadBlancing1
+- Truy cập vào IP của LoadBalancer1, sẽ thấy hostname của LoadBalancer1
 
-### Cài đặt NGINX trên LoadBlancing2 
+### Cài đặt NGINX trên LoadBalancer2 
 - Khaibáo repos để tăng tốc độ cài đặt
   ```sh
   echo "proxy=http://123.30.178.220:3142" >> /etc/yum.conf 
   yum -y update
   ```
-- Đặt hostname cho LoadBlancing2
+- Đặt hostname cho LoadBalancer2
   ```sh
   hostnamectl set-hostname lb2
   
@@ -135,7 +142,7 @@
   init 6
   ```
 
-- Đăng nhập lại vào máy LoadBlancing2 với địa chỉ ở trên và cài nginx trên LoadBlancing2
+- Đăng nhập lại vào máy LoadBalancer2 với địa chỉ ở trên và cài nginx trên LoadBalancer2
   ```sh
   yum install -y wget 
   yum install -y epel-release
@@ -160,7 +167,7 @@
   nginx version: nginx/1.10.2
   ```
   
-- Tạo 1 trang html trên LoadBlancing2 để test 
+- Tạo 1 trang html trên LoadBalancer2 để test 
   ```sh
   cat << EOF > /usr/share/nginx/html/index.html
   <html>
@@ -178,20 +185,20 @@
   systemctl restart nginx 
   ```
   
-- Truy cập vào IP của LoadBlancing2, sẽ thấy hostname của LoadBlancing2
+- Truy cập vào IP của LoadBalancer2, sẽ thấy hostname của LoadBalancer2
 
-### Cài đặt NGINX trên LoadBlancing3 
+### Cài đặt NGINX trên LoadBalancer3 
 - Khaibáo repos để tăng tốc độ cài đặt
   ```sh
   echo "proxy=http://123.30.178.220:3142" >> /etc/yum.conf 
   yum -y update
   ```
-- Đặt hostname cho LoadBlancing3
+- Đặt hostname cho LoadBalancer3
   ```sh
   hostnamectl set-hostname lb3
   
-  echo "172.16.69.23 lb1" >> /etc/hosts
-  echo "172.16.69.24 lb2" >> /etc/hosts
+  echo "172.16.69.51 lb1" >> /etc/hosts
+  echo "172.16.69.52 lb2" >> /etc/hosts
   echo "172.16.69.53 lb3" >> /etc/hosts
   ```
 - Đặt IP cho các NICs
@@ -221,7 +228,7 @@
   init 6
   ```
 
-- Đăng nhập lại vào máy LoadBlancing3 với địa chỉ ở trên và cài nginx trên LoadBlancing3
+- Đăng nhập lại vào máy LoadBalancer3 với địa chỉ ở trên và cài nginx trên LoadBalancer3
   ```sh
   yum install -y wget 
   yum install -y epel-release
@@ -246,7 +253,7 @@
   nginx version: nginx/1.10.2
   ```
   
-- Tạo 1 trang html trên LoadBlancing3 để test 
+- Tạo 1 trang html trên LoadBalancer3 để test 
   ```sh
   cat << EOF > /usr/share/nginx/html/index.html
   <html>
@@ -264,22 +271,21 @@
   systemctl restart nginx 
   ```
   
-- Truy cập vào IP của LoadBlancing3, sẽ thấy hostname của LoadBlancing3
+- Truy cập vào IP của LoadBalancer3, sẽ thấy hostname của LoadBalancer3
 
 ## Cài đặt pacemaker và corosync để tạo cluster cho nginx 
 - Packer dùng để quản lý các tài nguyên (web server - nginx, database, IP VIP)
 - Corosync dùng để làm `messenger` theo dõi tình trạng của các tài nguyên ở trên. 
 
-
-### Cài đặt pacemaker trên LB1  và trên LoadBlancing2 
+### Cài đặt pacemaker trên máy chủ LoadBalancer1  và trên LoadBalancer2 
 - Lưu ý:
-  - Mặc dù có 03 node nhưng bước này chỉ thực hiện trên 2 máy chủ LoadBlancing (LoadBlancing1 và LoadBlancing2). Mảy chủ LoadBlancing3 sẽ để mở rộng sau.
+  - Mặc dù có 03 node nhưng bước này chỉ thực hiện trên 2 máy chủ LoadBalancer (LoadBalancer1 và LoadBalancer2). Mảy chủ LoadBalancer3 sẽ để mở rộng sau.
 
-- Cài đặt `pacemaker` trên máy chủ LoadBlancing1 (làm tương tự với LoadBlancing2)
+- Cài đặt `pacemaker` trên các máy chủ `LoadBalancer1` và `LoadBalancer2`. Nếu muốn triển khai cả 3 máy thì thực hiện luôn trên `LoadBalancer3`
   ```sh
   yum -y install pacemaker pcs
   ```
-  - Sử dụng lệnh dưới để kiểm tra xem có gói `pacemaker` và `corosync` hay chưa `rpm -qa | egrep "pacemaker|corosync"`
+  - Sử dụng lệnh dưới để kiểm tra xem có gói `pacemaker` và `corosync` hay chưa `rpm -qa | egrep "pacemaker|corosync"`. Dưới là các phiên bản của `pacemaker` và `corosync`
     ```sh
     [root@lb1 ~]# rpm -qa | egrep "pacemaker|corosync"
     corosynclib-2.4.0-4.el7.x86_64
@@ -289,22 +295,44 @@
     pacemaker-cli-1.1.15-11.el7_3.4.x86_64
     pacemaker-libs-1.1.15-11.el7_3.4.x86_64
     ```
+  - Từ CentOS7 trở đi, khi cài `pacemaker` thì `corosync` sẽ được cài cùng. Ngoài ra, khi cài pacemaker thì user `hacluster` sẽ được tạo ra và gán vào group `haclient`. Ở bước dưới cần đặt mật khẩu cho user `hacluster` để xác thực các node trong cluster với nhau. 
   
-- Khởi động pacemaker
+- Khởi động và cho phép pacemaker bật khi máy chủ reboot
   ```sh
   systemctl start pcsd 
   systemctl enable pcsd
   ```
 
+- Kiểm tra lại trạng thái của `pacemaker` bằng lệnh `systemctl startus pcsd`, kết quả như sau:
+  ```sh
+  [root@lb1 ~]# systemctl status pcsd
+  ● pcsd.service - PCS GUI and remote configuration interface
+     Loaded: loaded (/usr/lib/systemd/system/pcsd.service; enabled; vendor preset: disabled)
+     Active: active (running) since Thu 2017-05-04 22:33:38 +07; 13s ago
+   Main PID: 2578 (pcsd)
+     CGroup: /system.slice/pcsd.service
+             └─2578 /usr/bin/ruby /usr/lib/pcsd/pcsd > /dev/null &
+
+  May 04 22:33:37 lb1 systemd[1]: Starting PCS GUI and remote configuration interface...
+  May 04 22:33:38 lb1 systemd[1]: Started PCS GUI and remote configuration interface.
+  ```
+  
 - Đặt mật khẩu cho user `hacluster` của cluster, nhập mật khẩu mà bạn muốn sử dụng.
   ```sh
   passwd hacluster
   ```
-  - Lưu ý: đặt mật khẩu giống nhau trên cả 2 node LoadBlancing1 và LoadBlancing2.
+  - Lưu ý: đặt mật khẩu giống nhau trên cả 2 node LoadBalancer1 và LoadBalancer2.
+
+- Trong bước kiểm tra trạng thái của `pacemaker` xem đã ok hay chưa, ta sẽ thấy thông báo về `PCS GUI` đã được cài đặt để quản lý cluster thông qua web. Đăng nhập bằng trình duyệt với địa chỉ của máy cài đặt pacemaker, ở đây là `https://172.16.69.51:2224`, nhập user là `hacluster` và mật khẩu bạn vừa nhập ở trên. GUI này có từ CentOS7.x trở đi. 
+
+- Chuyển sang máy chủ `LoadBalancer2` và thực hiện các bước cài như trên. Sau khi hoàn thành sẽ xuống bước dưới để thực hiện cấu hình cluster trên một trong các máy chủ trong cụm Cluster. Trong ví dụ này tôi sẽ thực hiện trên máy chủ `LoadBalancer1`
+- Khi đăng nhập bằng user `hacluster` vào địa chỉ `https://172.16.69.51:2224` ta sẽ có giao diện sau: http://prntscr.com/f42yvc
+- Ta có thể sử dụng giao diện này để quản lý, xem thông tin của cluster. Việc dùng giao diện này để quản lý Cluster sẽ được kiểm chứng sau. 
+
 
 ### Tạo cluster 
-- Đứng trên 1 trong 2 node để thực hiện các bước dưới. Lưu ý: chỉ đứng trên 1 node thực hiện bước này 
-- Thực hiện lệnh dưới để thiết lập xác thực giữa `LoadBlancing1` và `LoadBlancing2`, trong hướng dẫn này tôi đứng trên LB1 
+- Đứng trên 1 trong 2 máy chủ để thực hiện các bước dưới. Lưu ý: chỉ đứng trên 1 trong các máy chủ thực hiện bước này. Ví dụ này tôi sẽ đứng trên máy chủ `LoadBalancer1` để thực hiện việc tạo cluster. 
+- Thực hiện lệnh dưới để thiết lập xác thực giữa `LoadBalancer1` và `LoadBalancer2`, trong hướng dẫn này tôi đứng trên LB1 
   ```sh
   pcs cluster auth lb1 lb2
   ```
@@ -405,7 +433,7 @@
 
 ## Cấu hình để thêm các resources vào Cluster
 - Trong hướng dẫn này sẽ thêm các `resources agent` của NGINX và IP VIP.
-- Chỉ cần đứng trên 1 node bất kỳ trong cụm cluster để thưc hiện, trong ví dụ này thực hiện trên node `LoadBlancing1`
+- Chỉ cần đứng trên 1 node bất kỳ trong cụm cluster để thưc hiện, trong ví dụ này thực hiện trên node `LoadBalancer1`
 
 ### Cấu hình cơ bản cho NGINX
 - Disable cơ chế `STONITH`
@@ -552,7 +580,7 @@
 - https://www.server-world.info/en/note?os=CentOS_7&p=nginx
 - http://blog.air-foron.com/linux/centos-7/post-1433/
 - https://www.server-world.info/en/note?os=CentOS_7&p=pacemaker&f=1
-
+- http://www.unixarena.com/2015/12/rhel-7-configuring-pacemaker-corosync-redhat-cluster-part-4.html
 
 
 
