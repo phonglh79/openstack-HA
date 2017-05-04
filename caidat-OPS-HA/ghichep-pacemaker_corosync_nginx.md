@@ -104,8 +104,8 @@
   ```sh
   hostnamectl set-hostname lb2
   
-  echo "172.16.69.23 lb1" >> /etc/hosts
-  echo "172.16.69.24 lb2" >> /etc/hosts
+  echo "172.16.69.51 lb1" >> /etc/hosts
+  echo "172.16.69.52 lb2" >> /etc/hosts
   echo "172.16.69.53 lb3" >> /etc/hosts
   ```
 - Đặt IP cho các NICs
