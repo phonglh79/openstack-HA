@@ -1,9 +1,11 @@
 # Cài đặt httpd, pacemaker, corosync
 ## Mô hình
-[LB_Pacemaker_Corosync_Nginx_Topo.png](../images/LB_Pacemaker_Corosync_Nginx_Topo.png)
+![LB_Pacemaker_Corosync_Nginx_Topo.png](../images/LB_Pacemaker_Corosync_Nginx_Topo.png)
+
 ## IP Planning 
+![LB_NGINX_planning.png](../images/LB_NGINX_planning.png)
 
-
+# Cài đặt NIGNX
 ### Cài đặt NGINX trên LoadBlancing1
 
 - Khaibáo repos để tăng tốc độ cài đặt
@@ -16,20 +18,20 @@
   ```sh
   hostnamectl set-hostname lb1
   
-  echo "172.16.69.23 lb1" >> /etc/hosts
-  echo "172.16.69.24 lb2" >> /etc/hosts
-  echo "172.16.69.25 lb3" >> /etc/hosts
+  echo "172.16.69.51 lb1" >> /etc/hosts
+  echo "172.16.69.52 lb2" >> /etc/hosts
+  echo "172.16.69.53 lb3" >> /etc/hosts
   ```
 
 - Đặt địa chỉ IP cho các NICs
   ```sh
   echo "Setup IP  ens32"
-  nmcli c modify ens32 ipv4.addresses 10.10.10.23/24
+  nmcli c modify ens32 ipv4.addresses 10.10.10.51/24
   nmcli c modify ens32 ipv4.method manual
   nmcli con mod ens32 connection.autoconnect yes
 
   echo "Setup IP  ens33"
-  nmcli c modify ens33 ipv4.addresses 172.16.69.23/24
+  nmcli c modify ens33 ipv4.addresses 172.16.69.51/24
   nmcli c modify ens33 ipv4.gateway 172.16.69.1
   nmcli c modify ens33 ipv4.dns 8.8.8.8
   nmcli c modify ens33 ipv4.method manual
@@ -42,6 +44,7 @@
   sudo systemctl enable network
   sudo systemctl start network
 
+  sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux
   sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux
 
   init 6
@@ -78,7 +81,7 @@
   <html>
   <body>
   <div style="width: 100%; font-size: 40px; font-weight: bold; text-align: center;">
-  `hostname`
+  nginx-`hostname`
   </div>
   </body>
   </html>
@@ -103,16 +106,17 @@
   
   echo "172.16.69.23 lb1" >> /etc/hosts
   echo "172.16.69.24 lb2" >> /etc/hosts
+  echo "172.16.69.53 lb3" >> /etc/hosts
   ```
 - Đặt IP cho các NICs
   ```sh
   echo "Setup IP  ens32"
-  nmcli c modify ens32 ipv4.addresses 10.10.10.24/24
+  nmcli c modify ens32 ipv4.addresses 10.10.10.52/24
   nmcli c modify ens32 ipv4.method manual
   nmcli con mod ens32 connection.autoconnect yes
 
   echo "Setup IP  ens33"
-  nmcli c modify ens33 ipv4.addresses 172.16.69.24/24
+  nmcli c modify ens33 ipv4.addresses 172.16.69.52/24
   nmcli c modify ens33 ipv4.gateway 172.16.69.1
   nmcli c modify ens33 ipv4.dns 8.8.8.8
   nmcli c modify ens33 ipv4.method manual
@@ -126,6 +130,7 @@
   sudo systemctl start network
 
   sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux
+  sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
 
   init 6
   ```
@@ -161,7 +166,7 @@
   <html>
   <body>
   <div style="width: 100%; font-size: 40px; font-weight: bold; text-align: center;">
-  `hostname`
+  NGINX-`hostname`
   </div>
   </body>
   </html>
@@ -175,16 +180,102 @@
   
 - Truy cập vào IP của LoadBlancing2, sẽ thấy hostname của LoadBlancing2
 
+### Cài đặt NGINX trên LoadBlancing3 
+- Khaibáo repos để tăng tốc độ cài đặt
+  ```sh
+  echo "proxy=http://123.30.178.220:3142" >> /etc/yum.conf 
+  yum -y update
+  ```
+- Đặt hostname cho LoadBlancing3
+  ```sh
+  hostnamectl set-hostname lb3
+  
+  echo "172.16.69.23 lb1" >> /etc/hosts
+  echo "172.16.69.24 lb2" >> /etc/hosts
+  echo "172.16.69.53 lb3" >> /etc/hosts
+  ```
+- Đặt IP cho các NICs
+  ```sh
+  echo "Setup IP  ens32"
+  nmcli c modify ens32 ipv4.addresses 10.10.10.53/24
+  nmcli c modify ens32 ipv4.method manual
+  nmcli con mod ens32 connection.autoconnect yes
+
+  echo "Setup IP  ens33"
+  nmcli c modify ens33 ipv4.addresses 172.16.69.53/24
+  nmcli c modify ens33 ipv4.gateway 172.16.69.1
+  nmcli c modify ens33 ipv4.dns 8.8.8.8
+  nmcli c modify ens33 ipv4.method manual
+  nmcli con mod ens33 connection.autoconnect yes
+
+  sudo systemctl disable firewalld
+  sudo systemctl stop firewalld
+  sudo systemctl disable NetworkManager
+  sudo systemctl stop NetworkManager
+  sudo systemctl enable network
+  sudo systemctl start network
+
+  sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux
+  sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
+
+  init 6
+  ```
+
+- Đăng nhập lại vào máy LoadBlancing3 với địa chỉ ở trên và cài nginx trên LoadBlancing3
+  ```sh
+  yum install -y wget 
+  yum install -y epel-release
+
+  yum --enablerepo=epel -y install nginx
+  ```
+  
+- Khởi động nginx
+  ```sh
+  systemctl start nginx 
+  systemctl enable nginx
+  ```
+
+- Kiểm tra trạng thái của NGINX
+  ```sh
+  systemctl status nginx 
+  ```
+
+- Kiểm tra phiên bản của nginx bằng lệnh `nginx -v`
+  ```sh
+  [root@lb2 ~]# nginx -v
+  nginx version: nginx/1.10.2
+  ```
+  
+- Tạo 1 trang html trên LoadBlancing3 để test 
+  ```sh
+  cat << EOF > /usr/share/nginx/html/index.html
+  <html>
+  <body>
+  <div style="width: 100%; font-size: 40px; font-weight: bold; text-align: center;">
+  NGINX-`hostname`
+  </div>
+  </body>
+  </html>
+  EOF
+  ```
+  
+- Khởi động lại nginx
+  ```sh
+  systemctl restart nginx 
+  ```
+  
+- Truy cập vào IP của LoadBlancing3, sẽ thấy hostname của LoadBlancing3
+
 ## Cài đặt pacemaker và corosync để tạo cluster cho nginx 
 - Packer dùng để quản lý các tài nguyên (web server - nginx, database, IP VIP)
 - Corosync dùng để làm `messenger` theo dõi tình trạng của các tài nguyên ở trên. 
 
 
-### Cài đặt pacemaker trên LB1 và trên LoadBlancing2 
+### Cài đặt pacemaker trên LB1 LoadBlancing2 và LoadBlancing3
 - Lưu ý:
-  - Bước này thực hiện trên cả 2 máy chủ LoadBlancing (LoadBlancing1 và LoadBlancing2)
+  - Bước này thực hiện trên cả 3 máy chủ LoadBlancing (LoadBlancing1, LoadBlancing2 và LoadBlancing3)
 
-- Cài đặt `pacemaker` trên máy chủ LoadBlancing1 (làm tương tự với LoadBlancing2)
+- Cài đặt `pacemaker` trên máy chủ LoadBlancing1 (làm tương tự với LoadBlancing2 và LoadBlancing3)
   ```sh
   yum -y install pacemaker pcs
   ```
@@ -209,17 +300,17 @@
   ```sh
   passwd hacluster
   ```
-  - Lưu ý: đặt mật khẩu giống nhau trên cả 2 node LoadBlancing1 và LoadBlancing2.
+  - Lưu ý: đặt mật khẩu giống nhau trên cả 3 node LoadBlancing1, LoadBlancing2 và LoadBlancing3.
 
 ### Tạo cluster 
-- Đứng trên 1 trong 2 node để thực hiện các bước dưới. Lưu ý: chỉ đứng trên 1 node thực hiện bước này 
-- Thực hiện lệnh dưới để thiết lập xác thực giữa `LoadBlancing1` và `LoadBlancing2`, trong hướng dẫn này tôi đứng trên LB1 
+- Đứng trên 1 trong 3 node để thực hiện các bước dưới. Lưu ý: chỉ đứng trên 1 node thực hiện bước này 
+- Thực hiện lệnh dưới để thiết lập xác thực giữa `LoadBlancing1`, `LoadBlancing2` và `LoadBlancing3`, trong hướng dẫn này tôi đứng trên LB1 
   ```sh
-  pcs cluster auth lb1 lb2
+  pcs cluster auth lb1 lb2 lb3
   ```
   - Kết quả như sau:
       ```
-      [root@lb1 ~]# pcs cluster auth lb1 lb2
+      [root@lb1 ~]# pcs cluster auth lb1 lb2 lb3
       Username: hacluster
       Password:
       lb1: Authorized
@@ -227,7 +318,7 @@
       ```
 - Cấu hình cluster 
   ```sh
-  pcs cluster setup --name ha_cluster lb1 lb2
+  pcs cluster setup --name ha_cluster lb1 lb2 lb3
   ```
 
   - Kết quả như sau

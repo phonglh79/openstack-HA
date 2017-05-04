@@ -49,6 +49,7 @@
   sudo systemctl start network
 
   sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux
+  sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
   
   echo "172.16.69.41 mq1" >> /etc/hosts
   echo "172.16.69.42 mq2" >> /etc/hosts
@@ -92,6 +93,7 @@
   sudo systemctl start network
 
   sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux
+  sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
   
   echo "172.16.69.41 mq1" >> /etc/hosts
   echo "172.16.69.42 mq2" >> /etc/hosts
@@ -135,6 +137,7 @@
   sudo systemctl start network
 
   sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux
+  sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
   
   echo "172.16.69.41 mq1" >> /etc/hosts
   echo "172.16.69.42 mq2" >> /etc/hosts
