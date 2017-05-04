@@ -29,17 +29,17 @@
 
 - Đặt IP cho các NICs 
   ```sh
-  echo "Setup IP  eno16777728"
-  nmcli con modify eno16777728 ipv4.addresses 10.10.10.41/24
-  nmcli con modify eno16777728 ipv4.method manual
-  nmcli con mod eno16777728 connection.autoconnect yes
+  echo "Setup IP  ens32"
+  nmcli con modify ens32 ipv4.addresses 10.10.10.41/24
+  nmcli con modify ens32 ipv4.method manual
+  nmcli con mod ens32 connection.autoconnect yes
 
-  echo "Setup IP  eno33554952"
-  nmcli con modify eno33554952 ipv4.addresses 172.16.69.41/24
-  nmcli con modify eno33554952 ipv4.gateway 172.16.69.1
-  nmcli con modify eno33554952 ipv4.dns 8.8.8.8
-  nmcli con modify eno33554952 ipv4.method manual
-  nmcli con mod eno33554952 connection.autoconnect yes
+  echo "Setup IP  ens33"
+  nmcli con modify ens33 ipv4.addresses 172.16.69.41/24
+  nmcli con modify ens33 ipv4.gateway 172.16.69.1
+  nmcli con modify ens33 ipv4.dns 8.8.8.8
+  nmcli con modify ens33 ipv4.method manual
+  nmcli con mod ens33 connection.autoconnect yes
 
   sudo systemctl disable firewalld
   sudo systemctl stop firewalld
@@ -72,17 +72,17 @@
   
 - Đặt IP cho các NICs
   ```sh
-  echo "Setup IP  eno16777728"
-  nmcli c modify eno16777728 ipv4.addresses 10.10.10.42/24
-  nmcli c modify eno16777728 ipv4.method manual
-  nmcli con mod eno16777728 connection.autoconnect yes
+  echo "Setup IP  ens32"
+  nmcli c modify ens32 ipv4.addresses 10.10.10.42/24
+  nmcli c modify ens32 ipv4.method manual
+  nmcli con mod ens32 connection.autoconnect yes
 
-  echo "Setup IP  eno33554952"
-  nmcli c modify eno33554952 ipv4.addresses 172.16.69.42/24
-  nmcli c modify eno33554952 ipv4.gateway 172.16.69.1
-  nmcli c modify eno33554952 ipv4.dns 8.8.8.8
-  nmcli c modify eno33554952 ipv4.method manual
-  nmcli con mod eno33554952 connection.autoconnect yes
+  echo "Setup IP  ens33"
+  nmcli c modify ens33 ipv4.addresses 172.16.69.42/24
+  nmcli c modify ens33 ipv4.gateway 172.16.69.1
+  nmcli c modify ens33 ipv4.dns 8.8.8.8
+  nmcli c modify ens33 ipv4.method manual
+  nmcli con mod ens33 connection.autoconnect yes
 
   sudo systemctl disable firewalld
   sudo systemctl stop firewalld
@@ -115,17 +115,17 @@
   
 - Đặt IP cho các NICs
   ```sh
-  echo "Setup IP  eno16777728"
-  nmcli c modify eno16777728 ipv4.addresses 10.10.10.43/24
-  nmcli c modify eno16777728 ipv4.method manual
-  nmcli con mod eno16777728 connection.autoconnect yes
+  echo "Setup IP  ens32"
+  nmcli c modify ens32 ipv4.addresses 10.10.10.43/24
+  nmcli c modify ens32 ipv4.method manual
+  nmcli con mod ens32 connection.autoconnect yes
 
-  echo "Setup IP  eno33554952"
-  nmcli c modify eno33554952 ipv4.addresses 172.16.69.43/24
-  nmcli c modify eno33554952 ipv4.gateway 172.16.69.1
-  nmcli c modify eno33554952 ipv4.dns 8.8.8.8
-  nmcli c modify eno33554952 ipv4.method manual
-  nmcli con mod eno33554952 connection.autoconnect yes
+  echo "Setup IP  ens33"
+  nmcli c modify ens33 ipv4.addresses 172.16.69.43/24
+  nmcli c modify ens33 ipv4.gateway 172.16.69.1
+  nmcli c modify ens33 ipv4.dns 8.8.8.8
+  nmcli c modify ens33 ipv4.method manual
+  nmcli con mod ens33 connection.autoconnect yes
 
   sudo systemctl disable firewalld
   sudo systemctl stop firewalld

@@ -45,6 +45,7 @@ if [ "$1" == "mq1" ]; then
     sudo systemctl start network
 
     sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux
+    sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
 
     echo "192.168.20.21 mq1" >> /etc/hosts
     echo "192.168.20.22 mq2" >> /etc/hosts
@@ -82,6 +83,7 @@ if [ "$1" == "mq1" ]; then
     sudo systemctl start network
 
     sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux
+    sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
 
     echo "192.168.20.21 mq1" >> /etc/hosts
     echo "192.168.20.22 mq2" >> /etc/hosts
@@ -118,6 +120,7 @@ if [ "$1" == "mq1" ]; then
     sudo systemctl start network
 
     sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux
+    sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
 
     echo "192.168.20.21 mq1" >> /etc/hosts
     echo "192.168.20.22 mq2" >> /etc/hosts

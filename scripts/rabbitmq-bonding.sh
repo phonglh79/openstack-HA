@@ -70,6 +70,7 @@ nmcli con modify $BOND1_NIC connection.autoconnect yes
 
 echo "Vo hieu hoa firewall va reboot may"
 sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux
+sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
 sudo systemctl disable firewalld
 sudo systemctl stop firewalld
 sudo systemctl disable NetworkManager
