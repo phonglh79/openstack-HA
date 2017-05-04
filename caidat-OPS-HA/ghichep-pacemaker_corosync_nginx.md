@@ -271,11 +271,11 @@
 - Corosync dùng để làm `messenger` theo dõi tình trạng của các tài nguyên ở trên. 
 
 
-### Cài đặt pacemaker trên LB1 LoadBlancing2 và LoadBlancing3
+### Cài đặt pacemaker trên LB1  và trên LoadBlancing2 
 - Lưu ý:
-  - Bước này thực hiện trên cả 3 máy chủ LoadBlancing (LoadBlancing1, LoadBlancing2 và LoadBlancing3)
+  - Mặc dù có 03 node nhưng bước này chỉ thực hiện trên 2 máy chủ LoadBlancing (LoadBlancing1 và LoadBlancing2). Mảy chủ LoadBlancing3 sẽ để mở rộng sau.
 
-- Cài đặt `pacemaker` trên máy chủ LoadBlancing1 (làm tương tự với LoadBlancing2 và LoadBlancing3)
+- Cài đặt `pacemaker` trên máy chủ LoadBlancing1 (làm tương tự với LoadBlancing2)
   ```sh
   yum -y install pacemaker pcs
   ```
@@ -300,17 +300,17 @@
   ```sh
   passwd hacluster
   ```
-  - Lưu ý: đặt mật khẩu giống nhau trên cả 3 node LoadBlancing1, LoadBlancing2 và LoadBlancing3.
+  - Lưu ý: đặt mật khẩu giống nhau trên cả 2 node LoadBlancing1 và LoadBlancing2.
 
 ### Tạo cluster 
-- Đứng trên 1 trong 3 node để thực hiện các bước dưới. Lưu ý: chỉ đứng trên 1 node thực hiện bước này 
-- Thực hiện lệnh dưới để thiết lập xác thực giữa `LoadBlancing1`, `LoadBlancing2` và `LoadBlancing3`, trong hướng dẫn này tôi đứng trên LB1 
+- Đứng trên 1 trong 2 node để thực hiện các bước dưới. Lưu ý: chỉ đứng trên 1 node thực hiện bước này 
+- Thực hiện lệnh dưới để thiết lập xác thực giữa `LoadBlancing1` và `LoadBlancing2`, trong hướng dẫn này tôi đứng trên LB1 
   ```sh
-  pcs cluster auth lb1 lb2 lb3
+  pcs cluster auth lb1 lb2
   ```
   - Kết quả như sau:
       ```
-      [root@lb1 ~]# pcs cluster auth lb1 lb2 lb3
+      [root@lb1 ~]# pcs cluster auth lb1 lb2
       Username: hacluster
       Password:
       lb1: Authorized
@@ -318,7 +318,7 @@
       ```
 - Cấu hình cluster 
   ```sh
-  pcs cluster setup --name ha_cluster lb1 lb2 lb3
+  pcs cluster setup --name ha_cluster lb1 lb2
   ```
 
   - Kết quả như sau
