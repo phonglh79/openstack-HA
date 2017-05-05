@@ -344,7 +344,8 @@
 
 ### Tạo cluster 
 - Đứng trên 1 trong 2 máy chủ để thực hiện các bước dưới. Lưu ý: chỉ đứng trên 1 trong các máy chủ thực hiện bước này. Ví dụ này tôi sẽ đứng trên máy chủ `LoadBalancer1` để thực hiện việc tạo cluster. 
-- Thực hiện lệnh dưới để thiết lập xác thực giữa `LoadBalancer1` và `LoadBalancer2`, trong hướng dẫn này tôi đứng trên LB1 
+- Thực hiện lệnh dưới để thiết lập xác thực giữa `LoadBalancer1` và `LoadBalancer2`, trong hướng dẫn này tôi đứng trên LoadBalancer1. Thực hiện lệnh dưới sẽ yêu cầu bạn nhập user mà cụm cluster sẽ sử dụng, trong hướng dẫn này là user `hacluster` đã được tạo trong quá trình cài đặt `pacemaker` và `corosync`. 
+
   ```sh
   pcs cluster auth lb1 lb2
   ```
@@ -360,8 +361,11 @@
   ```sh
   pcs cluster setup --name ha_cluster lb1 lb2
   ```
+- Trong lệnh trên:
+  - `ha_cluster` là tên của cluster mà bạn sẽ tạo, mục này có thể nhập tùy ý.
+  - `lb1 lb2` là hostname các máy chủ trong cụm cluster. Muốn sử dụng tên này thì bạn phải chắc chắn đã khai báo trong file `/etc/hosts`
 
-  - Kết quả như sau
+  - Kết quả của lệnh trên như sau
     ```sh
     [root@lb1 ~]# pcs cluster setup --name ha_cluster lb1 lb2
     Destroying cluster on nodes: lb1, lb2...
@@ -396,7 +400,6 @@
   ```
 
 
-- Kích hoạt cluster. Chỉ đứng trên 1 node tại 1 thời điểm thực hiện bước này 
   ```sh
   pcs cluster enable --all 
   ```
