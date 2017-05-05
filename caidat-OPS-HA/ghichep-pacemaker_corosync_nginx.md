@@ -388,7 +388,41 @@
     [root@lb1 ~]#
     ```
     
-- Khởi động service cho cluster. Chỉ đứng trên 1 node tại 1 thời điểm thực hiện bước này 
+- Sau bước này, trên các máy chủ trong cụm cluster sẽ sinh ra file `/etc/corosync/corosync.conf` có nội dung giống nhau, trong ví dụ này nội dung như sau (Trước kia ở CentOS6.x ta phải cấu hình bằng tay file này):  
+  ```sh
+  [root@lb2 corosync]# cat corosync.conf
+  totem {
+      version: 2
+      secauth: off
+      cluster_name: ha_cluster
+      transport: udpu
+  }
+
+  nodelist {
+      node {
+          ring0_addr: lb1
+          nodeid: 1
+      }
+
+      node {
+          ring0_addr: lb2
+          nodeid: 2
+      }
+  }
+
+  quorum {
+      provider: corosync_votequorum
+      two_node: 1
+  }
+
+  logging {
+      to_logfile: yes
+      logfile: /var/log/cluster/corosync.log
+      to_syslog: yes
+  }
+  ``` 
+    
+- Khởi động cluster vừa tạo ở trên, với tùy chọn `--all` chỉ ra rằng cluster sẽ được start trên tất cả các máy chủ đã xác thực ở bước trên. Lưu ý: Chỉ đứng trên 1 node tại 1 thời điểm thực hiện bước này.
   ```sh
   pcs cluster start --all 
   ```
@@ -398,8 +432,10 @@
   lb2: Starting Cluster...
   lb1: Starting Cluster...
   ```
+  - Với bước này thì `corosync` cũng được khởi động cùng OS và khởi động trên tất cả các máy chủ trong cụm cluster, có thể kiểm tra bằng lệnh `systemctl status corosync` và `systemctl status pacemaker`
 
 
+- Kích hoạt cluster để cho phép khởi động cùng OS. Chỉ đứng trên 1 node tại 1 thời điểm thực hiện bước này 
   ```sh
   pcs cluster enable --all 
   ```
