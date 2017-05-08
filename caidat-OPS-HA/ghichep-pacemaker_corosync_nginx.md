@@ -316,14 +316,15 @@
   May 04 22:33:37 lb1 systemd[1]: Starting PCS GUI and remote configuration interface...
   May 04 22:33:38 lb1 systemd[1]: Started PCS GUI and remote configuration interface.
   ```
+  - Lưu ý 2 dòng cuối của lệnh trên. 
   
 - Đặt mật khẩu cho user `hacluster` của cluster, nhập mật khẩu mà bạn muốn sử dụng.
   ```sh
   passwd hacluster
   ```
   - Lưu ý: đặt mật khẩu giống nhau trên cả 2 node LoadBalancer1 và LoadBalancer2.
-
-- Trong bước kiểm tra trạng thái của `pacemaker` xem đã ok hay chưa, ta sẽ thấy thông báo về `PCS GUI` đã được cài đặt để quản lý cluster thông qua web. Đăng nhập bằng trình duyệt với địa chỉ của máy cài đặt pacemaker, ở đây là `https://172.16.69.51:2224`, nhập user là `hacluster` và mật khẩu bạn vừa nhập ở trên. GUI này có từ CentOS7.x trở đi. 
+- Trong bước kiểm tra trạng thái của `pacemaker` xem đã ok hay chưa, ta sẽ thấy thông báo về `PCS GUI` đã được cài đặt, đây là công cụ WEB để quản lý cluster. Đăng nhập bằng trình duyệt với địa chỉ của máy cài đặt pacemaker, ví dụ ở đây là `https://172.16.69.51:2224`, hãy nhập user là `hacluster` và mật khẩu bạn vừa nhập ở trên. 
+- GUI này có từ CentOS7.x trở đi. 
 
 - Chuyển sang máy chủ `LoadBalancer2` và thực hiện các bước cài như trên. Sau khi hoàn thành sẽ xuống bước dưới để thực hiện cấu hình cluster trên một trong các máy chủ trong cụm Cluster. Trong ví dụ này tôi sẽ thực hiện trên máy chủ `LoadBalancer1`
 - Khi đăng nhập bằng user `hacluster` vào địa chỉ `https://172.16.69.51:2224` ta sẽ có giao diện sau: http://prntscr.com/f42yvc
