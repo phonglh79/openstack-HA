@@ -323,12 +323,11 @@
   passwd hacluster
   ```
   - Lưu ý: đặt mật khẩu giống nhau trên cả 2 node LoadBalancer1 và LoadBalancer2.
-- Trong bước kiểm tra trạng thái của `pacemaker` xem đã ok hay chưa, ta sẽ thấy thông báo về `PCS GUI` đã được cài đặt, đây là công cụ WEB để quản lý cluster. Đăng nhập bằng trình duyệt với địa chỉ của máy cài đặt pacemaker, ví dụ ở đây là `https://172.16.69.51:2224`, hãy nhập user là `hacluster` và mật khẩu bạn vừa nhập ở trên. 
+- Trong bước kiểm tra trạng thái của `pacemaker` xem đã ok hay chưa, ta sẽ thấy thông báo về `PCS GUI` đã được cài đặt, đây là công cụ WEB để quản lý cluster. Đăng nhập bằng trình duyệt với địa chỉ của máy cài đặt pacemaker, ví dụ ở đây là `https://172.16.69.51:2224`, hãy nhập user là `hacluster` và mật khẩu bạn vừa nhập ở trên. Giao diện như sau: http://prntscr.com/f42yvc
 - GUI này có từ CentOS7.x trở đi. 
 
-- Chuyển sang máy chủ `LoadBalancer2` và thực hiện các bước cài như trên. Sau khi hoàn thành sẽ xuống bước dưới để thực hiện cấu hình cluster trên một trong các máy chủ trong cụm Cluster. Trong ví dụ này tôi sẽ thực hiện trên máy chủ `LoadBalancer1`
-- Khi đăng nhập bằng user `hacluster` vào địa chỉ `https://172.16.69.51:2224` ta sẽ có giao diện sau: http://prntscr.com/f42yvc
-- Ta có thể sử dụng giao diện này để quản lý, xem thông tin của cluster. Việc dùng giao diện này để quản lý Cluster sẽ được kiểm chứng sau. 
+- Chuyển sang máy chủ `LoadBalancer2` và thực hiện các bước cài như trên. 
+- Sau khi hoàn thành các bước cài đặt ở bên trên đối với máy chủ  `LoadBalancer2`, chuyển xuống bước dưới để thực hiện cấu hình cluster trên một trong các máy chủ trong cụm Cluster. Trong ví dụ này tôi sẽ thực hiện trên máy chủ `LoadBalancer1`
 - Có thể sử dụng các lệnh sau để kiểm tra phiên bản của pacemaker, corosync
   ```sh
   [root@lb1 ~]# corosync -v
