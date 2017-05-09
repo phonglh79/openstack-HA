@@ -11,7 +11,7 @@ if [ $# -ne 5 ]
         echo -e "Thuc hien tren may chu LB1: \e[31m bash $0 LB1_HOSTNAME LB1_IP_NIC1 LB1_IP_NIC2 LB1_IP_NIC3 LB1_IP_NIC4 \e[0m"
         echo -e "Thuc hien tren may chu LB1: \e[31m bash $0 LB2_HOSTNAME LB2_IP_NIC1 LB2_IP_NIC2 LB2_IP_NIC3 LB2_IP_NIC4 \e[0m"
         echo ""
-        echo -e "Vi du:\e[101mbash $0 lb1 10.10.20.31 10.10.10.31 192.168.20.31 192.168.40.41 \e[0m"
+        echo -e "Vi du:\e[101mbash $0 lb1 10.10.20.31 10.10.10.31 192.168.20.31 192.168.40.31 \e[0m"
         exit 1;
 fi
 
