@@ -61,6 +61,7 @@ nmcli con up $BOND0_NIC
 nmcli con modify $BOND0_NIC ipv4.addresses $BOND0_IP/$BOND0_NETMASK
 nmcli con modify $BOND0_NIC ipv4.method manual
 nmcli con modify $BOND0_NIC connection.autoconnect yes
+nmcli con modify $BOND0_NIC +bond.options mii=100
 
 echo "Cau hinh bond1"
 nmcli con del $INTERFACE3 $INTERFACE4
@@ -74,6 +75,9 @@ nmcli con up $BOND1_NIC
 nmcli con modify $BOND1_NIC ipv4.addresses $BOND1_IP/$BOND1_NETMASK
 nmcli con modify $BOND1_NIC ipv4.method manual
 nmcli con modify $BOND1_NIC connection.autoconnect yes
+nmcli con modify $BOND1_NIC +bond.options mii=100
+
+
 
 
 echo "Cau hinh BOND2"
@@ -90,6 +94,8 @@ nmcli con modify $BOND2_NIC ipv4.dns $BOND2_DNS
 nmcli con modify $BOND2_NIC ipv4.gateway $BOND2_DEAFAUL_GATEWAY
 nmcli con modify $BOND2_NIC ipv4.method manual
 nmcli con modify $BOND2_NIC connection.autoconnect yes
+nmcli con modify $BOND2_NIC +bond.options mii=100
+
 
 echo "Cau hinh bond3"
 nmcli con del $INTERFACE7 $INTERFACE8
@@ -103,6 +109,7 @@ nmcli con up $BOND3_NIC
 nmcli con modify $BOND3_NIC ipv4.addresses $BOND3_IP/$BOND3_NETMASK
 nmcli con modify $BOND3_NIC ipv4.method manual
 nmcli con modify $BOND3_NIC connection.autoconnect yes
+nmcli con modify $BOND3_NIC +bond.options mii=100
 ##########
 
 
