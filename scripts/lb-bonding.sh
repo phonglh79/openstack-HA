@@ -58,10 +58,11 @@ nmcli con up $BOND0_NIC-$INTERFACE1
 nmcli con up $BOND0_NIC-$INTERFACE2
 nmcli con up $BOND0_NIC
 
+nmcli con modify $BOND0_NIC ipv6.method ignore;
 nmcli con modify $BOND0_NIC ipv4.addresses $BOND0_IP/$BOND0_NETMASK
 nmcli con modify $BOND0_NIC ipv4.method manual
 nmcli con modify $BOND0_NIC connection.autoconnect yes
-nmcli con modify $BOND0_NIC +bond.options mii=100
+nmcli con modify $BOND0_NIC \+bond.options mii=100
 
 echo "Cau hinh bond1"
 nmcli con del $INTERFACE3 $INTERFACE4
@@ -72,13 +73,11 @@ nmcli con up $BOND1_NIC-$INTERFACE3
 nmcli con up $BOND1_NIC-$INTERFACE4
 nmcli con up $BOND1_NIC
 
+nmcli con modify $BOND1_NIC ipv6.method ignore;
 nmcli con modify $BOND1_NIC ipv4.addresses $BOND1_IP/$BOND1_NETMASK
 nmcli con modify $BOND1_NIC ipv4.method manual
 nmcli con modify $BOND1_NIC connection.autoconnect yes
-nmcli con modify $BOND1_NIC +bond.options mii=100
-
-
-
+nmcli con modify $BOND1_NIC \+bond.options mii=100
 
 echo "Cau hinh BOND2"
 nmcli con del $INTERFACE5 $INTERFACE6
@@ -89,12 +88,13 @@ nmcli con up $BOND2_NIC-$INTERFACE5
 nmcli con up $BOND2_NIC-$INTERFACE6
 nmcli con up $BOND2_NIC
 
+nmcli con modify $BOND2_NIC ipv6.method ignore;
 nmcli con modify $BOND2_NIC ipv4.addresses $BOND2_IP/$BOND2_NETMASK
 nmcli con modify $BOND2_NIC ipv4.dns $BOND2_DNS
 nmcli con modify $BOND2_NIC ipv4.gateway $BOND2_DEAFAUL_GATEWAY
 nmcli con modify $BOND2_NIC ipv4.method manual
 nmcli con modify $BOND2_NIC connection.autoconnect yes
-nmcli con modify $BOND2_NIC +bond.options mii=100
+nmcli con modify $BOND2_NIC \+bond.options mii=100
 
 
 echo "Cau hinh bond3"
@@ -106,10 +106,11 @@ nmcli con up $BOND3_NIC-$INTERFACE7
 nmcli con up $BOND3_NIC-$INTERFACE8
 nmcli con up $BOND3_NIC
 
+nmcli con modify $BOND3_NIC ipv6.method ignore;
 nmcli con modify $BOND3_NIC ipv4.addresses $BOND3_IP/$BOND3_NETMASK
 nmcli con modify $BOND3_NIC ipv4.method manual
 nmcli con modify $BOND3_NIC connection.autoconnect yes
-nmcli con modify $BOND3_NIC +bond.options mii=100
+nmcli con modify $BOND3_NIC \+bond.options mii=100
 ##########
 
 
@@ -118,8 +119,8 @@ sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux
 sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
 sudo systemctl disable firewalld
 sudo systemctl stop firewalld
-sudo systemctl disable NetworkManager
 sudo systemctl stop NetworkManager
+sudo systemctl disable NetworkManager
 sudo systemctl enable network
 sudo systemctl start network
 init 6
