@@ -50,7 +50,7 @@ echo "Dat hostname"
 hostnamectl set-hostname $1
 
 echo "Cau hinh bond0"
-nmcli con del $INTERFACE1 $INTERFACE2
+# nmcli con del $INTERFACE1 $INTERFACE2
 nmcli con add type bond con-name $BOND0_NIC ifname $BOND0_NIC mode active-backup
 nmcli con add type bond-slave con-name $BOND0_NIC-$INTERFACE1  ifname $INTERFACE1 master $BOND0_NIC
 nmcli con add type bond-slave con-name $BOND0_NIC-$INTERFACE2 ifname $INTERFACE2 master $BOND0_NIC
@@ -62,10 +62,10 @@ nmcli con modify $BOND0_NIC ipv6.method ignore;
 nmcli con modify $BOND0_NIC ipv4.addresses $BOND0_IP/$BOND0_NETMASK
 nmcli con modify $BOND0_NIC ipv4.method manual
 nmcli con modify $BOND0_NIC connection.autoconnect yes
-nmcli con modify $BOND0_NIC \+bond.options mii=100
+nmcli con modify $BOND0_NIC +bond.options mii=100
 
 echo "Cau hinh bond1"
-nmcli con del $INTERFACE3 $INTERFACE4
+# nmcli con del $INTERFACE3 $INTERFACE4
 nmcli con add type bond con-name $BOND1_NIC ifname $BOND1_NIC mode active-backup
 nmcli con add type bond-slave con-name $BOND1_NIC-$INTERFACE3 ifname $INTERFACE3 master $BOND1_NIC
 nmcli con add type bond-slave con-name $BOND1_NIC-$INTERFACE4 ifname $INTERFACE4 master $BOND1_NIC
@@ -77,10 +77,10 @@ nmcli con modify $BOND1_NIC ipv6.method ignore;
 nmcli con modify $BOND1_NIC ipv4.addresses $BOND1_IP/$BOND1_NETMASK
 nmcli con modify $BOND1_NIC ipv4.method manual
 nmcli con modify $BOND1_NIC connection.autoconnect yes
-nmcli con modify $BOND1_NIC \+bond.options mii=100
+nmcli con modify $BOND1_NIC +bond.options mii=100
 
 echo "Cau hinh BOND2"
-nmcli con del $INTERFACE5 $INTERFACE6
+# nmcli con del $INTERFACE5 $INTERFACE6
 nmcli con add type bond con-name $BOND2_NIC ifname $BOND2_NIC mode active-backup
 nmcli con add type bond-slave con-name $BOND2_NIC-$INTERFACE5 ifname $INTERFACE5 master $BOND2_NIC
 nmcli con add type bond-slave con-name $BOND2_NIC-$INTERFACE6 ifname $INTERFACE6 master $BOND2_NIC
@@ -94,11 +94,11 @@ nmcli con modify $BOND2_NIC ipv4.dns $BOND2_DNS
 nmcli con modify $BOND2_NIC ipv4.gateway $BOND2_DEAFAUL_GATEWAY
 nmcli con modify $BOND2_NIC ipv4.method manual
 nmcli con modify $BOND2_NIC connection.autoconnect yes
-nmcli con modify $BOND2_NIC \+bond.options mii=100
+nmcli con modify $BOND2_NIC +bond.options mii=100
 
 
 echo "Cau hinh bond3"
-nmcli con del $INTERFACE7 $INTERFACE8
+# nmcli con del $INTERFACE7 $INTERFACE8
 nmcli con add type bond con-name $BOND3_NIC ifname $BOND3_NIC mode active-backup
 nmcli con add type bond-slave con-name $BOND3_NIC-$INTERFACE7 ifname $INTERFACE7 master $BOND3_NIC
 nmcli con add type bond-slave con-name $BOND3_NIC-$INTERFACE8 ifname $INTERFACE8 master $BOND3_NIC
@@ -110,19 +110,19 @@ nmcli con modify $BOND3_NIC ipv6.method ignore;
 nmcli con modify $BOND3_NIC ipv4.addresses $BOND3_IP/$BOND3_NETMASK
 nmcli con modify $BOND3_NIC ipv4.method manual
 nmcli con modify $BOND3_NIC connection.autoconnect yes
-nmcli con modify $BOND3_NIC \+bond.options mii=100
+nmcli con modify $BOND3_NIC +bond.options mii=100
 ##########
 
 
 echo "Vo hieu hoa firewall va reboot may"
 sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux
 sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
-sudo systemctl disable firewalld
-sudo systemctl stop firewalld
-sudo systemctl stop NetworkManager
-sudo systemctl disable NetworkManager
-sudo systemctl enable network
-sudo systemctl start network
-init 6
+# sudo systemctl disable firewalld
+# sudo systemctl stop firewalld
+# sudo systemctl stop NetworkManager
+# sudo systemctl disable NetworkManager
+# sudo systemctl enable network
+# sudo systemctl start network
+# init 6
 
 
