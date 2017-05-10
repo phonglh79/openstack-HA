@@ -48,7 +48,7 @@ function copykey {
 function setup_config {
         for IP_ADD in $LB1_IP_NIC3 $LB2_IP_NIC3
         do
-                scp /root/config.cfg root@$IP_ADD:/root/
+                scp /root/lb-config.cfg root@$IP_ADD:/root/
                 chmod +x lb-config.cfg
         done
 }
@@ -64,7 +64,7 @@ function install_repo() {
 }
 
 function khai_bao_host() {
-        source config.cfg
+        source lb-config.cfg
         echo "$LB1_IP_NIC3 $LB1_HOSTNAME" >> /etc/hosts
         echo "$LB2_IP_NIC3 $LB2_HOSTNAME" >> /etc/hosts
         cp /etc/hosts root@LB2_IP_NIC3:/etc/
@@ -77,16 +77,25 @@ function install_nginx {
         yum --enablerepo=epel -y install nginx
         systemctl start nginx 
         systemctl enable nginx
+        IP
 cat << EOF > /usr/share/nginx/html/index.html
 <html>
 <body>
 <div style="width: 100%; font-size: 40px; font-weight: bold; text-align: center;">
-`hostname`
+$IP_ADD-`hostname`
 </div>
 </body>
 </html>
 EOF
         systemctl restart nginx 
+}
+
+function install_pacemaker_corosync {
+        yum -y install pacemaker pcs
+        systemctl start pcsd 
+        systemctl enable pcsd
+        echo "Ec0net@!2017" | passwd --stdin hacluster
+        
 }
 
 ############################
@@ -121,7 +130,11 @@ do
     fi
       echocolor "Cai dat install_nginx tren $IP_ADD"
       sleep 3
-      ssh root@$IP_ADD "$(typeset -f); install_nginx"    
+      ssh root@$IP_ADD "$(typeset -f); install_nginx"
+      
+      echocolor "Cai dat install_pacemaker_corosync tren $IP_ADD"
+      sleep 3
+      ssh root@$IP_ADD "$(typeset -f); install_pacemaker_corosync"      
 done 
 
 echocolor "Done"

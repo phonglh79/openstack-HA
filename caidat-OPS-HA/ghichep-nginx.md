@@ -564,8 +564,6 @@
     ```
     - Trong kết quả trên, ta có thể quan sát các resource đang được quản lý bởi pacemaker, các resource đang nằm trên node nào. 
     
-
-
 # Tham khảo:
 - https://www.server-world.info/en/note?os=CentOS_7&p=nginx
 - http://blog.air-foron.com/linux/centos-7/post-1433/
