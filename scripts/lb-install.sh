@@ -8,23 +8,25 @@ LB1_HOSTNAME=lb1
 LB2_HOSTNAME=lb2
 
 
-## IP Address
+##IP Address
 ### IP cho bond0 cho cac may LoadBalancer
 LB1_IP_NIC1=10.10.20.31
 LB2_IP_NIC1=10.10.20.31
 
 
-### IP cho bond1 cho cac may LoadBalancer
+###IP cho bond1 cho cac may LoadBalancer
 LB1_IP_NIC2=10.10.10.31
 LB2_IP_NIC2=10.10.10.32
 
-### IP cho bond2 cho cac may LoadBalancer
+###IP cho bond2 cho cac may LoadBalancer
 LB1_IP_NIC3=192.168.20.31
 LB2_IP_NIC3=192.168.20.32
 
-### IP cho bond2 cho cac may LoadBalancer
+###IP cho bond3 cho cac may LoadBalancer
 LB1_IP_NIC4=192.168.40.31
 LB2_IP_NIC4=192.168.40.32
+
+###MAT KHAU
 
 EOF
 
@@ -67,7 +69,7 @@ function khai_bao_host() {
         source lb-config.cfg
         echo "$LB1_IP_NIC3 $LB1_HOSTNAME" >> /etc/hosts
         echo "$LB2_IP_NIC3 $LB2_HOSTNAME" >> /etc/hosts
-        cp /etc/hosts root@LB2_IP_NIC3:/etc/
+        scp /etc/hosts root@$LB2_IP_NIC3:/etc/
                 
 }
 
@@ -82,7 +84,8 @@ cat << EOF > /usr/share/nginx/html/index.html
 <html>
 <body>
 <div style="width: 100%; font-size: 40px; font-weight: bold; text-align: center;">
-$IP_ADD-`hostname`
+\$IP_ADD-`hostname`
+`ip -o -4 addr show dev eth0 | sed 's/.* inet \([^/]*\).*/\1/'`
 </div>
 </body>
 </html>
@@ -91,11 +94,22 @@ EOF
 }
 
 function install_pacemaker_corosync {
+        source lb-config.cfg
         yum -y install pacemaker pcs
         systemctl start pcsd 
         systemctl enable pcsd
-        echo "Ec0net@!2017" | passwd --stdin hacluster
+        echo $PASS_CLUSTER | passwd --stdin hacluster
         
+}
+
+function config_cluster {
+        source lb-config.cfg
+        pcs cluster auth $LB1_HOSTNAME $LB2_HOSTNAME -u hacluster -p $PASS_CLUSTER --force
+        pcs cluster setup --name ha_cluster $LB1_HOSTNAME $LB2_HOSTNAME
+        pcs cluster start --all
+        pcs cluster enable --all
+        pcs property set stonith-enabled=false
+        pcs property set default-resource-stickiness="INFINITY"       
 }
 
 ############################
@@ -123,7 +137,7 @@ do
     sleep 3
     ssh root@$IP_ADD "$(typeset -f); install_repo"
     
-    if [ "$IP_ADD" == "$LB2_IP_NIC3" ]; then
+    if [ "$IP_ADD" == "$LB1_IP_NIC3" ]; then
       echocolor "Cai dat khai_bao_host tren $IP_ADD"
       sleep 3
       ssh root@$IP_ADD "$(typeset -f); khai_bao_host"
