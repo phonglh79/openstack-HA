@@ -8,9 +8,9 @@
 ### IP Planning
 
 
-## Cài đặt trên các node LB
+## 1. Cài đặt trên các node LB
 
-### Thực hiện script cấu hình bonding 
+### 1.1. Thực hiện script cấu hình bonding 
 - Đứng trên máy chủ LB1, tải và thực hiện script để cấu hình bonding
   ```sh
   curl -O https://raw.githubusercontent.com/congto/openstack-HA/master/scripts/lb-bonding.sh
@@ -23,11 +23,13 @@
   bash lb-bonding.sh lb2 10.10.20.32 10.10.10.32 192.168.20.32 192.168.40.32
   ```
 
-### Thực hiện script cài đặt pacemaker, corosync, cấu hình cluster cho 2 máy LB.
+### 1.2. Thực hiện script cài đặt pacemaker, corosync, cấu hình cluster cho 2 máy LB.
 
 - Đứng trên máy chủ LB1, thực hiện script sau. Kết thúc script thì cả 2 node sẽ được cài đặt pacemaker, corosync và cấu hình cluster. 
   ```sh
   curl -O https://raw.githubusercontent.com/congto/openstack-HA/master/scripts/lb-install.sh
   bash lb-install.sh
   ```
+  
+  
 
