@@ -85,8 +85,8 @@ cat << EOF > /usr/share/nginx/html/index.html
 <html>
 <body>
 <div style="width: 100%; font-size: 40px; font-weight: bold; text-align: center;">
-\$IP_ADD-`hostname`
-`ip -o -4 addr show dev eth0 | sed 's/.* inet \([^/]*\).*/\1/'`
+`ip -o -4 addr show dev bond2 | sed 's/.* inet \([^/]*\).*/\1/'
+`-`hostname`
 </div>
 </body>
 </html>
