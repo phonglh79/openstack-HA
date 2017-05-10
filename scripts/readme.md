@@ -23,7 +23,7 @@
   bash lb-bonding.sh lb2 10.10.20.32 10.10.10.32 192.168.20.32 192.168.40.32
   ```
 
-### 1.2. Thực hiện script cài đặt pacemaker, corosync, cấu hình cluster cho 2 máy LB.
+### 1.2. Thực hiện script cài đặt pacemaker, corosync, cấu hình cluster
 
 - Đứng trên máy chủ LB1, thực hiện script sau. Kết thúc script thì cả 2 node sẽ được cài đặt pacemaker, corosync và cấu hình cluster. 
   ```sh
@@ -31,5 +31,9 @@
   bash lb-install.sh
   ```
   
-  
+- Sau khi cấu hình cluster xong, thực hiện add resources cho pacemaker
+  ```sh
+  curl -O https://raw.githubusercontent.com/congto/openstack-HA/master/scripts/lb-add-resources.sh
+  bash lb-add-resources.sh
+  ```
 
