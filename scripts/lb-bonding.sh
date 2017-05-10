@@ -105,10 +105,10 @@ nmcli con up $BOND3_NIC
 ##########
 echo "Vo hieu hoa firewall va reboot may"
 
-sed -i 's/BONDING_OPTS=mode=active-backup/BONDING_OPTS="mode=active-backup miimon=100"/g'  /etc/sysconfig/network-scripts/ifcfg-bond0
-sed -i 's/BONDING_OPTS=mode=active-backup/BONDING_OPTS="mode=active-backup miimon=100"/g'  /etc/sysconfig/network-scripts/ifcfg-bond1
-sed -i 's/BONDING_OPTS=mode=active-backup/BONDING_OPTS="mode=active-backup miimon=100"/g'  /etc/sysconfig/network-scripts/ifcfg-bond2
-sed -i 's/BONDING_OPTS=mode=active-backup/BONDING_OPTS="mode=active-backup miimon=100"/g'  /etc/sysconfig/network-scripts/ifcfg-bond3
+sed -i 's/BONDING_OPTS=mode=active-backup/BONDING_OPTS="mode=active-backup miimon=100"/g'  /etc/sysconfig/network-scripts/ifcfg-$BOND0_NIC
+sed -i 's/BONDING_OPTS=mode=active-backup/BONDING_OPTS="mode=active-backup miimon=100"/g'  /etc/sysconfig/network-scripts/ifcfg-$BOND1_NIC
+sed -i 's/BONDING_OPTS=mode=active-backup/BONDING_OPTS="mode=active-backup miimon=100"/g'  /etc/sysconfig/network-scripts/ifcfg-$BOND2_NIC
+sed -i 's/BONDING_OPTS=mode=active-backup/BONDING_OPTS="mode=active-backup miimon=100"/g'  /etc/sysconfig/network-scripts/ifcfg-$BOND3_NIC
 
 nmcli con del $INTERFACE1 $INTERFACE2
 nmcli con del $INTERFACE3 $INTERFACE4
