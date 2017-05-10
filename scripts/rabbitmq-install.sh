@@ -1,7 +1,7 @@
 #!/bin/bash -ex
 ### Script cai dat rabbitmq tren mq1
 # Khai bao bien cho cac script 
-cat <<EOF> /root/config.cfg
+cat <<EOF> /root/mq-config.cfg
 ## Hostname
 ### Hostname cho cac may rabbitmq
 MQ1_HOSTNAME=mq1
@@ -10,23 +10,23 @@ MQ3_HOSTNAME=mq3
 
 ## IP Address
 ### IP cho bond0 cho cac may rabbitmq
-MQ1_IP_NIC1=10.10.10.21
-MQ2_IP_NIC1=10.10.10.22
-MQ3_IP_NIC1=10.10.10.23
+MQ1_IP_NIC1=10.10.10.41
+MQ2_IP_NIC1=10.10.10.42
+MQ3_IP_NIC1=10.10.10.43
 
 ### IP cho bond1 cho cac may rabbitmq
-MQ1_IP_NIC2=192.168.20.21
-MQ2_IP_NIC2=192.168.20.22
-MQ3_IP_NIC2=192.168.20.23
+MQ1_IP_NIC2=192.168.20.41
+MQ2_IP_NIC2=192.168.20.42
+MQ3_IP_NIC2=192.168.20.43
 EOF
 
-source config.cfg 
+source mq-config.cfg 
 
 function setup_config {
         for IP_ADD in $MQ1_IP_NIC2 $MQ2_IP_NIC2 $MQ3_IP_NIC2
         do
-                scp /root/config.cfg root@$IP_ADD:/root/
-                chmod +x config.cfg 
+                scp /root/mq-config.cfg root@$IP_ADD:/root/
+                chmod +x mq-config.cfg 
         done
 }
 
@@ -58,7 +58,7 @@ function install_repo() {
 }
 
 function khai_bao_host() {
-                source config.cfg
+                source mq-config.cfg
                 echo "$MQ1_IP_NIC2 mq1" >> /etc/hosts
                 echo "$MQ2_IP_NIC2 mq2" >> /etc/hosts
                 echo "$MQ3_IP_NIC2 mq3" >> /etc/hosts
@@ -80,7 +80,7 @@ function install_rabbitmq() {
 }
 
 function config_rabbitmq() {
-        source config.cfg
+        source mq-config.cfg
         rabbitmqctl add_user openstack Welcome123
         rabbitmqctl set_permissions openstack ".*" ".*" ".*"
         rabbitmqctl set_user_tags openstack administrator
@@ -94,7 +94,7 @@ function config_rabbitmq() {
 }
 
 function rabbitmq_join_cluster() {
-        source config.cfg
+        source mq-config.cfg
         chown rabbitmq:rabbitmq /var/lib/rabbitmq/.erlang.cookie
         chmod 400 /var/lib/rabbitmq/.erlang.cookie
         systemctl restart rabbitmq-server

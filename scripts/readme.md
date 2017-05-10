@@ -10,7 +10,7 @@
 
 ## 1. Cài đặt trên các node LB
 
-### 1.1. Thực hiện script cấu hình bonding 
+### 1.1. Thực hiện script cấu hình bonding cho các node LB
 - Đứng trên máy chủ LB1, tải và thực hiện script để cấu hình bonding
   ```sh
   curl -O https://raw.githubusercontent.com/congto/openstack-HA/master/scripts/lb-bonding.sh
@@ -37,3 +37,25 @@
   bash lb-add-resources.sh
   ```
 
+## 2. Cài đặt RABBITMQ Cluster
+
+### 2.1. Thực hiện script cấu hình bonding cho các RABBITMQ
+- Đăng nhập vào máy RABBITMQ1 và thực hiện các lệnh sau.
+  ```sh
+  curl -O https://raw.githubusercontent.com/congto/openstack-HA/master/scripts/rabbitmq-bonding.sh
+  bash rabbitmq-bonding.sh mq1 10.10.10.41 192.168.20.41
+  ```
+  
+- Đăng nhập vào máy RABBITMQ2 và thực hiện các lệnh sau.
+  ```sh
+  curl -O https://raw.githubusercontent.com/congto/openstack-HA/master/scripts/rabbitmq-bonding.sh
+  bash rabbitmq-bonding.sh mq3 10.10.10.42 192.168.20.42
+  ```
+
+- Đăng nhập vào máy RABBITMQ3 và thực hiện các lệnh sau.
+  ```sh
+  curl -O https://raw.githubusercontent.com/congto/openstack-HA/master/scripts/rabbitmq-bonding.sh
+  bash rabbitmq-bonding.sh mq3 10.10.10.43 192.168.20.43
+  ```
+
+  
