@@ -155,4 +155,8 @@ sleep 3
 ssh root@$IP_ADD "$(typeset -f); install_pacemaker_corosync"    
 done 
 
+echocolor "Cai dat install_pacemaker_corosync tren $IP_ADD"
+sleep 3
+config_cluster
+
 echocolor "Done"
