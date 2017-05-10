@@ -137,9 +137,9 @@ do
       sleep 3
       ssh root@$IP_ADD "$(typeset -f); khai_bao_host"
     fi 
-    echocolor "Cai dat install_rabbitmq tren $IP_ADD"
-    sleep 3
-    ssh root@$IP_ADD "$(typeset -f); install_rabbitmq"
+      echocolor "Cai dat install_rabbitmq tren $IP_ADD"
+      sleep 3
+      ssh root@$IP_ADD "$(typeset -f); install_rabbitmq"
 done 
 
 for IP_ADD in $MQ1_IP_NIC2 $MQ2_IP_NIC2 $MQ3_IP_NIC2

@@ -64,11 +64,29 @@ function install_repo() {
 }
 
 function khai_bao_host() {
-                source config.cfg
-                echo "$LB1_IP_NIC3 $LB1_HOSTNAME" >> /etc/hosts
-                echo "$LB2_IP_NIC3 $LB2_HOSTNAME" >> /etc/hosts
-                scp /etc/hosts root@LB2_IP_NIC3:/etc/
+        source config.cfg
+        echo "$LB1_IP_NIC3 $LB1_HOSTNAME" >> /etc/hosts
+        echo "$LB2_IP_NIC3 $LB2_HOSTNAME" >> /etc/hosts
+        cp /etc/hosts root@LB2_IP_NIC3:/etc/
                 
+}
+
+function install_nginx {
+        yum install -y wget 
+        yum install -y epel-release
+        yum --enablerepo=epel -y install nginx
+        systemctl start nginx 
+        systemctl enable nginx
+cat << EOF > /usr/share/nginx/html/index.html
+<html>
+<body>
+<div style="width: 100%; font-size: 40px; font-weight: bold; text-align: center;">
+`hostname`
+</div>
+</body>
+</html>
+EOF
+        systemctl restart nginx 
 }
 
 ############################
@@ -83,7 +101,7 @@ sleep 3
 copykey
 setup_config
 
-echocolor " install_proxy, install_repo "
+echocolor "install_proxy, install_repo "
 sleep 3
 
 for IP_ADD in $LB1_IP_NIC3 $LB2_IP_NIC3
@@ -100,5 +118,10 @@ do
       echocolor "Cai dat khai_bao_host tren $IP_ADD"
       sleep 3
       ssh root@$IP_ADD "$(typeset -f); khai_bao_host"
-    fi 
+    fi
+      echocolor "Cai dat install_nginx tren $IP_ADD"
+      sleep 3
+      ssh root@$IP_ADD "$(typeset -f); install_nginx"    
 done 
+
+echocolor "Done"
