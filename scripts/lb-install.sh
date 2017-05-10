@@ -131,10 +131,13 @@ do
       echocolor "Cai dat install_nginx tren $IP_ADD"
       sleep 3
       ssh root@$IP_ADD "$(typeset -f); install_nginx"
-      
-      echocolor "Cai dat install_pacemaker_corosync tren $IP_ADD"
-      sleep 3
-      ssh root@$IP_ADD "$(typeset -f); install_pacemaker_corosync"      
+done 
+
+for IP_ADD in $LB1_IP_NIC3 $LB2_IP_NIC3
+do 
+echocolor "Cai dat install_pacemaker_corosync tren $IP_ADD"
+sleep 3
+ssh root@$IP_ADD "$(typeset -f); install_pacemaker_corosync"    
 done 
 
 echocolor "Done"
