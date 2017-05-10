@@ -68,7 +68,7 @@
   
 ## 3. Cài đặt MariaDB Cluster
 
-### 2.1. Thực hiện script cấu hình bonding cho các MariaDB
+### 3.1. Thực hiện script cấu hình bonding cho các MariaDB
 - Đăng nhập vào máy MariaDB1 và thực hiện các lệnh sau.
   ```sh
   curl -O https://raw.githubusercontent.com/congto/openstack-HA/master/scripts/db-bonding.sh
