@@ -80,7 +80,6 @@ function install_nginx {
         yum --enablerepo=epel -y install nginx
         systemctl start nginx 
         systemctl enable nginx
-        IP
 cat << EOF > /usr/share/nginx/html/index.html
 <html>
 <body>
