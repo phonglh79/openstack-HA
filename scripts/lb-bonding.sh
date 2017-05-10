@@ -57,8 +57,8 @@ nmcli con up $BOND0_NIC-$INTERFACE1
 nmcli con up $BOND0_NIC-$INTERFACE2
 
 nmcli con modify $BOND0_NIC ipv6.method ignore;
-nmcli con modify $BOND0_NIC ipv4.method manual
 nmcli con modify $BOND0_NIC ipv4.addresses $BOND0_IP/$BOND0_NETMASK
+nmcli con modify $BOND0_NIC ipv4.method manual
 nmcli con modify $BOND0_NIC connection.autoconnect yes
 nmcli con up $BOND0_NIC
 
@@ -98,8 +98,8 @@ nmcli con up $BOND3_NIC-$INTERFACE7
 nmcli con up $BOND3_NIC-$INTERFACE8
 
 nmcli con modify $BOND3_NIC ipv6.method ignore;
-nmcli con modify $BOND3_NIC ipv4.method manual
 nmcli con modify $BOND3_NIC ipv4.addresses $BOND3_IP/$BOND3_NETMASK
+nmcli con modify $BOND3_NIC ipv4.method manual
 nmcli con modify $BOND3_NIC connection.autoconnect yes
 nmcli con up $BOND3_NIC
 ##########
@@ -110,10 +110,7 @@ sed -i 's/BONDING_OPTS=mode=active-backup/BONDING_OPTS="mode=active-backup miimo
 sed -i 's/BONDING_OPTS=mode=active-backup/BONDING_OPTS="mode=active-backup miimon=100"/g'  /etc/sysconfig/network-scripts/ifcfg-$BOND2_NIC
 sed -i 's/BONDING_OPTS=mode=active-backup/BONDING_OPTS="mode=active-backup miimon=100"/g'  /etc/sysconfig/network-scripts/ifcfg-$BOND3_NIC
 
-nmcli con del $INTERFACE1 $INTERFACE2
-nmcli con del $INTERFACE3 $INTERFACE4
-nmcli con del $INTERFACE5 $INTERFACE6
-nmcli con del $INTERFACE7 $INTERFACE8
+nmcli con del $INTERFACE1 $INTERFACE2 $INTERFACE3 $INTERFACE4 $INTERFACE5 $INTERFACE6 $INTERFACE7 $INTERFACE8
 
 sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux
 sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
