@@ -57,5 +57,11 @@
   curl -O https://raw.githubusercontent.com/congto/openstack-HA/master/scripts/rabbitmq-bonding.sh
   bash rabbitmq-bonding.sh mq3 10.10.10.43 192.168.20.43
   ```
-
+  
+### 2.2. Thực hiện cài đặt cluster cho rabbitmq
+- Đứng trên node MQ1 và thực hiện script sau, trong quá trình cài cần nhập mật khẩu root của 03 máy rabbitmq
+  ```sh
+  curl -O https://raw.githubusercontent.com/congto/openstack-HA/master/scripts/rabbitmq-install.sh
+  bash rabbitmq-install.sh
+  ````
   
