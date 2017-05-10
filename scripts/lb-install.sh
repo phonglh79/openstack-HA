@@ -9,7 +9,7 @@ LB2_HOSTNAME=lb2
 
 
 ##IP Address
-### IP cho bond0 cho cac may LoadBalancer
+###IP cho bond0 cho cac may LoadBalancer
 LB1_IP_NIC1=10.10.20.31
 LB2_IP_NIC1=10.10.20.31
 

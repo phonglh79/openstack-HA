@@ -49,7 +49,7 @@
 - Đăng nhập vào máy RABBITMQ2 và thực hiện các lệnh sau.
   ```sh
   curl -O https://raw.githubusercontent.com/congto/openstack-HA/master/scripts/rabbitmq-bonding.sh
-  bash rabbitmq-bonding.sh mq3 10.10.10.42 192.168.20.42
+  bash rabbitmq-bonding.sh mq2 10.10.10.42 192.168.20.42
   ```
 
 - Đăng nhập vào máy RABBITMQ3 và thực hiện các lệnh sau.
