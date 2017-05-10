@@ -72,17 +72,17 @@
 - Đăng nhập vào máy MariaDB1 và thực hiện các lệnh sau.
   ```sh
   curl -O https://raw.githubusercontent.com/congto/openstack-HA/master/scripts/db-bonding.sh
-  bash rabbitmq-bonding.sh db1 10.10.10.51 192.168.20.51
+  bash db-bonding.sh db1 10.10.10.51 192.168.20.51
   ```
   
 - Đăng nhập vào máy MariaDB2 và thực hiện các lệnh sau.
   ```sh
   curl -O https://raw.githubusercontent.com/congto/openstack-HA/master/scripts/db-bonding.sh
-  bash rabbitmq-bonding.sh db2 10.10.10.52 192.168.20.52
+  bash db-bonding.sh db2 10.10.10.52 192.168.20.52
   ```
 
 - Đăng nhập vào máy MariaDB3 và thực hiện các lệnh sau.
   ```sh
   curl -O https://raw.githubusercontent.com/congto/openstack-HA/master/scripts/db-bonding.sh
-  bash rabbitmq-bonding.sh db3 10.10.10.53 192.168.20.53
+  bash db-bonding.sh db3 10.10.10.53 192.168.20.53
   ```
