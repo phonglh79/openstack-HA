@@ -89,7 +89,7 @@
   
 ## 4. Cài đặt trên các node Controller
 
-### 4.1. Thực hiện script cấu hình bonding cho các node Controller
+### 4.1. Thực hiện script cấu hình bonding cho các node CONTROLLER
 - Đứng trên máy chủ CTL1, tải và thực hiện script để cấu hình bonding
   ```sh
   curl -O https://raw.githubusercontent.com/congto/openstack-HA/master/scripts/ctl-bonding.sh
