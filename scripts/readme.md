@@ -99,11 +99,11 @@
 - Đứng trên máy chủ CTL2, tải và thực hiện script để cấu hình bonding
   ```sh
   curl -O https://raw.githubusercontent.com/congto/openstack-HA/master/scripts/ctl-bonding.sh
-  bash ctl-bonding.sh ctl1 10.10.20.62 10.10.10.62 192.168.20.62 10.10.0.62
+  bash ctl-bonding.sh ctl2 10.10.20.62 10.10.10.62 192.168.20.62 10.10.0.62
   ```
 
 - Đứng trên máy chủ CTL3, tải và thực hiện script để cấu hình bonding
   ```sh
   curl -O https://raw.githubusercontent.com/congto/openstack-HA/master/scripts/ctl-bonding.sh
-  bash ctl-bonding.sh ctl1 10.10.20.63 10.10.10.63 192.168.20.63 10.10.0.63
+  bash ctl-bonding.sh ctl3 10.10.20.63 10.10.10.63 192.168.20.63 10.10.0.63
   ```
