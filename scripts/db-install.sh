@@ -10,14 +10,17 @@ DB3_HOSTNAME=db3
 
 ## IP Address
 ### IP cho bond0 cho cac may DB
-DB1_IP_NIC1=10.10.10.41
-DB2_IP_NIC1=10.10.10.42
-DB3_IP_NIC1=10.10.10.43
+DB1_IP_NIC1=10.10.10.51
+DB2_IP_NIC1=10.10.10.52
+DB3_IP_NIC1=10.10.10.53
 
 ### IP cho bond1 cho cac may DB
-DB1_IP_NIC2=192.168.20.41
-DB2_IP_NIC2=192.168.20.42
-DB3_IP_NIC2=192.168.20.43
+DB1_IP_NIC2=192.168.20.52
+DB2_IP_NIC2=192.168.20.52
+DB3_IP_NIC2=192.168.20.52
+
+### Password cho MariaDB
+PASS_DATABASE_ROOT=Ec0net@!2017
 EOF
 
 source db-config.cfg 
@@ -82,16 +85,46 @@ gpgkey=https://yum.mariadb.org/RPM-GPG-KEY-MariaDB
 gpgcheck=1' >> /etc/yum.repos.d/MariaDB.repo
 }
 
-
-function khai_bao_host() {
-                source db-config.cfg
-                echo "$DB1_IP_NIC2 db1" >> /etc/hosts
-                echo "$DB2_IP_NIC2 db2" >> /etc/hosts
-                echo "$DB3_IP_NIC2 db3" >> /etc/hosts
-                scp /etc/hosts root@$DB2_IP_NIC2:/etc/
-                scp /etc/hosts root@$DB3_IP_NIC2:/etc/
+function khai_bao_host {
+        source db-config.cfg
+        echo "$DB1_IP_NIC2 db1" >> /etc/hosts
+        echo "$DB2_IP_NIC2 db2" >> /etc/hosts
+        echo "$DB3_IP_NIC2 db3" >> /etc/hosts
+        scp /etc/hosts root@$DB2_IP_NIC2:/etc/
+        scp /etc/hosts root@$DB3_IP_NIC2:/etc/
 }
 
+function install_mariadb_galera {
+        yum -y install mariadb-server rsync xinetd crudini
+}
+
+
+function set_pass_db {
+cat << EOF | mysql -uroot
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY '$PASS_DATABASE_ROOT';FLUSH PRIVILEGES;
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' IDENTIFIED BY '$PASS_DATABASE_ROOT';FLUSH PRIVILEGES;
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'db1' IDENTIFIED BY '$PASS_DATABASE_ROOT';FLUSH PRIVILEGES;
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'127.0.0.1' IDENTIFIED BY '$PASS_DATABASE_ROOT';FLUSH PRIVILEGES;
+GRANT PROCESS ON *.* TO 'clustercheckuser'@'localhost' IDENTIFIED BY '$PASS_DATABASE_ROOT'; FLUSH PRIVILEGES;
+EOF
+}
+
+function config_galera_cluster {
+        HOSTNAME_DB=`hostname`
+        cp /etc/my.cnf.d/server.cnf  /etc/my.cnf.d/server.cnf.orig
+        ops_edit /etc/my.cnf.d/server.cnf galera wsrep_on ON
+        ops_edit /etc/my.cnf.d/server.cnf galera wsrep_provider /usr/lib64/galera/libgalera_smm.so
+        ops_edit /etc/my.cnf.d/server.cnf galera wsrep_cluster_address "gcomm://$DB1_IP_NIC1,$DB2_IP_NIC1,$DB3_IP_NIC1" 
+        ops_edit /etc/my.cnf.d/server.cnf galera binlog_format row
+        ops_edit /etc/my.cnf.d/server.cnf galera default_storage_engine InnoDB
+        ops_edit /etc/my.cnf.d/server.cnf galera innodb_autoinc_lock_mode 2
+        ops_edit /etc/my.cnf.d/server.cnf galera wsrep_cluster_name "linoxide_cluster"
+        ops_edit /etc/my.cnf.d/server.cnf galera bind-address 0.0.0.0
+        ops_edit /etc/my.cnf.d/server.cnf galera wsrep_node_address "$IP_ADD"
+        ops_edit /etc/my.cnf.d/server.cnf galera wsrep_node_name "$HOSTNAME_DB"
+        ops_edit /etc/my.cnf.d/server.cnf galera wsrep_sst_method rsync
+
+}
 
 
 ############################
@@ -119,6 +152,7 @@ do
     echocolor "Cai dat install_repo tren $IP_ADD"
     sleep 3
     ssh root@$IP_ADD "$(typeset -f); install_repo"
+    ssh root@$IP_ADD "$(typeset -f); install_repo_galera"
     
     if [ "$IP_ADD" == "$DB1_IP_NIC2" ]; then
       echocolor "Cai dat khai_bao_host tren $IP_ADD"
@@ -127,4 +161,35 @@ do
     fi 
 done 
 
+echocolor " Cai dat MariaDBm galera "
+sleep 3
+for IP_ADD in $DB1_IP_NIC2 $DB2_IP_NIC2 $DB3_IP_NIC2
+do 
+    echocolor "Cai dat install_mariadb_galera tren $IP_ADD"
+    sleep 3
+    ssh root@$IP_ADD "$(typeset -f); install_mariadb_galera"   
+    if [ "$IP_ADD" == "$DB1_IP_NIC2" ]; then
+      echocolor "Thuc hien script set_pass_db tren $IP_ADD"
+      sleep 3
+      ssh root@$IP_ADD "$(typeset -f); set_pass_db"
+    fi
+    echocolor "Thuc hien script config_galera_cluster tren $IP_ADD"
+    sleep 3
+    ssh root@$IP_ADD "$(typeset -f); config_galera_cluster"
+    
+done 
+
+echocolor "Khoi dong MariaDB Cluster "
+sleep 3
+for IP_ADD in $DB1_IP_NIC2 $DB2_IP_NIC2 $DB3_IP_NIC2
+do 
+    if [ "$IP_ADD" == "$DB1_IP_NIC2" ]; then
+      echocolor "Thuc hien khoi dong cluster DB $IP_ADD"
+      sleep 3
+      galera_new_cluster
+      
+    else
+      systemctl start mariadb
+    fi
+done 
 echocolor DONE
