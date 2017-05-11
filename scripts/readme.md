@@ -8,7 +8,7 @@
 ### IP Planning
 
 
-## 1. Cài đặt trên các node LB
+## 1. Cài đặt trên các node LoadBalancer (Pacemaker, Corosync, Nginx)
 
 ### 1.1. Thực hiện script cấu hình bonding cho các node LB
 - Đứng trên máy chủ LB1, tải và thực hiện script để cấu hình bonding
@@ -85,4 +85,25 @@
   ```sh
   curl -O https://raw.githubusercontent.com/congto/openstack-HA/master/scripts/db-bonding.sh
   bash db-bonding.sh db3 10.10.10.53 192.168.20.53
+  ```
+  
+## 4. Cài đặt trên các node Controller
+
+### 4.1. Thực hiện script cấu hình bonding cho các node Controller
+- Đứng trên máy chủ CTL1, tải và thực hiện script để cấu hình bonding
+  ```sh
+  curl -O https://raw.githubusercontent.com/congto/openstack-HA/master/scripts/ctl-bonding.sh
+  bash lb-bonding.sh ctl1 10.10.20.61 10.10.10.61 192.168.20.61 10.10.0.61
+  ```
+
+- Đứng trên máy chủ CTL2, tải và thực hiện script để cấu hình bonding
+  ```sh
+  curl -O https://raw.githubusercontent.com/congto/openstack-HA/master/scripts/ctl-bonding.sh
+  bash lb-bonding.sh ctl1 10.10.20.62 10.10.10.62 192.168.20.62 10.10.0.62
+  ```
+
+- Đứng trên máy chủ CTL3, tải và thực hiện script để cấu hình bonding
+  ```sh
+  curl -O https://raw.githubusercontent.com/congto/openstack-HA/master/scripts/ctl-bonding.sh
+  bash lb-bonding.sh ctl1 10.10.20.63 10.10.10.63 192.168.20.63 10.10.0.63
   ```
