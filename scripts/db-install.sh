@@ -110,6 +110,7 @@ EOF
 }
 
 function config_galera_cluster {
+        source db-config.cfg
         HOSTNAME_DB=`hostname`
         cp /etc/my.cnf.d/server.cnf  /etc/my.cnf.d/server.cnf.orig
         ops_edit /etc/my.cnf.d/server.cnf galera wsrep_on ON
@@ -131,7 +132,7 @@ function config_galera_cluster {
 # Thuc thi cac functions
 ## Goi cac functions
 ############################
-echocolor "Cai dat rabbitmq"
+echocolor "Cai dat MariaDB, Galera"
 sleep 3
 
 echocolor "Tao key va copy key, bien khai bao sang cac node"
