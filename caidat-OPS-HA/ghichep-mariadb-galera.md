@@ -46,12 +46,28 @@ Thực hiện theo script sau
 
 - Sao lưu file cấu hình của mariadb
   ```sh
-  cp /etc/my.cnf.d/mariadb-server.cnf  /etc/my.cnf.d/mariadb-server.cnf.orig
+  cp /etc/my.cnf.d/server.cnf  /etc/my.cnf.d/server.cnf.orig
   ```
   
 - Đặt password cho MariaDB
+```
+password_galera_root=Ec0net@!2017
+cat << EOF | mysql -uroot
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY '$password_galera_root';FLUSH PRIVILEGES;
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' IDENTIFIED BY '$password_galera_root';FLUSH PRIVILEGES;
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'db1' IDENTIFIED BY '$password_galera_root';FLUSH PRIVILEGES;
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'127.0.0.1' IDENTIFIED BY '$password_galera_root';FLUSH PRIVILEGES;
+EOF
+````
+
+- Tạo script để check mysql
+
 ```sh
-mysql -uroot -p$password_galera_root -e "GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY '"$password_galera_root"';FLUSH PRIVILEGES;"
+GRANT PROCESS ON *.* TO 'clustercheckuser'@'localhost' IDENTIFIED BY 'Ec0net@!2017'; FLUSH PRIVILEGES;
+
+exit;
+```
+
 
 
   
@@ -59,48 +75,48 @@ mysql -uroot -p$password_galera_root -e "GRANT ALL PRIVILEGES ON *.* TO 'root'@'
 - Thực hiện các lệnh dưới trên DB1 
 
 ```sh
-crudini --set /etc/my.cnf.d/mariadb-server.cnf galera wsrep_on ON
-crudini --set /etc/my.cnf.d/mariadb-server.cnf galera wsrep_provider /usr/lib64/galera/libgalera_smm.so
-crudini --set /etc/my.cnf.d/mariadb-server.cnf galera wsrep_cluster_address "gcomm://192.168.20.51,192.168.20.52,192.168.20.53" 
-crudini --set /etc/my.cnf.d/mariadb-server.cnf galera binlog_format row
-crudini --set /etc/my.cnf.d/mariadb-server.cnf galera default_storage_engine InnoDB
-crudini --set /etc/my.cnf.d/mariadb-server.cnf galera innodb_autoinc_lock_mode 2
-crudini --set /etc/my.cnf.d/mariadb-server.cnf galera wsrep_cluster_name "linoxide_cluster"
-crudini --set /etc/my.cnf.d/mariadb-server.cnf galera bind-address 0.0.0.0
-crudini --set /etc/my.cnf.d/mariadb-server.cnf galera wsrep_node_address "192.168.20.51"
-crudini --set /etc/my.cnf.d/mariadb-server.cnf galera wsrep_node_name "db1"
-crudini --set /etc/my.cnf.d/mariadb-server.cnf galera wsrep_sst_method rsync
+crudini --set /etc/my.cnf.d/server.cnf galera wsrep_on ON
+crudini --set /etc/my.cnf.d/server.cnf galera wsrep_provider /usr/lib64/galera/libgalera_smm.so
+crudini --set /etc/my.cnf.d/server.cnf galera wsrep_cluster_address "gcomm://192.168.20.51,192.168.20.52,192.168.20.53" 
+crudini --set /etc/my.cnf.d/server.cnf galera binlog_format row
+crudini --set /etc/my.cnf.d/server.cnf galera default_storage_engine InnoDB
+crudini --set /etc/my.cnf.d/server.cnf galera innodb_autoinc_lock_mode 2
+crudini --set /etc/my.cnf.d/server.cnf galera wsrep_cluster_name "linoxide_cluster"
+crudini --set /etc/my.cnf.d/server.cnf galera bind-address 0.0.0.0
+crudini --set /etc/my.cnf.d/server.cnf galera wsrep_node_address "192.168.20.51"
+crudini --set /etc/my.cnf.d/server.cnf galera wsrep_node_name "db1"
+crudini --set /etc/my.cnf.d/server.cnf galera wsrep_sst_method rsync
 ```
 
 - Thực hiện các lệnh dưới trên DB2
 
 ```sh
-crudini --set /etc/my.cnf.d/mariadb-server.cnf galera wsrep_on ON
-crudini --set /etc/my.cnf.d/mariadb-server.cnf galera wsrep_provider /usr/lib64/galera/libgalera_smm.so
-crudini --set /etc/my.cnf.d/mariadb-server.cnf galera wsrep_cluster_address "gcomm://192.168.20.51,192.168.20.52,192.168.20.53" 
-crudini --set /etc/my.cnf.d/mariadb-server.cnf galera binlog_format row
-crudini --set /etc/my.cnf.d/mariadb-server.cnf galera default_storage_engine InnoDB
-crudini --set /etc/my.cnf.d/mariadb-server.cnf galera innodb_autoinc_lock_mode 2
-crudini --set /etc/my.cnf.d/mariadb-server.cnf galera wsrep_cluster_name "linoxide_cluster"
-crudini --set /etc/my.cnf.d/mariadb-server.cnf galera bind-address 0.0.0.0
-crudini --set /etc/my.cnf.d/mariadb-server.cnf galera wsrep_node_address "192.168.20.52"
-crudini --set /etc/my.cnf.d/mariadb-server.cnf galera wsrep_node_name "db2"
-crudini --set /etc/my.cnf.d/mariadb-server.cnf galera wsrep_sst_method rsync
+crudini --set /etc/my.cnf.d/server.cnf galera wsrep_on ON
+crudini --set /etc/my.cnf.d/server.cnf galera wsrep_provider /usr/lib64/galera/libgalera_smm.so
+crudini --set /etc/my.cnf.d/server.cnf galera wsrep_cluster_address "gcomm://192.168.20.51,192.168.20.52,192.168.20.53" 
+crudini --set /etc/my.cnf.d/server.cnf galera binlog_format row
+crudini --set /etc/my.cnf.d/server.cnf galera default_storage_engine InnoDB
+crudini --set /etc/my.cnf.d/server.cnf galera innodb_autoinc_lock_mode 2
+crudini --set /etc/my.cnf.d/server.cnf galera wsrep_cluster_name "linoxide_cluster"
+crudini --set /etc/my.cnf.d/server.cnf galera bind-address 0.0.0.0
+crudini --set /etc/my.cnf.d/server.cnf galera wsrep_node_address "192.168.20.52"
+crudini --set /etc/my.cnf.d/server.cnf galera wsrep_node_name "db2"
+crudini --set /etc/my.cnf.d/server.cnf galera wsrep_sst_method rsync
 ```
 
 - Thực hiện các lệnh dưới trên DB3
 ```sh
-crudini --set /etc/my.cnf.d/mariadb-server.cnf galera wsrep_on ON
-crudini --set /etc/my.cnf.d/mariadb-server.cnf galera wsrep_provider /usr/lib64/galera/libgalera_smm.so
-crudini --set /etc/my.cnf.d/mariadb-server.cnf galera wsrep_cluster_address "gcomm://192.168.20.51,192.168.20.52,192.168.20.53" 
-crudini --set /etc/my.cnf.d/mariadb-server.cnf galera binlog_format row
-crudini --set /etc/my.cnf.d/mariadb-server.cnf galera default_storage_engine InnoDB
-crudini --set /etc/my.cnf.d/mariadb-server.cnf galera innodb_autoinc_lock_mode 2
-crudini --set /etc/my.cnf.d/mariadb-server.cnf galera wsrep_cluster_name "linoxide_cluster"
-crudini --set /etc/my.cnf.d/mariadb-server.cnf galera bind-address 0.0.0.0
-crudini --set /etc/my.cnf.d/mariadb-server.cnf galera wsrep_node_address "192.168.20.53"
-crudini --set /etc/my.cnf.d/mariadb-server.cnf galera wsrep_node_name "db2"
-crudini --set /etc/my.cnf.d/mariadb-server.cnf galera wsrep_sst_method rsync
+crudini --set /etc/my.cnf.d/server.cnf galera wsrep_on ON
+crudini --set /etc/my.cnf.d/server.cnf galera wsrep_provider /usr/lib64/galera/libgalera_smm.so
+crudini --set /etc/my.cnf.d/server.cnf galera wsrep_cluster_address "gcomm://192.168.20.51,192.168.20.52,192.168.20.53" 
+crudini --set /etc/my.cnf.d/server.cnf galera binlog_format row
+crudini --set /etc/my.cnf.d/server.cnf galera default_storage_engine InnoDB
+crudini --set /etc/my.cnf.d/server.cnf galera innodb_autoinc_lock_mode 2
+crudini --set /etc/my.cnf.d/server.cnf galera wsrep_cluster_name "linoxide_cluster"
+crudini --set /etc/my.cnf.d/server.cnf galera bind-address 0.0.0.0
+crudini --set /etc/my.cnf.d/server.cnf galera wsrep_node_address "192.168.20.53"
+crudini --set /etc/my.cnf.d/server.cnf galera wsrep_node_name "db2"
+crudini --set /etc/my.cnf.d/server.cnf galera wsrep_sst_method rsync
 ```
 
 
