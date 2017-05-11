@@ -23,16 +23,19 @@ Thực hiện theo script sau
 - Khai báo file `/etc/hosts`
 
 
-- Khai báo repos
+- Khai báo repos để cài mariadb-galera 
   ```sh
-  yum -y install centos-release-openstack-newton
-  yum -y upgrade
-  
   echo '[mariadb]
   name = MariaDB
   baseurl = http://yum.mariadb.org/10.1/centos7-amd64
   gpgkey=https://yum.mariadb.org/RPM-GPG-KEY-MariaDB
   gpgcheck=1' >> /etc/yum.repos.d/MariaDB.repo
+  ```
+
+- Khai báo repos của Openstack
+  ```sh
+  yum -y install centos-release-openstack-newton
+  yum -y upgrade
   ```
 
 ### Cài đặt các gói của MariaDB, Galera
@@ -45,6 +48,13 @@ Thực hiện theo script sau
   ```sh
   cp /etc/my.cnf.d/mariadb-server.cnf  /etc/my.cnf.d/mariadb-server.cnf.orig
   ```
+  
+- Đặt password cho MariaDB
+```sh
+mysql -uroot -p$password_galera_root -e "GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY '"$password_galera_root"';FLUSH PRIVILEGES;"
+
+
+  
 #### Sửa file cấu hình trên DB1
 - Thực hiện các lệnh dưới trên DB1 
 
@@ -92,3 +102,6 @@ crudini --set /etc/my.cnf.d/mariadb-server.cnf galera wsrep_node_address "192.16
 crudini --set /etc/my.cnf.d/mariadb-server.cnf galera wsrep_node_name "db2"
 crudini --set /etc/my.cnf.d/mariadb-server.cnf galera wsrep_sst_method rsync
 ```
+
+
+
