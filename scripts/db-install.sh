@@ -122,8 +122,8 @@ function config_galera_cluster {
         ops_edit /etc/my.cnf.d/server.cnf galera innodb_autoinc_lock_mode 2
         ops_edit /etc/my.cnf.d/server.cnf galera wsrep_cluster_name "vietstack_db_cluster"
         ops_edit /etc/my.cnf.d/server.cnf galera bind-address 0.0.0.0
-        ops_edit /etc/my.cnf.d/server.cnf galera wsrep_node_address "$IP_ADD"
-        ops_edit /etc/my.cnf.d/server.cnf galera wsrep_node_name "$HOSTNAME_DB"
+        ops_edit /etc/my.cnf.d/server.cnf galera wsrep_node_address $IP_ADD
+        ops_edit /etc/my.cnf.d/server.cnf galera wsrep_node_name $HOSTNAME_DB
         ops_edit /etc/my.cnf.d/server.cnf galera wsrep_sst_method rsync
 
 }
@@ -180,6 +180,7 @@ do
     echocolor "Thuc hien script config_galera_cluster tren $IP_ADD"
     sleep 3
     ssh root@$IP_ADD "$(typeset -f); config_galera_cluster"
+    echo "Day la node $IP_ADD" > test_config_galera_cluster.txt
     
 done 
 
@@ -191,7 +192,7 @@ do
       echocolor "Thuc hien khoi dong cluster DB $IP_ADD"
       sleep 3
       galera_new_cluster
-      
+      echo "Day la node $IP_ADD" > testip.txt
     else
       systemctl enable mariadb.service
       systemctl start mariadb.service
