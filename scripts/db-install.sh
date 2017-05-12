@@ -102,15 +102,11 @@ function install_mariadb_galera {
 
 
 function set_pass_db {
-source db-config.cfg
-HOSTNAME_DB=`hostname`
-cat << EOF | mysql -uroot
-GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY '$PASS_DATABASE_ROOT';FLUSH PRIVILEGES;
-GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' IDENTIFIED BY '$PASS_DATABASE_ROOT';FLUSH PRIVILEGES;
-GRANT ALL PRIVILEGES ON *.* TO 'root'@'$HOSTNAME_DB' IDENTIFIED BY '$PASS_DATABASE_ROOT';FLUSH PRIVILEGES;
-GRANT ALL PRIVILEGES ON *.* TO 'root'@'127.0.0.1' IDENTIFIED BY '$PASS_DATABASE_ROOT';FLUSH PRIVILEGES;
-GRANT PROCESS ON *.* TO 'clustercheckuser'@'localhost' IDENTIFIED BY '$PASS_DATABASE_ROOT'; FLUSH PRIVILEGES;
-EOF
+        source db-config.cfg
+        HOSTNAME_DB=`hostname`
+        /usr/bin/mysqladmin -u root password '$PASS_DATABASE_ROOT'
+        /usr/bin/mysqladmin -u root -h '$HOSTNAME_DB' password '$PASS_DATABASE_ROOT'
+        /usr/bin/mysqladmin -u root -h * password '$PASS_DATABASE_ROOT'
 }
 
 function config_galera_cluster {
@@ -176,6 +172,8 @@ do
     if [ "$IP_ADD" == "$DB1_IP_NIC2" ]; then
       echocolor "Thuc hien script set_pass_db tren $IP_ADD"
       sleep 3
+      systemctl enable mariadb.service
+      systemctl start mariadb.service
       ssh root@$IP_ADD "$(typeset -f); set_pass_db"
     fi
     echocolor "Thuc hien script config_galera_cluster tren $IP_ADD"
@@ -194,7 +192,8 @@ do
       galera_new_cluster
       
     else
-      systemctl start mariadb
+      systemctl enable mariadb.service
+      systemctl start mariadb.service
     fi
 done 
 echocolor DONE
