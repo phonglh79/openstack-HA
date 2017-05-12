@@ -98,6 +98,18 @@ function khai_bao_host {
 
 function install_mariadb_galera {
         yum -y install mariadb-server rsync xinetd crudini
+        
+cat << EOF > /etc/my.cnf.d/openstack.cnf
+[mysqld]
+bind-address = 0.0.0.0
+
+default-storage-engine = innodb
+innodb_file_per_table
+max_connections = 4096
+collation-server = utf8_general_ci
+character-set-server = utf8
+EOF
+
 }
 
 
@@ -124,7 +136,7 @@ function config_galera_cluster {
         ops_edit /etc/my.cnf.d/server.cnf galera wsrep_node_address $IP_ADD
         ops_edit /etc/my.cnf.d/server.cnf galera wsrep_node_name $HOSTNAME_DB
         ops_edit /etc/my.cnf.d/server.cnf galera wsrep_sst_method rsync
-
+        
 }
 
 
