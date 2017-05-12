@@ -20,7 +20,7 @@ DB2_IP_NIC2=192.168.20.52
 DB3_IP_NIC2=192.168.20.53
 
 ### Password cho MariaDB
-PASS_DATABASE_ROOT=Ec0net@!2017
+
 EOF
 
 source db-config.cfg 
@@ -116,6 +116,7 @@ EOF
 function set_pass_db {
         source db-config.cfg
         HOSTNAME_DB=`hostname`
+        PASS_DATABASE_ROOT=Ec0net@!2017
         /usr/bin/mysqladmin -u root password '$PASS_DATABASE_ROOT'
         /usr/bin/mysqladmin -u root -h $HOSTNAME_DB password '$PASS_DATABASE_ROOT'
         /usr/bin/mysqladmin -u root -h * password '$PASS_DATABASE_ROOT'
