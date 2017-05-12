@@ -94,6 +94,7 @@
   sudo systemctl start network
 
   sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux
+  sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
 
   init 6
   ```
@@ -152,6 +153,7 @@
   sudo systemctl start network
 
   sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux
+  sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
 
   init 6
   ```
@@ -235,6 +237,7 @@
   sudo systemctl start network
 
   sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux
+  sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
 
   init 6
   ```

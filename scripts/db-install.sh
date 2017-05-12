@@ -72,7 +72,7 @@ function install_proxy() {
         yum -y update
 }
 
-function install_repo {
+function install_repo_openstack {
         yum -y install centos-release-openstack-newton
         yum -y upgrade
 }
@@ -83,6 +83,8 @@ name = MariaDB
 baseurl = http://yum.mariadb.org/10.1/centos7-amd64
 gpgkey=https://yum.mariadb.org/RPM-GPG-KEY-MariaDB
 gpgcheck=1' >> /etc/yum.repos.d/MariaDB.repo
+
+yum -y upgrade
 }
 
 function khai_bao_host {
@@ -154,8 +156,8 @@ do
     
     echocolor "Cai dat install_repo tren $IP_ADD"
     sleep 3
-    ssh root@$IP_ADD "$(typeset -f); install_repo"
     ssh root@$IP_ADD "$(typeset -f); install_repo_galera"
+    ssh root@$IP_ADD "$(typeset -f); install_repo_openstack"
     
     if [ "$IP_ADD" == "$DB1_IP_NIC2" ]; then
       echocolor "Cai dat khai_bao_host tren $IP_ADD"
