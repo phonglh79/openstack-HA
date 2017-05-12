@@ -105,7 +105,8 @@ function set_pass_db {
         source db-config.cfg
         HOSTNAME_DB=`hostname`
         /usr/bin/mysqladmin -u root password '$PASS_DATABASE_ROOT'
-        /usr/bin/mysqladmin -u root -h '$HOSTNAME_DB' password '$PASS_DATABASE_ROOT'
+        /usr/bin/mysqladmin -u root -h $HOSTNAME_DB password '$PASS_DATABASE_ROOT'
+        /usr/bin/mysqladmin -u root -h localhost password '$PASS_DATABASE_ROOT'
         /usr/bin/mysqladmin -u root -h * password '$PASS_DATABASE_ROOT'
 }
 
@@ -119,7 +120,7 @@ function config_galera_cluster {
         ops_edit /etc/my.cnf.d/server.cnf galera binlog_format row
         ops_edit /etc/my.cnf.d/server.cnf galera default_storage_engine InnoDB
         ops_edit /etc/my.cnf.d/server.cnf galera innodb_autoinc_lock_mode 2
-        ops_edit /etc/my.cnf.d/server.cnf galera wsrep_cluster_name "linoxide_cluster"
+        ops_edit /etc/my.cnf.d/server.cnf galera wsrep_cluster_name "vietstack_db_cluster"
         ops_edit /etc/my.cnf.d/server.cnf galera bind-address 0.0.0.0
         ops_edit /etc/my.cnf.d/server.cnf galera wsrep_node_address "$IP_ADD"
         ops_edit /etc/my.cnf.d/server.cnf galera wsrep_node_name "$HOSTNAME_DB"
