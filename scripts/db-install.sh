@@ -106,7 +106,6 @@ function set_pass_db {
         HOSTNAME_DB=`hostname`
         /usr/bin/mysqladmin -u root password '$PASS_DATABASE_ROOT'
         /usr/bin/mysqladmin -u root -h $HOSTNAME_DB password '$PASS_DATABASE_ROOT'
-        /usr/bin/mysqladmin -u root -h localhost password '$PASS_DATABASE_ROOT'
         /usr/bin/mysqladmin -u root -h * password '$PASS_DATABASE_ROOT'
 }
 
@@ -116,7 +115,7 @@ function config_galera_cluster {
         cp /etc/my.cnf.d/server.cnf  /etc/my.cnf.d/server.cnf.orig
         ops_edit /etc/my.cnf.d/server.cnf galera wsrep_on ON
         ops_edit /etc/my.cnf.d/server.cnf galera wsrep_provider /usr/lib64/galera/libgalera_smm.so
-        ops_edit /etc/my.cnf.d/server.cnf galera wsrep_cluster_address "gcomm://$DB1_IP_NIC1,$DB2_IP_NIC1,$DB3_IP_NIC1" 
+        ops_edit /etc/my.cnf.d/server.cnf galera wsrep_cluster_address "gcomm://$DB1_IP_NIC2,$DB2_IP_NIC2,$DB3_IP_NIC2" 
         ops_edit /etc/my.cnf.d/server.cnf galera binlog_format row
         ops_edit /etc/my.cnf.d/server.cnf galera default_storage_engine InnoDB
         ops_edit /etc/my.cnf.d/server.cnf galera innodb_autoinc_lock_mode 2
