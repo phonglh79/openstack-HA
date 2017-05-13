@@ -116,6 +116,8 @@ EOF
 function set_pass_db {
         source db-config.cfg
         HOSTNAME_DB=`hostname`
+        systemctl enable mariadb.service
+        systemctl start mariadb.service
         /usr/bin/mysqladmin -u root password 'Ec0net@!2017'
         /usr/bin/mysqladmin -u root -h $HOSTNAME_DB password 'Ec0net@!2017'
         /usr/bin/mysqladmin -u root -h * password 'Ec0net@!2017'
@@ -123,9 +125,10 @@ function set_pass_db {
 
 function config_galera_cluster {
         source db-config.cfg
+        IP_ADD_MNGT=`ip -o -4 addr show dev bond1 | sed 's/.* inet \([^/]*\).*/\1/'`
         HOSTNAME_DB=`hostname`
         cp /etc/my.cnf.d/server.cnf /etc/my.cnf.d/server.cnf.orig
-cat <<EOF >
+cat <<EOF > /etc/my.cnf.d/server.cnf
 [server]
 [mysqld]
 [galera]
@@ -137,14 +140,14 @@ default_storage_engine=InnoDB
 innodb_autoinc_lock_mode=2
 wsrep_cluster_name="linoxide_cluster"
 bind-address=0.0.0.0
-wsrep_node_address="$IP_ADD"
+wsrep_node_address="$IP_ADD_MNGT"
 wsrep_node_name="$HOSTNAME_DB"
 wsrep_sst_method=rsync
 [embedded]
 [mariadb]
 [mariadb-10.1]
 EOF
-        echo "Day la node $IP_ADD - $HOSTNAME_DB" > test_config_galera_cluster.txt
+        echo "Day la node $IP_ADD_MNGT - $HOSTNAME_DB" > test_config_galera_cluster.txt
         
 }
 
@@ -190,13 +193,11 @@ do
     echocolor "Cai dat install_mariadb_galera tren $IP_ADD"
     sleep 3
     ssh root@$IP_ADD "$(typeset -f); install_mariadb_galera"   
-    if [ "$IP_ADD" == "$DB1_IP_NIC2" ]; then
-      echocolor "Thuc hien script set_pass_db tren $IP_ADD"
-      sleep 3
-      systemctl enable mariadb.service
-      systemctl start mariadb.service
-      ssh root@$IP_ADD "$(typeset -f); set_pass_db"
-    fi
+    #if [ "$IP_ADD" == "$DB1_IP_NIC2" ]; then
+      #echocolor "Thuc hien script set_pass_db tren $IP_ADD"
+      #sleep 3
+       #ssh root@$IP_ADD "$(typeset -f); set_pass_db"
+    #fi
     echocolor "Thuc hien script config_galera_cluster tren $IP_ADD"
     sleep 3
     ssh root@$IP_ADD "$(typeset -f); config_galera_cluster"   
