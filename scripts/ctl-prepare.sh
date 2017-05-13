@@ -161,6 +161,7 @@ do
     echocolor "Cai dat install_repo tren $IP_ADD"
     sleep 3
     ssh root@$IP_ADD "$(typeset -f); install_repo"  
+    
     if [ "$IP_ADD" == "$CTL1_IP_NIC3" ]; then
       echocolor "Cai dat khai_bao_host tren $IP_ADD"
       sleep 3
