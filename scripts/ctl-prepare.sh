@@ -98,11 +98,12 @@ function install_ntp_server {
         source ctl-config.cfg
         yum -y install chrony
         for IP_ADD in $CTL1_IP_NIC3 $CTL2_IP_NIC3 $CTL3_IP_NIC3
-        cp /etc/chrony.conf /etc/chrony.conf.orig
-        if [ "$IP_ADD" == "$CTL1_IP_NIC3" ]; then
-                echocolor "Cau hinh NTP cho $CTL1_IP_NIC3"
-                sleep 3
-                sed -i 's/server 0.centos.pool.ntp.org iburst/ \
+        do 
+          cp /etc/chrony.conf /etc/chrony.conf.orig
+          if [ "$IP_ADD" == "$CTL1_IP_NIC3" ]; then
+                  echocolor "Cau hinh NTP cho $CTL1_IP_NIC3"
+                  sleep 3
+                  sed -i 's/server 0.centos.pool.ntp.org iburst/ \
 server 1.vn.pool.ntp.org iburst \
 server 0.asia.pool.ntp.org iburst \
 server 3.asia.pool.ntp.org iburst/g' /etc/chrony.conf
@@ -114,23 +115,23 @@ sed -i 's/server 3.centos.pool.ntp.org iburst/ \
 # server 3.centos.pool.ntp.org iburst/g' /etc/chrony.conf
 sed -i 's/#allow 192.168\/16/allow 192.168.20.0\/24/g' /etc/chrony.conf
 
-        else 
-                echocolor "Cau hinh ntp tren `hostname`"
-                sed -i 's/server 0.centos.pool.ntp.org iburst/server $CTL1_IP_NIC3 iburst/g' /etc/chrony.conf
-                sed -i 's/server 1.centos.pool.ntp.org iburst/ \
+          else 
+                  echocolor "Cau hinh ntp tren `hostname`"
+                  sed -i 's/server 0.centos.pool.ntp.org iburst/server $CTL1_IP_NIC3 iburst/g' /etc/chrony.conf
+                  sed -i 's/server 1.centos.pool.ntp.org iburst/ \
 # server 1.centos.pool.ntp.org iburst/g' /etc/chrony.conf
-                sed -i 's/server 2.centos.pool.ntp.org iburst/ \
+                  sed -i 's/server 2.centos.pool.ntp.org iburst/ \
 # server 2.centos.pool.ntp.org iburst/g' /etc/chrony.conf
-                sed -i 's/server 3.centos.pool.ntp.org iburst/ \
+                  sed -i 's/server 3.centos.pool.ntp.org iburst/ \
 # server 3.centos.pool.ntp.org iburst/g' /etc/chrony.conf
-        fi 
-                echocolor "Khoi dong chrony va kiem tra"
-                sleep 3
-                systemctl enable chronyd.service
-                systemctl start chronyd.service
-                chronyc sources   
+          fi 
+                  echocolor "Khoi dong chrony va kiem tra"
+                  sleep 3
+                  systemctl enable chronyd.service
+                  systemctl start chronyd.service
+                  chronyc sources   
 
-      done        
+        done        
 }
 
 function install_repo() {
