@@ -116,27 +116,35 @@ EOF
 function set_pass_db {
         source db-config.cfg
         HOSTNAME_DB=`hostname`
-        PASS_DATABASE_ROOT=Ec0net@!2017
-        /usr/bin/mysqladmin -u root password '$PASS_DATABASE_ROOT'
-        /usr/bin/mysqladmin -u root -h $HOSTNAME_DB password '$PASS_DATABASE_ROOT'
-        /usr/bin/mysqladmin -u root -h * password '$PASS_DATABASE_ROOT'
+        /usr/bin/mysqladmin -u root password 'Ec0net@!2017'
+        /usr/bin/mysqladmin -u root -h $HOSTNAME_DB password 'Ec0net@!2017'
+        /usr/bin/mysqladmin -u root -h * password 'Ec0net@!2017'
 }
 
 function config_galera_cluster {
         source db-config.cfg
         HOSTNAME_DB=`hostname`
-        cp /etc/my.cnf.d/server.cnf  /etc/my.cnf.d/server.cnf.orig
-        ops_edit /etc/my.cnf.d/server.cnf galera wsrep_on ON
-        ops_edit /etc/my.cnf.d/server.cnf galera wsrep_provider /usr/lib64/galera/libgalera_smm.so
-        ops_edit /etc/my.cnf.d/server.cnf galera wsrep_cluster_address "gcomm://$DB1_IP_NIC2,$DB2_IP_NIC2,$DB3_IP_NIC2" 
-        ops_edit /etc/my.cnf.d/server.cnf galera binlog_format row
-        ops_edit /etc/my.cnf.d/server.cnf galera default_storage_engine InnoDB
-        ops_edit /etc/my.cnf.d/server.cnf galera innodb_autoinc_lock_mode 2
-        ops_edit /etc/my.cnf.d/server.cnf galera wsrep_cluster_name "vietstack_db_cluster"
-        ops_edit /etc/my.cnf.d/server.cnf galera bind-address 0.0.0.0
-        ops_edit /etc/my.cnf.d/server.cnf galera wsrep_node_address $IP_ADD
-        ops_edit /etc/my.cnf.d/server.cnf galera wsrep_node_name $HOSTNAME_DB
-        ops_edit /etc/my.cnf.d/server.cnf galera wsrep_sst_method rsync
+        cp /etc/my.cnf.d/server.cnf /etc/my.cnf.d/server.cnf.orig
+cat <<EOF >
+[server]
+[mysqld]
+[galera]
+wsrep_on=ON
+wsrep_provider=/usr/lib64/galera/libgalera_smm.so
+wsrep_cluster_address="gcomm://$DB1_IP_NIC2,$DB2_IP_NIC2,$DB3_IP_NIC2"
+binlog_format=row
+default_storage_engine=InnoDB
+innodb_autoinc_lock_mode=2
+wsrep_cluster_name="linoxide_cluster"
+bind-address=0.0.0.0
+wsrep_node_address="$IP_ADD"
+wsrep_node_name="$HOSTNAME_DB"
+wsrep_sst_method=rsync
+[embedded]
+[mariadb]
+[mariadb-10.1]
+EOF
+        echo "Day la node $IP_ADD - $HOSTNAME_DB" > test_config_galera_cluster.txt
         
 }
 
@@ -191,23 +199,21 @@ do
     fi
     echocolor "Thuc hien script config_galera_cluster tren $IP_ADD"
     sleep 3
-    ssh root@$IP_ADD "$(typeset -f); config_galera_cluster"
-    echo "Day la node $IP_ADD" > test_config_galera_cluster.txt
-    
+    ssh root@$IP_ADD "$(typeset -f); config_galera_cluster"   
 done 
 
-echocolor "Khoi dong MariaDB Cluster "
-sleep 3
-for IP_ADD in $DB1_IP_NIC2 $DB2_IP_NIC2 $DB3_IP_NIC2
-do 
-    if [ "$IP_ADD" == "$DB1_IP_NIC2" ]; then
-      echocolor "Thuc hien khoi dong cluster DB $IP_ADD"
-      sleep 3
-      galera_new_cluster
-      echo "Day la node $IP_ADD" > testip.txt
-    else
-      systemctl enable mariadb.service
-      systemctl start mariadb.service
-    fi
-done 
+# echocolor "Khoi dong MariaDB Cluster "
+# sleep 3
+# for IP_ADD in $DB1_IP_NIC2 $DB2_IP_NIC2 $DB3_IP_NIC2
+# do 
+#     if [ "$IP_ADD" == "$DB1_IP_NIC2" ]; then
+#       echocolor "Thuc hien khoi dong cluster DB $IP_ADD"
+#       sleep 3
+#       galera_new_cluster
+#       echo "Day la node $IP_ADD" > testip.txt
+#     else
+#       systemctl enable mariadb.service
+#       systemctl start mariadb.service
+#     fi
+# done 
 echocolor DONE
