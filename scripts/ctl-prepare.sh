@@ -28,9 +28,9 @@ CTL2_IP_NIC3=192.168.20.62
 CTL3_IP_NIC3=192.168.20.63
 
 ### IP cho bond4 cho cac may CONTROLLER
-CTL1_IP_NIC3=10.10.0.61
-CTL2_IP_NIC3=10.10.0.62
-CTL3_IP_NIC3=10.10.0.63
+CTL1_IP_NIC4=10.10.0.61
+CTL2_IP_NIC4=10.10.0.62
+CTL3_IP_NIC4=10.10.0.63
 EOF
 
 chmod +x ctl-config.cfg
@@ -63,7 +63,7 @@ function ops_del {
 
 function copykey {
         ssh-keygen -t rsa -f /root/.ssh/id_rsa -q -P ""
-        for IP_ADD in $CTL1_IP_NIC3 $CTL2_IP_NIC3 $CTL2_IP_NIC3
+        for IP_ADD in $CTL1_IP_NIC3 $CTL2_IP_NIC3 $CTL3_IP_NIC3
         do
                 ssh-copy-id -o StrictHostKeyChecking=no -i /root/.ssh/id_rsa.pub root@$IP_ADD
         done
