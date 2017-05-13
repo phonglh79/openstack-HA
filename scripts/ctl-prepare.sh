@@ -92,14 +92,6 @@ function khai_bao_host {
         scp /etc/hosts root@$CTL3_IP_NIC3:/etc/
 }
 
-function restart_ntp {
-        echocolor "Khoi dong chrony va kiem tra ntp tren `hostname`"
-        sleep 3
-        systemctl enable chronyd.service
-        systemctl start chronyd.service
-        chronyc sources 
-}
-
 # Cai dat NTP server 
 function install_ntp_server {
         source ctl-config.cfg
@@ -118,18 +110,22 @@ server 3.asia.pool.ntp.org iburst/g' /etc/chrony.conf
                   sed -i 's/server 2.centos.pool.ntp.org iburst/#/g' /etc/chrony.conf
                   sed -i 's/server 3.centos.pool.ntp.org iburst/#/g' /etc/chrony.conf
                   sed -i 's/#allow 192.168\/16/allow 192.168.20.0\/24/g' /etc/chrony.conf
-                  restart_ntp
-
           else 
-                  echocolor "Cau hinh NTP cho `hostname`"
-                  ssh root@$IP_ADD << EOF 
+                  
+                  ssh root@$IP_ADD << EOF
+echocolor "Cau hinh NTP cho `hostname`"                  
 sed -i 's/server 0.centos.pool.ntp.org iburst/server $CTL1_IP_NIC3 iburst/g' /etc/chrony.conf
 sed -i 's/server 1.centos.pool.ntp.org iburst/#/g' /etc/chrony.conf
 sed -i 's/server 2.centos.pool.ntp.org iburst/#/g' /etc/chrony.conf
 sed -i 's/server 3.centos.pool.ntp.org iburst/#/g' /etc/chrony.conf
-restart_ntp
 EOF
-          fi  
+          fi
+           ssh root@$IP_ADD << EOF
+echocolor "Khoi dong lai ntp va kiem tra dong bo tren `hostname`" "
+systemctl enable chronyd.service"
+systemctl start chronyd.service"
+chronyc sources"
+EOF
         done        
 }
 
