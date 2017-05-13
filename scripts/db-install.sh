@@ -97,6 +97,9 @@ function khai_bao_host {
 }
 
 function install_mariadb_galera {
+        source db-config.cfg
+        IP_ADD_MNGT=`ip -o -4 addr show dev bond1 | sed 's/.* inet \([^/]*\).*/\1/'`
+        HOSTNAME_DB=`hostname`
         yum -y install mariadb-server rsync xinetd crudini
         
 cat << EOF > /etc/my.cnf.d/openstack.cnf
@@ -109,27 +112,8 @@ max_connections = 4096
 collation-server = utf8_general_ci
 character-set-server = utf8
 EOF
-
-}
-
-
-function set_pass_db {
-        source db-config.cfg
-        HOSTNAME_DB=`hostname`
-        PASS_DATABASE_ROOT=Ec0net@!2017
-cat << EOF | mysql -uroot
-GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY '$PASS_DATABASE_ROOT';FLUSH PRIVILEGES;
-GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' IDENTIFIED BY '$PASS_DATABASE_ROOT';FLUSH PRIVILEGES;
-GRANT ALL PRIVILEGES ON *.* TO 'root'@'$HOSTNAME_DB' IDENTIFIED BY '$PASS_DATABASE_ROOT';FLUSH PRIVILEGES;
-GRANT ALL PRIVILEGES ON *.* TO 'root'@'127.0.0.1' IDENTIFIED BY '$PASS_DATABASE_ROOT';FLUSH PRIVILEGES;
-EOF
-}
-
-function config_galera_cluster {
-        source db-config.cfg
-        IP_ADD_MNGT=`ip -o -4 addr show dev bond1 | sed 's/.* inet \([^/]*\).*/\1/'`
-        HOSTNAME_DB=`hostname`
-        cp /etc/my.cnf.d/server.cnf /etc/my.cnf.d/server.cnf.orig
+       cp /etc/my.cnf.d/server.cnf /etc/my.cnf.d/server.cnf.orig
+       
 cat <<EOF > /etc/my.cnf.d/server.cnf
 [server]
 [mysqld]
@@ -151,8 +135,25 @@ wsrep_sst_method=rsync
 EOF
         echo "Day la node $IP_ADD_MNGT - $HOSTNAME_DB" > test_config_galera_cluster.txt
         
+        
 }
 
+function set_pass_db {
+        source db-config.cfg
+        HOSTNAME_DB=`hostname`
+        PASS_DATABASE_ROOT=Ec0net@!2017
+cat << EOF | mysql -uroot
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY '$PASS_DATABASE_ROOT';FLUSH PRIVILEGES;
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' IDENTIFIED BY '$PASS_DATABASE_ROOT';FLUSH PRIVILEGES;
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'$HOSTNAME_DB' IDENTIFIED BY '$PASS_DATABASE_ROOT';FLUSH PRIVILEGES;
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'127.0.0.1' IDENTIFIED BY '$PASS_DATABASE_ROOT';FLUSH PRIVILEGES;
+EOF
+}
+
+function restart_db {
+        systemctl enable mariadb.service
+        systemctl start mariadb.service
+}
 
 ############################
 # Thuc thi cac functions
@@ -195,22 +196,22 @@ do
     echocolor "Cai dat install_mariadb_galera tren $IP_ADD"
     sleep 3
     ssh root@$IP_ADD "$(typeset -f); install_mariadb_galera"   
-    echocolor "Thuc hien script config_galera_cluster tren $IP_ADD"
-    sleep 3
-    ssh root@$IP_ADD "$(typeset -f); config_galera_cluster"   
 done 
 
 echocolor "Khoi dong MariaDB Cluster "
 sleep 3
+
 for IP_ADD in $DB1_IP_NIC2 $DB2_IP_NIC2 $DB3_IP_NIC2
 do 
     if [ "$IP_ADD" == "$DB1_IP_NIC2" ]; then
       echocolor "Thuc hien khoi dong cluster DB $IP_ADD"
        sleep 3
        galera_new_cluster
-    else
-       systemctl enable mariadb.service
-       systemctl start mariadb.service
+    else 
+      ssh root@$IP_ADD "$(typeset -f); restart_db"    
      fi
 done 
+
+set_pass_db
+
 echocolor DONE
