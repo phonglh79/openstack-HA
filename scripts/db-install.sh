@@ -116,11 +116,14 @@ EOF
 function set_pass_db {
         source db-config.cfg
         HOSTNAME_DB=`hostname`
-        systemctl enable mariadb.service
-        systemctl start mariadb.service
-        /usr/bin/mysqladmin -u root password 'Ec0net@!2017'
-        /usr/bin/mysqladmin -u root -h $HOSTNAME_DB password 'Ec0net@!2017'
-        /usr/bin/mysqladmin -u root -h * password 'Ec0net@!2017'
+        PASS_DATABASE_ROOT=Ec0net@!2017
+cat << EOF | mysql -uroot
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY '$PASS_DATABASE_ROOT';FLUSH PRIVILEGES;
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' IDENTIFIED BY '$PASS_DATABASE_ROOT';FLUSH PRIVILEGES;
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'$HOSTNAME_DB' IDENTIFIED BY '$PASS_DATABASE_ROOT';FLUSH PRIVILEGES;
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'127.0.0.1' IDENTIFIED BY '$PASS_DATABASE_ROOT';FLUSH PRIVILEGES;
+GRANT PROCESS ON *.* TO 'clustercheckuser'@'localhost' IDENTIFIED BY '$PASS_DATABASE_ROOT'; FLUSH PRIVILEGES;
+EOF
 }
 
 function config_galera_cluster {
@@ -193,28 +196,22 @@ do
     echocolor "Cai dat install_mariadb_galera tren $IP_ADD"
     sleep 3
     ssh root@$IP_ADD "$(typeset -f); install_mariadb_galera"   
-    #if [ "$IP_ADD" == "$DB1_IP_NIC2" ]; then
-      #echocolor "Thuc hien script set_pass_db tren $IP_ADD"
-      #sleep 3
-       #ssh root@$IP_ADD "$(typeset -f); set_pass_db"
-    #fi
     echocolor "Thuc hien script config_galera_cluster tren $IP_ADD"
     sleep 3
     ssh root@$IP_ADD "$(typeset -f); config_galera_cluster"   
 done 
 
-# echocolor "Khoi dong MariaDB Cluster "
-# sleep 3
-# for IP_ADD in $DB1_IP_NIC2 $DB2_IP_NIC2 $DB3_IP_NIC2
-# do 
-#     if [ "$IP_ADD" == "$DB1_IP_NIC2" ]; then
-#       echocolor "Thuc hien khoi dong cluster DB $IP_ADD"
-#       sleep 3
-#       galera_new_cluster
-#       echo "Day la node $IP_ADD" > testip.txt
-#     else
-#       systemctl enable mariadb.service
-#       systemctl start mariadb.service
-#     fi
-# done 
+echocolor "Khoi dong MariaDB Cluster "
+sleep 3
+for IP_ADD in $DB1_IP_NIC2 $DB2_IP_NIC2 $DB3_IP_NIC2
+do 
+    if [ "$IP_ADD" == "$DB1_IP_NIC2" ]; then
+      echocolor "Thuc hien khoi dong cluster DB $IP_ADD"
+       sleep 3
+       galera_new_cluster
+    else
+       systemctl enable mariadb.service
+       systemctl start mariadb.service
+     fi
+done 
 echocolor DONE
