@@ -1,4 +1,11 @@
 ﻿# Hướng dẫn thực hiện
+# MỤC LỤC 
+
+1. Cài đặt trên các máy chủ LB
+2. Cài đặt trên các máy chủ RABBITMQ
+3. Cài đặt trên các máy chủ DATABASE
+4. Cài đặt trên các máy chủ CONTROLLER
+
 
 ### Môi trường lab
 - OS: Centos Minimal 7.3 - 64 bit
@@ -37,8 +44,7 @@
   bash lb-add-resources.sh
   ```
 
-## 2. Cài đặt RABBITMQ Cluster
-
+## 2. Cài đặt RABBITMQ 
 ### 2.1. Thực hiện script cấu hình bonding cho các RABBITMQ
 - Đăng nhập vào máy RABBITMQ1 và thực hiện các lệnh sau.
   ```sh
@@ -66,8 +72,7 @@
   ````
   
   
-## 3. Cài đặt MariaDB Cluster
-
+## 3. Cài đặt các máy chủ DATABASE
 ### 3.1. Thực hiện script cấu hình bonding cho các MariaDB
 - Đăng nhập vào máy MariaDB1 và thực hiện các lệnh sau.
   ```sh
@@ -87,7 +92,15 @@
   bash db-bonding.sh db3 10.10.10.53 192.168.20.53
   ```
   
-## 4. Cài đặt trên các node Controller
+### 3.2. Thực hiện script cài đặt cluster cho DATABASE
+
+- Đăng nhập vào máy chủ db1 và thưc hiện script sau.
+  ````sh
+  curl -O https://raw.githubusercontent.com/congto/openstack-HA/master/scripts/db-install.sh
+  bash db-install.sh
+  ```
+  
+## 4. Cài đặt trên các node `CONTROLLER`
 
 ### 4.1. Thực hiện script cấu hình bonding cho các node CONTROLLER
 - Đứng trên máy chủ CTL1, tải và thực hiện script để cấu hình bonding
@@ -107,3 +120,6 @@
   curl -O https://raw.githubusercontent.com/congto/openstack-HA/master/scripts/ctl-bonding.sh
   bash ctl-bonding.sh ctl3 10.10.20.63 10.10.10.63 192.168.20.63 10.10.0.63
   ```
+  
+### 4.2. Thực hiện cài đặt các gói chuẩn bị.
+- Đăng nhập vào máy chủ `CTL1` và thực hiện script sau.
