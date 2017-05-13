@@ -84,7 +84,7 @@ function install_proxy() {
 }
 
 function khai_bao_host {
-        source db-config.cfg
+        source ctl-config.cfg
         echo "$CTL1_IP_NIC3 ctl1" >> /etc/hosts
         echo "$CTL2_IP_NIC3 ctl2" >> /etc/hosts
         echo "$CTL3_IP_NIC3 ctl3" >> /etc/hosts
