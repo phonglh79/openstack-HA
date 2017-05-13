@@ -119,13 +119,11 @@ sed -i 's/server 1.centos.pool.ntp.org iburst/#/g' /etc/chrony.conf
 sed -i 's/server 2.centos.pool.ntp.org iburst/#/g' /etc/chrony.conf
 sed -i 's/server 3.centos.pool.ntp.org iburst/#/g' /etc/chrony.conf
 EOF
-          fi
-           ssh root@$IP_ADD << EOF
-echocolor "Khoi dong lai ntp va kiem tra dong bo tren `hostname`" "
-systemctl enable chronyd.service"
-systemctl start chronyd.service"
-chronyc sources"
-EOF
+          fi  
+          ssh root@$IP_ADD "echocolor "Khoi dong lai ntp cho `hostname`" "
+          ssh root@$IP_ADD "systemctl enable chronyd.service"
+          ssh root@$IP_ADD "systemctl start chronyd.service"
+          ssh root@$IP_ADD "chronyc sources"
         done        
 }
 
@@ -161,7 +159,6 @@ do
     echocolor "Cai dat install_repo tren $IP_ADD"
     sleep 3
     ssh root@$IP_ADD "$(typeset -f); install_repo"  
-    
     if [ "$IP_ADD" == "$CTL1_IP_NIC3" ]; then
       echocolor "Cai dat khai_bao_host tren $IP_ADD"
       sleep 3
