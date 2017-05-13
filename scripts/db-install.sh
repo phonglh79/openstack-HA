@@ -208,9 +208,13 @@ do
        sleep 3
        galera_new_cluster
     else 
+      echocolor "Thuc hien khoi dong tren $IP_ADD"
       ssh root@$IP_ADD "$(typeset -f); restart_db"    
      fi
 done 
+
+echocolor "Dat mat khau cho DB MariaDB Cluster "
+sleep 3
 
 set_pass_db
 
