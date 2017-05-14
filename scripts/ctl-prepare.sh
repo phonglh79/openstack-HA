@@ -110,6 +110,11 @@ server 3.asia.pool.ntp.org iburst/g' /etc/chrony.conf
                   sed -i 's/server 2.centos.pool.ntp.org iburst/#/g' /etc/chrony.conf
                   sed -i 's/server 3.centos.pool.ntp.org iburst/#/g' /etc/chrony.conf
                   sed -i 's/#allow 192.168\/16/allow 192.168.20.0\/24/g' /etc/chrony.conf
+                  echocolor "Khoi dong NTP tren`hostname`"                  
+                  systemctl enable chronyd.service
+                  systemctl start chronyd.service
+                  chronyc sources
+                  echo "CONG TO" > test3.txt
           else 
                   
                   ssh root@$IP_ADD << EOF
@@ -118,13 +123,13 @@ sed -i 's/server 0.centos.pool.ntp.org iburst/server $CTL1_IP_NIC3 iburst/g' /et
 sed -i 's/server 1.centos.pool.ntp.org iburst/#/g' /etc/chrony.conf
 sed -i 's/server 2.centos.pool.ntp.org iburst/#/g' /etc/chrony.conf
 sed -i 's/server 3.centos.pool.ntp.org iburst/#/g' /etc/chrony.conf
+echocolor "Khoi dong NTP tren`hostname`"                  
+systemctl enable chronyd.service
+systemctl start chronyd.service
+chronyc sources
+echo "Cong" > test1.txt
 EOF
           fi  
-          ssh root@$IP_ADD "systemctl enable chronyd.service"
-          ssh root@$IP_ADD "systemctl start chronyd.service"
-          ssh root@$IP_ADD "chronyc sources"
-          ssh root@$IP_ADD "echo "Cong" > test1.txt"
-          
         done        
 }
 
