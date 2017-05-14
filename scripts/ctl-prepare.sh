@@ -113,22 +113,20 @@ server 3.asia.pool.ntp.org iburst/g' /etc/chrony.conf
                   echocolor "Khoi dong NTP tren`hostname`"                  
                   systemctl enable chronyd.service
                   systemctl start chronyd.service
+                  systemctl restart chronyd.service
                   chronyc sources
-                  echo "CONG TO" > test3.txt
           else 
+                  echocolor "Cau hinh NTP cho $IP_ADD"               
+                  ssh root@$IP_ADD << EOF               
                   
-                  ssh root@$IP_ADD << EOF
-source ctl-config.cfg                  
-echocolor "Cau hinh NTP cho `hostname`"                  
 sed -i 's/server 0.centos.pool.ntp.org iburst/server $CTL1_IP_NIC3 iburst/g' /etc/chrony.conf
 sed -i 's/server 1.centos.pool.ntp.org iburst/#/g' /etc/chrony.conf
 sed -i 's/server 2.centos.pool.ntp.org iburst/#/g' /etc/chrony.conf
 sed -i 's/server 3.centos.pool.ntp.org iburst/#/g' /etc/chrony.conf
-echocolor "Khoi dong NTP tren`hostname`"                  
 systemctl enable chronyd.service
 systemctl start chronyd.service
+systemctl restart chronyd.service
 chronyc sources
-echo "Cong" > test1.txt
 EOF
           fi  
         done        
