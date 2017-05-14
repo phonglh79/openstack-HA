@@ -118,6 +118,7 @@ server 3.asia.pool.ntp.org iburst/g' /etc/chrony.conf
           else 
                   
                   ssh root@$IP_ADD << EOF
+source ctl-config.cfg                  
 echocolor "Cau hinh NTP cho `hostname`"                  
 sed -i 's/server 0.centos.pool.ntp.org iburst/server $CTL1_IP_NIC3 iburst/g' /etc/chrony.conf
 sed -i 's/server 1.centos.pool.ntp.org iburst/#/g' /etc/chrony.conf
