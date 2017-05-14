@@ -109,7 +109,7 @@ function install_mariadb_galera {
         source db-config.cfg
         IP_ADD_MNGT=`ip -o -4 addr show dev bond1 | sed 's/.* inet \([^/]*\).*/\1/'`
         HOSTNAME_DB=`hostname`
-        yum -y install mariadb-server rsync xinetd crudini
+        yum -y install mariadb mariadb-server python2-PyMySQL rsync xinetd crudini
         
 cat << EOF > /etc/my.cnf.d/openstack.cnf
 [mysqld]
