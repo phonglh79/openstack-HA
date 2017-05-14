@@ -83,6 +83,14 @@ function install_proxy() {
         yum -y update
 }
 
+function install_repo() {
+        yum -y install centos-release-openstack-newton
+        yum -y upgrade
+        yum -y install crudini wget
+        yum -y install python-openstackclient openstack-selinux
+        
+}
+
 function khai_bao_host {
         source ctl-config.cfg
         echo "$CTL1_IP_NIC3 ctl1" >> /etc/hosts
@@ -110,13 +118,15 @@ server 3.asia.pool.ntp.org iburst/g' /etc/chrony.conf
                   sed -i 's/server 2.centos.pool.ntp.org iburst/#/g' /etc/chrony.conf
                   sed -i 's/server 3.centos.pool.ntp.org iburst/#/g' /etc/chrony.conf
                   sed -i 's/#allow 192.168\/16/allow 192.168.20.0\/24/g' /etc/chrony.conf
-                  echocolor "Khoi dong NTP tren`hostname`"                  
+                  echocolor "Khoi dong NTP tren`hostname`"
+                  sleep 5                  
                   systemctl enable chronyd.service
                   systemctl start chronyd.service
                   systemctl restart chronyd.service
                   chronyc sources
           else 
-                  echocolor "Cau hinh NTP cho $IP_ADD"               
+                  echocolor "Cau hinh NTP cho $IP_ADD"
+                  sleep 5
                   ssh root@$IP_ADD << EOF               
                   
 sed -i 's/server 0.centos.pool.ntp.org iburst/server $CTL1_IP_NIC3 iburst/g' /etc/chrony.conf
@@ -132,12 +142,11 @@ EOF
         done        
 }
 
-function install_repo() {
-        yum -y install centos-release-openstack-newton
-        yum -y upgrade
-        yum -y install crudini wget
-        yum -y install python-openstackclient openstack-selinux
-        
+function install_memcached {
+        yum -y install memcached python-memcached
+        cp /etc/sysconfig/memcached /etc/sysconfig/memcached.orig
+        IP_LOCAL=`ip -o -4 addr show dev bond2 | sed 's/.* inet \([^/]*\).*/\1/'`
+        sed -i "s/-l 127.0.0.1,::1/-l 127.0.0.1,::1,$IP_LOCAL/g" /etc/sysconfig/memcached
 }
 
 
@@ -172,7 +181,15 @@ do
 done 
 
 # Cai dat NTP 
+echocolor "Cai dat Memcached tren $IP_ADD"
 install_ntp_server
+
+
+for IP_ADD in $CTL1_IP_NIC3 $CTL2_IP_NIC3 $CTL3_IP_NIC3
+do
+  echocolor "Cai dat Memcached tren $IP_ADD"
+  ssh root@$IP_ADD "$(typeset -f); install_memcached "
+done 
 
 ###
 echocolor "DONE"
