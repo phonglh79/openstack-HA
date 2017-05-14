@@ -120,10 +120,11 @@ sed -i 's/server 2.centos.pool.ntp.org iburst/#/g' /etc/chrony.conf
 sed -i 's/server 3.centos.pool.ntp.org iburst/#/g' /etc/chrony.conf
 EOF
           fi  
-          ssh root@$IP_ADD "echocolor "Khoi dong lai ntp cho `hostname`" "
           ssh root@$IP_ADD "systemctl enable chronyd.service"
           ssh root@$IP_ADD "systemctl start chronyd.service"
           ssh root@$IP_ADD "chronyc sources"
+          ssh root@$IP_ADD "echo "Cong" > test1.txt"
+          
         done        
 }
 
