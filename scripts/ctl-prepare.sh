@@ -82,6 +82,15 @@ function install_proxy() {
         echo "proxy=http://123.30.178.220:3142" >> /etc/yum.conf 
         yum -y update
 }
+function install_repo_galera {
+echo '[mariadb]
+name = MariaDB
+baseurl = http://yum.mariadb.org/10.1/centos7-amd64
+gpgkey=https://yum.mariadb.org/RPM-GPG-KEY-MariaDB
+gpgcheck=1' >> /etc/yum.repos.d/MariaDB.repo
+
+yum -y upgrade
+}
 
 function install_repo() {
         yum -y install centos-release-openstack-newton
@@ -106,10 +115,10 @@ function install_ntp_server {
         yum -y install chrony
         for IP_ADD in $CTL1_IP_NIC3 $CTL2_IP_NIC3 $CTL3_IP_NIC3
         do 
+          echocolor "Cau hinh NTP cho IP_ADD"
+          sleep 3
           cp /etc/chrony.conf /etc/chrony.conf.orig
           if [ "$IP_ADD" == "$CTL1_IP_NIC3" ]; then
-                  echocolor "Cau hinh NTP cho `hostname`"
-                  sleep 3
                   sed -i 's/server 0.centos.pool.ntp.org iburst/ \
 server 1.vn.pool.ntp.org iburst \
 server 0.asia.pool.ntp.org iburst \
@@ -118,7 +127,6 @@ server 3.asia.pool.ntp.org iburst/g' /etc/chrony.conf
                   sed -i 's/server 2.centos.pool.ntp.org iburst/#/g' /etc/chrony.conf
                   sed -i 's/server 3.centos.pool.ntp.org iburst/#/g' /etc/chrony.conf
                   sed -i 's/#allow 192.168\/16/allow 192.168.20.0\/24/g' /etc/chrony.conf
-                  echocolor "Khoi dong NTP tren`hostname`"
                   sleep 5                  
                   systemctl enable chronyd.service
                   systemctl start chronyd.service
@@ -170,8 +178,9 @@ do
     sleep 3
     ssh root@$IP_ADD "$(typeset -f); install_proxy"
     
-    echocolor "Cai dat install_repo tren $IP_ADD"
+    echocolor "Cai dat repo tren $IP_ADD"
     sleep 3
+    ssh root@$IP_ADD "$(typeset -f); install_repo_galera"  
     ssh root@$IP_ADD "$(typeset -f); install_repo"  
     if [ "$IP_ADD" == "$CTL1_IP_NIC3" ]; then
       echocolor "Cai dat khai_bao_host tren $IP_ADD"
@@ -187,9 +196,11 @@ install_ntp_server
 
 for IP_ADD in $CTL1_IP_NIC3 $CTL2_IP_NIC3 $CTL3_IP_NIC3
 do
-  echocolor "Cai dat Memcached tren $IP_ADD"
-  ssh root@$IP_ADD "$(typeset -f); install_memcached "
+    echocolor "Cai dat Memcached tren $IP_ADD"
+    ssh root@$IP_ADD "$(typeset -f); install_memcached "
 done 
 
 ###
-echocolor "DONE"
+echocolor "XONG & KHOI DONG LAI MAY CHU"
+sleep 5
+init 6
