@@ -123,3 +123,17 @@
   
 ### 4.2. Thực hiện cài đặt các gói chuẩn bị.
 - Đăng nhập vào máy chủ `CTL1` và thực hiện script sau.
+  ```sh
+  curl -O https://raw.githubusercontent.com/congto/openstack-HA/master/scripts/ctl-prepare.sh
+  bash ctl-prepare.sh
+  ```
+
+### 4.3. Thực hiện cài đặt keystone 
+
+- Tải script cài đặt keystone 
+  ```sh
+  curl -O https://raw.githubusercontent.com/congto/openstack-HA/master/scripts/ctl-keystone.sh
+  bash ctl-keystone.sh
+  ```
+
+
