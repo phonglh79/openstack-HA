@@ -95,7 +95,7 @@
 ### 3.2. Thực hiện script cài đặt cluster cho DATABASE
 
 - Đăng nhập vào máy chủ db1 và thưc hiện script sau.
-  ````sh
+  ```sh
   curl -O https://raw.githubusercontent.com/congto/openstack-HA/master/scripts/db-install.sh
   bash db-install.sh
   ```
