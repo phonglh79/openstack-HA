@@ -37,10 +37,17 @@ GRANT ALL PRIVILEGES ON keystone.* TO 'keystone'@'%' IDENTIFIED BY '"$PASS_DATAB
 FLUSH PRIVILEGES;"
 }
 
-function install_keystone {
+function keystone_install {
         yum -y install openstack-keystone httpd mod_wsgi
         cp /etc/keystone/keystone.conf /etc/keystone/keystone.conf.orig
+        
 }
+
+function keystone_config {
+          /etc/keystone/keystone.conf=keystone_conf
+          ops_edit $keystone_conf database connection mysql+pymysql://keystone:$PASS_DATABASE_KEYSTONE@$virtual_ip/keystone"
+}
+
 
 ############################
 # Thuc thi cac functions
@@ -52,3 +59,4 @@ sleep 3
 echocolor "Tao DB keystone"
 sleep 3
 create_keystone_db
+

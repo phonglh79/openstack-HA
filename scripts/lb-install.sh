@@ -7,12 +7,15 @@ cat <<EOF> /root/lb-config.cfg
 LB1_HOSTNAME=lb1
 LB2_HOSTNAME=lb2
 
-
 ##IP Address
+### IP VIP
+IP_VIP_ADMIN=192.168.20.30
+IP_VIP_DB=10.10.10.30
+IP_VIP_API=10.10.20.30
+
 ###IP cho bond0 cho cac may LoadBalancer
 LB1_IP_NIC1=10.10.20.31
 LB2_IP_NIC1=10.10.20.31
-
 
 ###IP cho bond1 cho cac may LoadBalancer
 LB1_IP_NIC2=10.10.10.31
@@ -27,7 +30,7 @@ LB1_IP_NIC4=192.168.40.31
 LB2_IP_NIC4=192.168.40.32
 
 ###MAT KHAU
-PASS_CLUSTER=Ec0net@!2017
+PASS_CLUSTER='Ec0net@!2017'
 
 EOF
 

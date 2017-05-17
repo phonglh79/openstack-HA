@@ -60,6 +60,52 @@ PASS_DATABASE_GLANCE=PASS_DATABASE_ROOT
 PASS_DATABASE_CEILOMTER=PASS_DATABASE_ROOT
 PASS_DATABASE_AODH=PASS_DATABASE_ROOT
 PASS_DATABASE_GNOCCHI=PASS_DATABASE_ROOT
+
+### Hostname cho cac may rabbitmq
+MQ1_HOSTNAME=mq1
+MQ2_HOSTNAME=mq2
+MQ3_HOSTNAME=mq3
+
+## IP Address
+### IP cho bond0 cho cac may rabbitmq
+MQ1_IP_NIC1=10.10.10.41
+MQ2_IP_NIC1=10.10.10.42
+MQ3_IP_NIC1=10.10.10.43
+
+### IP cho bond1 cho cac may rabbitmq
+MQ1_IP_NIC2=192.168.20.41
+MQ2_IP_NIC2=192.168.20.42
+MQ3_IP_NIC2=192.168.20.43
+
+### Hostname cho cac may LoadBalancer
+LB1_HOSTNAME=lb1
+LB2_HOSTNAME=lb2
+
+##IP Address
+### IP VIP
+IP_VIP_ADMIN=192.168.20.30
+IP_VIP_DB=10.10.10.30
+IP_VIP_API=10.10.20.30
+
+###IP cho bond0 cho cac may LoadBalancer
+LB1_IP_NIC1=10.10.20.31
+LB2_IP_NIC1=10.10.20.31
+
+###IP cho bond1 cho cac may LoadBalancer
+LB1_IP_NIC2=10.10.10.31
+LB2_IP_NIC2=10.10.10.32
+
+###IP cho bond2 cho cac may LoadBalancer
+LB1_IP_NIC3=192.168.20.31
+LB2_IP_NIC3=192.168.20.32
+
+###IP cho bond3 cho cac may LoadBalancer
+LB1_IP_NIC4=192.168.40.31
+LB2_IP_NIC4=192.168.40.32
+
+###MAT KHAU
+PASS_CLUSTER='Ec0net@!2017'
+
 EOF
 
 chmod +x ctl-config.cfg
