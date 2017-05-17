@@ -1,3 +1,35 @@
+
+
+## C. Xử lý lỗi và các lệnh kiểm tra
+### C.1. Xử lý tình huống các node galera không start được
+- Log sau khi các 3 node bị reboot đồng thời: http://paste.openstack.org/raw/609728/
+- Hoặc kiểm tra trạng thái của mariadb sẽ có kết quả: http://paste.openstack.org/raw/609729/
+- Xử lý lỗi khi reboot đồng thời cụm database - galera (reboot mà ko chờ các node up).
+  - Xem nội dung file `/var/lib/mysql/grastate.dat` trên tất cả các máy trong cluster, máy nào có dòng `safe_to_bootstrap:` với giá trị lớn hơn (thường là `1`) thì thực hiện lệnh
+    ```sh
+    galera_new_cluster
+    ```
+  - Sau khi xử lý xong sẽ có log ở `/var/log/messages` như sau: http://paste.openstack.org/raw/609730/
+- Tiếp tục thực hiện restart mariadb trên các node còn lại để join cluster ` systemctl restart mariadb`
+- Sau khi join lại xong, kiểm tra bằng lệnh sau để xem số node trong cluter đã ok hay chưa ()
+  ```sh
+  mysql -u root -p -e "SHOW STATUS LIKE 'wsrep_cluster_size'"
+  ```
+  - Kết quả lệnh trên như sau:
+    ```sh
+    [root@db3 ~]# mysql -u root -p -e "SHOW STATUS LIKE 'wsrep_cluster_size'"
+    Enter password:
+    +--------------------+-------+
+    | Variable_name      | Value |
+    +--------------------+-------+
+    | wsrep_cluster_size | 3     |
+    +--------------------+-------+
+    [root@db3 ~]#
+    ```
+
+### Khác
+``
+`
 if [ "$1" == "controller" ]; then
       echo "$HOST_CTL" > $path_hostname
       hostname -F $path_hostname
@@ -83,38 +115,7 @@ crudini --set /etc/keystone/keystone.conf database connection mysql+pymysql://ke
 
 
 PASS_DATABASE_KEYSTONE='Ec0net@!20171
-
-
-## C. Xử lý lỗi và các lệnh kiểm tra
-### C.1. Xử lý tình huống các node galera không start được
-- Log sau khi các 3 node bị reboot đồng thời: http://paste.openstack.org/raw/609728/
-- Hoặc kiểm tra trạng thái của mariadb sẽ có kết quả: http://paste.openstack.org/raw/609729/
-- Xử lý lỗi khi reboot đồng thời cụm database - galera (reboot mà ko chờ các node up).
-  - Xem nội dung file `/var/lib/mysql/grastate.dat` trên tất cả các máy trong cluster, máy nào có dòng `safe_to_bootstrap:` với giá trị lớn hơn (thường là `1`) thì thực hiện lệnh
-    ```sh
-    galera_new_cluster
-    ```
-  - Sau khi xử lý xong sẽ có log ở `/var/log/messages` như sau: http://paste.openstack.org/raw/609730/
-- Tiếp tục thực hiện restart mariadb trên các node còn lại để join cluster ` systemctl restart mariadb`
-- Sau khi join lại xong, kiểm tra bằng lệnh sau để xem số node trong cluter đã ok hay chưa ()
-  ```sh
-  mysql -u root -p -e "SHOW STATUS LIKE 'wsrep_cluster_size'"
-  ```
-  - Kết quả lệnh trên như sau:
-    ```sh
-    [root@db3 ~]# mysql -u root -p -e "SHOW STATUS LIKE 'wsrep_cluster_size'"
-    Enter password:
-    +--------------------+-------+
-    | Variable_name      | Value |
-    +--------------------+-------+
-    | wsrep_cluster_size | 3     |
-    +--------------------+-------+
-    [root@db3 ~]#
-    ```
-
-
-
-
+```
 
 
 
