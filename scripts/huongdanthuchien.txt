@@ -43,3 +43,74 @@ Chay script bonding tren cac may LB
 
 bash lb-bonding.sh lb1 10.10.20.31 10.10.10.31 192.168.20.31 192.168.40.31
 bash lb-bonding.sh lb2 10.10.20.32 10.10.10.32 192.168.20.32 192.168.40.32
+
+
+### Ghi chep ve add resource cho pacemaker
+echo IP_VIP_API=10.10.20.30 >> lb-config.cfg 
+echo IP_VIP_DB=10.10.10.30 >> lb-config.cfg 
+echo IP_VIP_ADMIN=192.168.20.30 >> lb-config.cfg 
+
+pcs resource create Virtual_IP_API ocf:heartbeat:IPaddr2 ip=10.10.20.30 cidr_netmask=32 op monitor interval=30s
+pcs resource create Virtual_IP_MNGT ocf:heartbeat:IPaddr2 ip=192.168.20.30 cidr_netmask=32 op monitor interval=30s
+pcs resource create Virtual_IP_DB ocf:heartbeat:IPaddr2 ip=10.10.10.30 cidr_netmask=32 op monitor interval=30s
+pcs resource create Web_Cluster ocf:heartbeat:nginx configfile=/etc/nginx/nginx.conf status10url op monitor interval=5s
+
+pcs constraint colocation add Web_Cluster with Virtual_IP_API INFINITY        
+pcs constraint colocation add Web_Cluster with Virtual_IP_DB INFINITY     
+pcs constraint colocation add Web_Cluster with Virtual_IP_MNGT INFINITY     
+
+pcs constraint order Virtual_IP_API then Web_Cluster
+pcs constraint order Virtual_IP_API then Web_Cluster
+pcs constraint order Virtual_IP_MNGT then Web_Cluster   
+
+
+# pcs resource clone Web_Cluster globally-unique=true clone-max=2 clone-node-max=2
+pcs constraint colocation add Web_Cluster with Virtual_IP_API INFINITY        
+pcs constraint order Virtual_IP_API then Web_Cluster
+pcs constraint order Virtual_IP_DB then Web_Cluster
+
+
+
+#### Node keystone
+
+ mysql+pymysql://keystone:KEYSTONE_DBPASS@controller/keystone
+
+PASS_DATABASE_KEYSTONE='Ec0net@!20171
+mysql+pymysql://keystone:Ec0net@!20171@10.10.10.30/keystone
+
+
+crudini --set /etc/keystone/keystone.conf database connection mysql+pymysql://keystone:'Ec0net@!2017'@10.10.10.30/keystone
+
+
+PASS_DATABASE_KEYSTONE='Ec0net@!20171
+
+
+## C. Xử lý lỗi và các lệnh kiểm tra
+### C.1. Xử lý tình huống các node galera không start được
+- Log sau khi các 3 node bị reboot đồng thời: http://paste.openstack.org/raw/609728/
+- Hoặc kiểm tra trạng thái của mariadb sẽ có kết quả: http://paste.openstack.org/raw/609729/
+- Xử lý lỗi khi reboot đồng thời cụm database - galera (reboot mà ko chờ các node up).
+  - Xem nội dung file `/var/lib/mysql/grastate.dat` trên tất cả các máy trong cluster, máy nào có dòng `safe_to_bootstrap:` với giá trị lớn hơn (thường là `1`) thì thực hiện lệnh
+  ```sh
+  galera_new_cluster
+  ```
+  - Sau khi xử lý xong sẽ có log ở `/var/log/messages` như sau: http://paste.openstack.org/raw/609730/
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

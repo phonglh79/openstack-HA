@@ -37,6 +37,11 @@ GRANT ALL PRIVILEGES ON keystone.* TO 'keystone'@'%' IDENTIFIED BY '"$PASS_DATAB
 FLUSH PRIVILEGES;"
 }
 
+function install_keystone {
+        yum -y install openstack-keystone httpd mod_wsgi
+        cp /etc/keystone/keystone.conf /etc/keystone/keystone.conf.orig
+}
+
 ############################
 # Thuc thi cac functions
 ## Goi cac functions

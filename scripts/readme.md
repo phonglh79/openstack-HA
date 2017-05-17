@@ -129,7 +129,7 @@
   ```
 
 ### 4.3. Thực hiện cài đặt keystone 
-
+- Bước này thực hiện trên máy chủ CTL1 (CONTROLLER1)
 - Tải script cài đặt keystone 
   ```sh
   curl -O https://raw.githubusercontent.com/congto/openstack-HA/master/scripts/ctl-keystone.sh
