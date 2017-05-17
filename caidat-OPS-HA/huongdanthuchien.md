@@ -6,6 +6,7 @@
 - Hoặc kiểm tra trạng thái của mariadb sẽ có kết quả: http://paste.openstack.org/raw/609729/
 - Xử lý lỗi khi reboot đồng thời cụm database - galera (reboot mà ko chờ các node up).
   - Xem nội dung file `/var/lib/mysql/grastate.dat` trên tất cả các máy trong cluster, máy nào có dòng `safe_to_bootstrap:` với giá trị lớn hơn (thường là `1`) thì thực hiện lệnh
+  
     ```sh
     galera_new_cluster
     ```
