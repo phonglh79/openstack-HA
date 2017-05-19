@@ -113,10 +113,45 @@ mysql+pymysql://keystone:Ec0net@!20171@10.10.10.30/keystone
 
 
 crudini --set /etc/keystone/keystone.conf database connection mysql+pymysql://keystone:'Ec0net@!2017'@10.10.10.30/keystone
+crudini --set /etc/keystone/keystone.conf database connection mysql+pymysql://keystone:'Ec0net@!2017'@10.10.10.53/keystone
 
+
+
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY '$PASS_DATABASE_ROOT';FLUSH PRIVILEGES;
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' IDENTIFIED BY '$PASS_DATABASE_ROOT';FLUSH PRIVILEGES;
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'192.168.20.61' IDENTIFIED BY '$PASS_DATABASE_ROOT' WITH GRANT OPTION ;FLUSH PRIVILEGES;
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'192.168.20.62' IDENTIFIED BY '$PASS_DATABASE_ROOT' WITH GRANT OPTION ;FLUSH PRIVILEGES;
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'192.168.20.63' IDENTIFIED BY '$PASS_DATABASE_ROOT' WITH GRANT OPTION ;FLUSH PRIVILEGES;
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'127.0.0.1' IDENTIFIED BY '$PASS_DATABASE_ROOT';FLUSH PRIVILEGES;
+
+
+GRANT ALL PRIVILEGES ON keystone.* TO 'keystone'@'localhost' IDENTIFIED BY 'Welcome123' WITH GRANT OPTION; FLUSH PRIVILEGES;
+GRANT ALL PRIVILEGES ON keystone.* TO 'keystone'@'%' IDENTIFIED BY 'Welcome123' WITH GRANT OPTION; FLUSH PRIVILEGES;
+
+
+GRANT ALL PRIVILEGES ON keystone.* TO 'keystone'@'%' IDENTIFIED BY 'Ec0net@!2017' WITH GRANT OPTION; FLUSH PRIVILEGES;
+FLUSH PRIVILEGES;"
+
+
+PASS_DATABASE_ROOT='Ec0net@!2017'
+PASS_DATABASE_KEYSTONE=PASS_DATABASE_ROOT
+DB1_IP_NIC2=192.168.20.51
+mysql -uroot -p'Ec0net@!20171' -h 192.168.20.51 -e "CREATE DATABASE keystone;
+GRANT ALL PRIVILEGES ON keystone.* TO 'keystone'@'localhost' IDENTIFIED BY 'Ec0net@!20171';
+GRANT ALL PRIVILEGES ON keystone.* TO 'keystone'@'%' IDENTIFIED BY 'Ec0net@!20171';
+FLUSH PRIVILEGES;"
 
 PASS_DATABASE_KEYSTONE='Ec0net@!20171
-```
+
+
+slmgr /skms active.orientsoftware.asia
+slmgr /ato
+
+http://prntscr.com/f93zk6
+
+connection = mysql+pymysql://keystone:Ec0net@!2017@10.10.10.30/keystone
+su -s /bin/sh -c "keystone-manage db_sync" keystone
+
 
 
 

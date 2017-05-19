@@ -18,6 +18,8 @@ MQ3_IP_NIC1=10.10.10.43
 MQ1_IP_NIC2=192.168.20.41
 MQ2_IP_NIC2=192.168.20.42
 MQ3_IP_NIC2=192.168.20.43
+
+PASS_RABBIT='Ec0net#!2017'
 EOF
 
 source mq-config.cfg 
@@ -81,7 +83,7 @@ function install_rabbitmq() {
 
 function config_rabbitmq() {
         source mq-config.cfg
-        rabbitmqctl add_user openstack Welcome123
+        rabbitmqctl add_user openstack $PASS_RABBIT
         rabbitmqctl set_permissions openstack ".*" ".*" ".*"
         rabbitmqctl set_user_tags openstack administrator
         rabbitmqctl set_policy ha-all '^(?!amq\.).*' '{"ha-mode": "all"}'          
