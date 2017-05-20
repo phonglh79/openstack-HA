@@ -78,9 +78,15 @@ function khai_bao_host() {
 }
 
 function install_nginx {
-        yum install -y wget 
-        yum install -y epel-release
-        yum --enablerepo=epel -y install nginx
+        yum -y install wget 
+cat << EOF > /etc/yum.repos.d/nginx.repo
+[nginx]
+name=nginx repo
+baseurl=http://nginx.org/packages/centos/$releasever/$basearch/
+gpgcheck=0
+enabled=1
+EOF
+        yum -y install nginx
         systemctl start nginx 
         systemctl enable nginx
 cat << EOF > /usr/share/nginx/html/index.html
