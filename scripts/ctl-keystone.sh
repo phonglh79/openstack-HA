@@ -39,21 +39,28 @@ FLUSH PRIVILEGES;"
 
 function keystone_install {
         yum -y install openstack-keystone httpd mod_wsgi
-        cp /etc/keystone/keystone.conf /etc/keystone/keystone.conf.orig
-        
+       
 }
 
 function keystone_config {
-          /etc/keystone/keystone.conf=keystone_conf
-          ops_edit $keystone_conf database connection mysql+pymysql://keystone:$PASS_DATABASE_KEYSTONE@$virtual_ip/keystone
-          ops_edit $keystone_conf token provider fernet         
+        /etc/keystone/keystone.conf=keystone_conf
+        cp $keystone_conf $keystone_conf.orig        
+        ops_edit $keystone_conf database connection mysql+pymysql://keystone:$PASS_DATABASE_KEYSTONE@$virtual_ip/keystone
+        ops_edit $keystone_conf token provider fernet
+        for IP_ADD in $CTL1_IP_NIC3 $CTL2_IP_NIC3 $CTL3_IP_NIC3
+        do
+                scp $keystone_conf root@$IP_ADD:/etc/keystone/
+        done
 }
 
-function keystone_create {
+
+function keystone_create_fernet {
           su -s /bin/sh -c "keystone-manage db_sync" keystone
           keystone-manage fernet_setup --keystone-user keystone --keystone-group keystone
           keystone-manage credential_setup --keystone-user keystone --keystone-group keystone
+}
 
+function keystone_bootstrap {
           keystone-manage bootstrap --bootstrap-password $ADMIN_PASS \
           --bootstrap-admin-url http://$IP_VIP_API:35357/v3/ \
           --bootstrap-internal-url http://$IP_VIP_API:5000/v3/ \
@@ -68,6 +75,17 @@ function keystone_install_http {
           systemctl start httpd.service
 }
 
+function keystone_create_adminrc {
+            echo "OS_USERNAME=admin" > /root/adminrc
+            echo "OS_PASSWORD=ADMIN_PASS" >> /root/adminrc
+            echo "OS_PROJECT_NAME=admin"  >> /root/adminrc
+            echo "OS_USER_DOMAIN_NAME=Default"  >> /root/adminrc
+            echo "OS_PROJECT_DOMAIN_NAME=Default"  >> /root/adminrc
+            echo "OS_AUTH_URL=http://$IP_VIP_API:35357/v3" >> /root/adminrc
+            echo "OS_IDENTITY_API_VERSION=3" >> /root/adminrc
+}
+
+
 ############################
 # Thuc thi cac functions
 ## Goi cac functions
@@ -79,5 +97,19 @@ echocolor "Tao DB keystone"
 sleep 3
 create_keystone_db
 
-echocolor "Cau hinh keystone"
+echocolor "Cai dat keystone"
 sleep 3
+for IP_ADD in $CTL1_IP_NIC3 $CTL2_IP_NIC3 $CTL3_IP_NIC3
+do
+    echocolor "Cai dat proxy tren $IP_ADD"
+    sleep 3
+    ssh root@$IP_ADD "$(typeset -f); keystone_install"
+done
+
+echocolor "Config keystone"
+sleep 3
+keystone_config
+
+echocolor "Tao fernet key"
+sleep 3
+keystone_create_fernet
