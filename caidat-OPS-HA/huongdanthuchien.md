@@ -115,9 +115,9 @@ mysql+pymysql://keystone:Ec0net@!20171@10.10.10.30/keystone
 crudini --set /etc/keystone/keystone.conf database connection mysql+pymysql://keystone:'Ec0net@!2017'@10.10.10.30/keystone
 crudini --set /etc/keystone/keystone.conf database connection mysql+pymysql://keystone:'Ec0net@!2017'@10.10.10.53/keystone
 
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'Ec0net@!2017' WITH GRANT OPTION ;FLUSH PRIVILEGES;
 
-
-GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY '$PASS_DATABASE_ROOT';FLUSH PRIVILEGES;
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY '$PASS_DATABASE_ROOT' ;FLUSH PRIVILEGES;
 GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' IDENTIFIED BY '$PASS_DATABASE_ROOT';FLUSH PRIVILEGES;
 GRANT ALL PRIVILEGES ON *.* TO 'root'@'192.168.20.61' IDENTIFIED BY '$PASS_DATABASE_ROOT' WITH GRANT OPTION ;FLUSH PRIVILEGES;
 GRANT ALL PRIVILEGES ON *.* TO 'root'@'192.168.20.62' IDENTIFIED BY '$PASS_DATABASE_ROOT' WITH GRANT OPTION ;FLUSH PRIVILEGES;
@@ -136,12 +136,16 @@ FLUSH PRIVILEGES;"
 PASS_DATABASE_ROOT='Ec0net@!2017'
 PASS_DATABASE_KEYSTONE=PASS_DATABASE_ROOT
 DB1_IP_NIC2=192.168.20.51
-mysql -uroot -p'Ec0net@!20171' -h 192.168.20.51 -e "CREATE DATABASE keystone;
-GRANT ALL PRIVILEGES ON keystone.* TO 'keystone'@'localhost' IDENTIFIED BY 'Ec0net@!20171';
-GRANT ALL PRIVILEGES ON keystone.* TO 'keystone'@'%' IDENTIFIED BY 'Ec0net@!20171';
-FLUSH PRIVILEGES;"
+mysql -uroot -p$PASS_DATABASE_ROOT -h $DB1_IP_NIC2 -e "CREATE DATABASE keystone;
 
-PASS_DATABASE_KEYSTONE='Ec0net@!20171
+CREATE DATABASE keystone;
+GRANT ALL PRIVILEGES ON keystone.* TO 'keystone'@'localhost' IDENTIFIED BY 'Ec0net#!2017';
+GRANT ALL PRIVILEGES ON keystone.* TO 'keystone'@'%' IDENTIFIED BY 'Ec0net#!2017';
+FLUSH PRIVILEGES;
+
+"
+
+PASS_DATABASE_KEYSTONE='Ec0net@!2017'
 
 
 slmgr /skms active.orientsoftware.asia
@@ -150,17 +154,42 @@ slmgr /ato
 http://prntscr.com/f93zk6
 
 connection = mysql+pymysql://keystone:Ec0net@!2017@10.10.10.30/keystone
+
 su -s /bin/sh -c "keystone-manage db_sync" keystone
 
+keystone-manage fernet_setup --keystone-user keystone --keystone-group keystone
+keystone-manage credential_setup --keystone-user keystone --keystone-group keystone
+
+
+keystone-manage bootstrap --bootstrap-password Welcome123 \
+  --bootstrap-admin-url http://10.10.20.61:35357/v3/ \
+  --bootstrap-internal-url http://10.10.20.61:35357/v3/ \
+  --bootstrap-public-url http://10.10.20.61:5000/v3/ \
+  --bootstrap-region-id RegionOne
 
 
 
+keystone-manage bootstrap --bootstrap-password Welcome123 \
+  --bootstrap-admin-url http://10.10.20.6:35357/v3/ \
+  --bootstrap-internal-url http://10.10.20.30:35357/v3/ \
+  --bootstrap-public-url http://10.10.20.30:5000/v3/ \
+  --bootstrap-region-id RegionOne
+  
+  
+export OS_USERNAME=admin
+export OS_PASSWORD=Ec0net#!2017
+export OS_PROJECT_NAME=admin
+export OS_USER_DOMAIN_NAME=Default
+export OS_PROJECT_DOMAIN_NAME=Default
+export OS_AUTH_URL=http://10.10.20.30:35357/v3
+export OS_IDENTITY_API_VERSION=3
+
+openstack project create --domain default --description "Service Project" service
 
 
-
-
-
-
+systemctl enable httpd.service
+systemctl start httpd.service
+systemctl restart httpd.service
 
 
 
