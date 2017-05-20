@@ -53,7 +53,7 @@ function keystone_create {
           su -s /bin/sh -c "keystone-manage db_sync" keystone
           keystone-manage fernet_setup --keystone-user keystone --keystone-group keystone
           keystone-manage credential_setup --keystone-user keystone --keystone-group keystone
-          scp 
+
           keystone-manage bootstrap --bootstrap-password $ADMIN_PASS \
           --bootstrap-admin-url http://$IP_VIP_API:35357/v3/ \
           --bootstrap-internal-url http://$IP_VIP_API:5000/v3/ \
