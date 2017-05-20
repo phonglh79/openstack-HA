@@ -120,3 +120,15 @@ keystone_config
 echocolor "Tao fernet key"
 sleep 3
 keystone_create_fernet
+
+echocolor "Tao endpoint"
+sleep 3
+keystone_bootstrap
+
+echocolor "Cau hinh http"
+sleep 3
+keystone_config_http
+
+echocolor "Tao bien moi truong"
+sleep 3
+keystone_create_adminrc
