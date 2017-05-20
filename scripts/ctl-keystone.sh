@@ -68,7 +68,7 @@ function keystone_bootstrap {
           --bootstrap-region-id RegionOne
 }
 
-function keystone_install_http {
+function keystone_config_http {
           echo "ServerName `hostname`" >> /etc/httpd/conf/httpd.conf
           ln -s /usr/share/keystone/wsgi-keystone.conf /etc/httpd/conf.d/
           systemctl enable httpd.service

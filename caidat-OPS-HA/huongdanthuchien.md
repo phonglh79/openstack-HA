@@ -93,7 +93,7 @@ pcs constraint colocation add Web_Cluster with Virtual_IP_DB INFINITY
 pcs constraint colocation add Web_Cluster with Virtual_IP_MNGT INFINITY     
 
 pcs constraint order Virtual_IP_API then Web_Cluster
-pcs constraint order Virtual_IP_API then Web_Cluster
+pcs constraint order Virtual_IP_DB then Web_Cluster
 pcs constraint order Virtual_IP_MNGT then Web_Cluster   
 
 
