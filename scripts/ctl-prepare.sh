@@ -110,6 +110,7 @@ PASS_DATABASE_GNOCCHI=\$PASS_DATABASE_ROOT
 
 ### Password openstack service
 ADMIN_PASS=\$PASS_DATABASE_ROOT
+DEMO_PASS=\$PASS_DATABASE_ROOT
 EOF
 
 chmod +x ctl-config.cfg

@@ -100,7 +100,8 @@ cat << EOF > /usr/share/nginx/html/index.html
 </body>
 </html>
 EOF
-        systemctl restart nginx 
+        systemctl restart nginx
+        cp /etc/nginx/nginx.conf /etc/nginx/nginx.conf.orig
 }
 
 function install_pacemaker_corosync {
