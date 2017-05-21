@@ -60,6 +60,7 @@ function glance_config {
         cp $glance_api_conf $glance_api_conf.orig
         cp $glance_registry_conf $glance_registry_conf.orig
 
+        ###glance_api_conf
         ops_edit $glance_api_conf glance_store stores file,http
         ops_edit $glance_api_conf glance_store default_store file
         ops_edit $glance_api_conf glance_store filesystem_store_datadir /var/lib/glance/images/
@@ -70,18 +71,35 @@ function glance_config {
         ops_edit $glance_api_conf keystone_authtoken auth_url http://$IP_VIP_API:35357
         ops_edit $glance_api_conf keystone_authtoken memcached_servers $CTL1_IP_NIC1:11211,$CTL2_IP_NIC1:11211,$CTL3_IP_NIC1:11211
         ops_edit $glance_api_conf keystone_authtoken auth_type password
-        ops_edit $glance_api_conf keystone_authtoken project_domain_name default
-        ops_edit $glance_api_conf keystone_authtoken user_domain_name default
+        ops_edit $glance_api_conf keystone_authtoken project_domain_name Default
+        ops_edit $glance_api_conf keystone_authtoken user_domain_name Default
         ops_edit $glance_api_conf keystone_authtoken project_name service
         ops_edit $glance_api_conf keystone_authtoken username glance
         ops_edit $glance_api_conf keystone_authtoken password $GLANCE_PASS
 
         ops_edit $glance_api_conf paste_deploy flavor keystone
+        
+        ###glance_registry_conf
+        ops_edit $glance_registry_conf database connection mysql+pymysql://glance:$PASS_DATABASE_GLANCE@$IP_VIP_API/glance
+
+        ops_edit $glance_registry_conf keystone_authtoken auth_uri http://$IP_VIP_API:5000
+        ops_edit $glance_registry_conf keystone_authtoken auth_url http://$IP_VIP_API:35357
+        ops_edit $glance_registry_conf keystone_authtoken memcached_servers $CTL1_IP_NIC1:11211,$CTL2_IP_NIC1:11211,$CTL3_IP_NIC1:11211
+        ops_edit $glance_registry_conf keystone_authtoken auth_type password
+        ops_edit $glance_registry_conf keystone_authtoken project_domain_name Default
+        ops_edit $glance_registry_conf keystone_authtoken user_domain_name Default
+        ops_edit $glance_registry_conf keystone_authtoken project_name service
+        ops_edit $glance_registry_conf keystone_authtoken username glance
+        ops_edit $glance_registry_conf keystone_authtoken password $GLANCE_PASS
+
+        ops_edit $glance_registry_conf paste_deploy flavor keystone
 
 }
 function glance_syncdb {
         su -s /bin/sh -c "glance-manage db_sync" glance
-
+        for IP_ADD in $CTL2_IP_NIC3 $CTL3_IP_NIC3
+        scp $glance_api_conf root@$CTL2_IP_NIC3:/etc/glance/
+        scp $glance_registry_conf root@$CTL3_IP_NIC3:/etc/glance/
 }
 
 
@@ -95,47 +113,46 @@ function glance_enable_restart {
         done  
 }
 
+function glance_create_image {
+        wget http://download.cirros-cloud.net/0.3.4/cirros-0.3.4-x86_64-disk.img
+        openstack image create "cirros" --file cirros-0.3.4-x86_64-disk.img \
+        --disk-format qcow2 --container-format bare \
+        --public
+        
+        openstack image list       
+}
 
 ############################
 # Thuc thi cac functions
 ## Goi cac functions
 ############################
-echocolor "Cai dat Keystone"
+echocolor "Bat dau cai dat Glance"
+echocolor "Tao DB Glance"
 sleep 3
+create_glance_db
 
-echocolor "Tao DB keystone"
+echocolor "Tao user va endpoint cho Glance"
 sleep 3
-create_keystone_db
+glance_user_endpoint
 
-echocolor "Cai dat keystone"
+echocolor "Cai dat Glance"
 sleep 3
-keystone_install
+glance_install
 
-echocolor "Config keystone"
+echocolor "Cau hinh cho Glance"
 sleep 3
-keystone_config
+glance_config
 
-echocolor "Sync DB cho keystone"
+echocolor "Dong bo DB cho Glance"
 sleep 3
-keystone_syncdb
+glance_syncdb
 
-echocolor "Tao endpoint"
+echocolor "Restart dich vu glance"
 sleep 3
-keystone_bootstrap
+glance_enable_restart
 
-echocolor "Cau hinh http"
+echocolor "Tao images"
 sleep 3
-for IP_ADD in $CTL1_IP_NIC3 $CTL2_IP_NIC3 $CTL3_IP_NIC3
-do
-    echo "Cai dat keystone_config_http $IP_ADD"
-    ssh root@$IP_ADD "$(typeset -f); keystone_config_http"
-done
+glance_create_image
 
-echocolor "Tao bien moi truong"
-sleep 3
-keystone_create_adminrc
-source admin-openrc
-
-echocolor "Tao Endpoint"
-sleep 3
-keystone_endpoint
+echocolor "Da cai dat xong Glance"
