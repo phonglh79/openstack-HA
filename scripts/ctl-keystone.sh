@@ -167,3 +167,7 @@ echocolor "Tao bien moi truong"
 sleep 3
 keystone_create_adminrc
 source admin-openrc
+
+echocolor "Tao Endpoint"
+sleep 3
+keystone_endpoint
