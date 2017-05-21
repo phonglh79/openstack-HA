@@ -38,8 +38,10 @@ FLUSH PRIVILEGES;"
 }
 
 function keystone_install {
-        yum -y install openstack-keystone httpd mod_wsgi
-       
+        for IP_ADD in $CTL1_IP_NIC3 $CTL2_IP_NIC3 $CTL3_IP_NIC3
+        do
+            ssh root@$IP_ADD "yum -y install openstack-keystone httpd mod_wsgi"
+        done       
 }
 
 function keystone_config {
@@ -72,16 +74,10 @@ function keystone_bootstrap {
 }
 
 function keystone_config_http {
-        for IP_ADD in $CTL1_IP_NIC3 $CTL2_IP_NIC3 $CTL3_IP_NIC3
-        do  
-        ssh root@$IP_ADD << EOF               
-echo "ServerName `hostname`" >> /etc/httpd/conf/httpd.conf
-ln -s /usr/share/keystone/wsgi-keystone.conf /etc/httpd/conf.d/
-systemctl enable httpd.service
-systemctl start httpd.service
-EOF
-        done       
-
+          echo "ServerName `hostname`" >> /etc/httpd/conf/httpd.conf
+          ln -s /usr/share/keystone/wsgi-keystone.conf /etc/httpd/conf.d/
+          systemctl enable httpd.service
+          systemctl start httpd.service 
 }
 
 function keystone_endpoint {
@@ -140,12 +136,7 @@ create_keystone_db
 
 echocolor "Cai dat keystone"
 sleep 3
-for IP_ADD in $CTL1_IP_NIC3 $CTL2_IP_NIC3 $CTL3_IP_NIC3
-do
-    echocolor "Cai dat keystone_install $IP_ADD"
-    sleep 3
-    ssh root@$IP_ADD "$(typeset -f); keystone_install"
-done
+keystone_install
 
 echocolor "Config keystone"
 sleep 3
@@ -161,7 +152,11 @@ keystone_bootstrap
 
 echocolor "Cau hinh http"
 sleep 3
-keystone_config_http
+for IP_ADD in $CTL1_IP_NIC3 $CTL2_IP_NIC3 $CTL3_IP_NIC3
+do
+    echo "Cai dat keystone_config_http $IP_ADD"
+    ssh root@$IP_ADD "$(typeset -f); keystone_config_http"
+done
 
 echocolor "Tao bien moi truong"
 sleep 3
