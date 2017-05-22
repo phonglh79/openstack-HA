@@ -97,8 +97,11 @@ function glance_config {
 }
 function glance_syncdb {
         su -s /bin/sh -c "glance-manage db_sync" glance
-        scp $glance_api_conf root@$CTL2_IP_NIC3:/etc/glance/
-        scp $glance_registry_conf root@$CTL3_IP_NIC3:/etc/glance/
+        for IP_ADD in $CTL2_IP_NIC3 $CTL3_IP_NIC3
+        do
+            scp $glance_api_conf root@$IP_ADD:/etc/glance/
+            scp $glance_registry_conf root@$IP_ADD:/etc/glance/
+        done
 }
 
 
