@@ -136,4 +136,12 @@
   bash ctl-keystone.sh
   ```
 
+### 4.4. Thực hiện cài đặt Glance 
+- Bước này thực hiện trên máy chủ CTL1 (CONTROLLER1)
+- Tải script cài đặt Glance 
+  ```sh
+  curl -O https://raw.githubusercontent.com/congto/openstack-HA/master/scripts/ctl-glance.sh
+  bash ctl-glance.sh
+  ```
+
 

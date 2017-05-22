@@ -30,7 +30,7 @@ function ops_del {
     crudini --del $1 $2 $3
 }
 
-function create_glance_db {
+function glance_create_db {
 mysql -uroot -p$PASS_DATABASE_ROOT -h $DB1_IP_NIC2 -e "CREATE DATABASE glance;
 GRANT ALL PRIVILEGES ON glance.* TO 'glance'@'localhost' IDENTIFIED BY '$PASS_DATABASE_GLANCE';
 GRANT ALL PRIVILEGES ON glance.* TO 'glance'@'%' IDENTIFIED BY '$PASS_DATABASE_GLANCE';
@@ -38,7 +38,7 @@ FLUSH PRIVILEGES;"
 }
 
 function glance_user_endpoint {
-        openstack user create  glance --domain default --password $PASS_DATABASE_GLANCE
+        openstack user create  glance --domain default --password $GLANCE_PASS
         openstack role add --project service --user glance admin
         openstack service create --name glance --description "OpenStack Image" image
         openstack endpoint create --region RegionOne image public http://$IP_VIP_API:9292
@@ -80,7 +80,7 @@ function glance_config {
         ops_edit $glance_api_conf paste_deploy flavor keystone
         
         ###glance_registry_conf
-        ops_edit $glance_registry_conf database connection mysql+pymysql://glance:$PASS_DATABASE_GLANCE@$IP_VIP_API/glance
+        ops_edit $glance_registry_conf database connection mysql+pymysql://glance:$PASS_DATABASE_GLANCE@$IP_VIP_DB/glance
 
         ops_edit $glance_registry_conf keystone_authtoken auth_uri http://$IP_VIP_API:5000
         ops_edit $glance_registry_conf keystone_authtoken auth_url http://$IP_VIP_API:35357
@@ -131,7 +131,7 @@ function glance_create_image {
 echocolor "Bat dau cai dat Glance"
 echocolor "Tao DB Glance"
 sleep 3
-create_glance_db
+glance_create_db
 
 echocolor "Tao user va endpoint cho Glance"
 sleep 3
