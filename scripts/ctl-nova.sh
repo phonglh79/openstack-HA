@@ -67,13 +67,13 @@ function nova_config {
         ops_edit $ctl_nova_conf DEFAULT rpc_backend rabbit
         ops_edit $ctl_nova_conf DEFAULT memcached_servers $CTL1_IP_NIC1:11211,$CTL2_IP_NIC1:11211,$CTL3_IP_NIC1:11211
         ops_edit $ctl_nova_conf DEFAULT auth_strategy keystone
-        ops_edit $ctl_nova_conf DEFAULT my_ip \$ip
+        ops_edit $ctl_nova_conf DEFAULT my_ip IP_ADDRESS
         ops_edit $ctl_nova_conf DEFAULT use_neutron true
         ops_edit $ctl_nova_conf DEFAULT firewall_driver nova.virt.firewall.NoopFirewallDriver
         ops_edit $ctl_nova_conf DEFAULT osapi_compute_listen \$ip
         ops_edit $ctl_nova_conf DEFAULT metadata_listen \$ip
         
-        ops_edit $ctl_nova_conf api_database connection  mysql+pymysql://nova_api:$PASS_DATABASE_NOVA_API@$IP_VIP_DB/nova_api
+        ops_edit $ctl_nova_conf api_database connection  mysql+pymysql://nova:$PASS_DATABASE_NOVA_API@$IP_VIP_DB/nova_api
         ops_edit $ctl_nova_conf database connection  mysql+pymysql://nova:$PASS_DATABASE_NOVA@$IP_VIP_DB/nova
         
         ops_edit $ctl_nova_conf oslo_messaging_rabbit rabbit_hosts $MQ1_IP_NIC1:5672,$MQ2_IP_NIC1:5672,$MQ3_IP_NIC1:5672:5672
@@ -99,18 +99,21 @@ function nova_config {
         ops_edit $ctl_nova_conf vnc vncserver_proxyclient_address \$ip
         ops_edit $ctl_nova_conf vnc novncproxy_host \$ip
         
-        ops_edit $ctl_nova_conf glance api_servers http://$virtual_ip:9292
+        ops_edit $ctl_nova_conf glance api_servers http://$IP_VIP_API:9292
         
-        ops_edit $ctl_nova_conf oslo_concurrency lock_path /var/lib/nova/tmp   
+        ops_edit $ctl_nova_conf oslo_concurrency lock_path /var/lib/nova/tmp
+        
+        for IP_ADD in $CTL2_IP_NIC3 $CTL3_IP_NIC3
+        do            
+                scp $ctl_nova_conf root@$IP_ADD:/etc/nova/
+                ssh root@$IP_ADD "sed -i 's/my_ip = IP_ADDRESS/my_ip = $IP_ADD/g' $ctl_nova_conf"                  
+        done
 }
 
 function nova_syncdb {
         su -s /bin/sh -c "nova-manage api_db sync" nova
         su -s /bin/sh -c "nova-manage db sync" nova
-        for IP_ADD in $CTL2_IP_NIC3 $CTL3_IP_NIC3
-        do            
-        scp $ctl_nova_conf root@$IP_ADD:/etc/nova/            
-        done
+
 }
 
 function nova_enable_restart {
