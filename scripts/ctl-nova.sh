@@ -103,6 +103,17 @@ function nova_config {
         
         ops_edit $ctl_nova_conf oslo_concurrency lock_path /var/lib/nova/tmp
         
+        ops_edit $ctl_nova_conf neutron url http://$IP_VIP_API:9696
+        ops_edit $ctl_nova_conf neutron auth_url http://$IP_VIP_API:35357
+        ops_edit $ctl_nova_conf neutron auth_type password
+        ops_edit $ctl_nova_conf neutron project_domain_name Default
+        ops_edit $ctl_nova_conf neutron user_domain_name Default
+        ops_edit $ctl_nova_conf neutron project_name service
+        ops_edit $ctl_nova_conf neutron username neutron
+        ops_edit $ctl_nova_conf neutron password $NEUTRON_PASS
+        ops_edit $ctl_nova_conf neutron service_metadata_proxy True
+        ops_edit $ctl_nova_conf neutron password $METADATA_SECRET
+        
         for IP_ADD in $CTL1_IP_NIC1 $CTL2_IP_NIC1 $CTL3_IP_NIC1 
         do            
                 scp $ctl_nova_conf root@$IP_ADD:/etc/nova/
