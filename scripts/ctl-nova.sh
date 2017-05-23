@@ -103,10 +103,10 @@ function nova_config {
         
         ops_edit $ctl_nova_conf oslo_concurrency lock_path /var/lib/nova/tmp
         
-        for IP_ADD in $CTL1_IP_NIC3 $CTL2_IP_NIC3 $CTL3_IP_NIC3
+        for IP_ADD in $CTL1_IP_NIC1 $CTL2_IP_NIC1 $CTL3_IP_NIC1 
         do            
                 scp $ctl_nova_conf root@$IP_ADD:/etc/nova/
-                ssh root@$IP_ADD "sed -i 's/IP_ADDRESS/$IP_ADD/g' $ctl_nova_conf"                  
+                ssh -o StrictHostKeyChecking=no root@$IP_ADD "sed -i 's/IP_ADDRESS/$IP_ADD/g' $ctl_nova_conf"                  
         done
 }
 
