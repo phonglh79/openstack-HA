@@ -76,7 +76,7 @@ function nova_config {
         ops_edit $ctl_nova_conf api_database connection  mysql+pymysql://nova:$PASS_DATABASE_NOVA_API@$IP_VIP_DB/nova_api
         ops_edit $ctl_nova_conf database connection  mysql+pymysql://nova:$PASS_DATABASE_NOVA@$IP_VIP_DB/nova
         
-        ops_edit $ctl_nova_conf oslo_messaging_rabbit rabbit_hosts $MQ1_IP_NIC1:5672,$MQ2_IP_NIC1:5672,$MQ3_IP_NIC1:5672:5672
+        ops_edit $ctl_nova_conf oslo_messaging_rabbit rabbit_hosts $MQ1_IP_NIC1:5672,$MQ2_IP_NIC1:5672,$MQ3_IP_NIC1:5672
         ops_edit $ctl_nova_conf oslo_messaging_rabbit rabbit_ha_queues true
         ops_edit $ctl_nova_conf oslo_messaging_rabbit rabbit_retry_interval 1
         ops_edit $ctl_nova_conf oslo_messaging_rabbit rabbit_retry_backoff 2
@@ -103,7 +103,7 @@ function nova_config {
         
         ops_edit $ctl_nova_conf oslo_concurrency lock_path /var/lib/nova/tmp
         
-        for IP_ADD in $CTL2_IP_NIC3 $CTL3_IP_NIC3
+        for IP_ADD in $CTL1_IP_NIC3 $CTL2_IP_NIC3 $CTL3_IP_NIC3
         do            
                 scp $ctl_nova_conf root@$IP_ADD:/etc/nova/
                 ssh root@$IP_ADD "sed -i 's/IP_ADDRESS/$IP_ADD/g' $ctl_nova_conf"                  
