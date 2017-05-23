@@ -47,7 +47,7 @@ function keystone_install {
 function keystone_config {
         keystone_conf=/etc/keystone/keystone.conf
         cp $keystone_conf $keystone_conf.orig        
-        ops_edit $keystone_conf database connection mysql+pymysql://keystone:$PASS_DATABASE_KEYSTONE@$IP_VIP_API/keystone
+        ops_edit $keystone_conf database connection mysql+pymysql://keystone:$PASS_DATABASE_KEYSTONE@$IP_VIP_DB/keystone
         ops_edit $keystone_conf token provider fernet
 }
 function keystone_syncdb {
