@@ -65,7 +65,7 @@ function glance_config {
         ops_edit $glance_api_conf glance_store default_store file
         ops_edit $glance_api_conf glance_store filesystem_store_datadir /var/lib/glance/images/
 
-        ops_edit $glance_api_conf database connection mysql+pymysql://glance:$PASS_DATABASE_GLANCE@$IP_VIP_API/glance
+        ops_edit $glance_api_conf database connection mysql+pymysql://glance:$PASS_DATABASE_GLANCE@$IP_VIP_DB/glance
 
         ops_edit $glance_api_conf keystone_authtoken auth_uri http://$IP_VIP_API:5000
         ops_edit $glance_api_conf keystone_authtoken auth_url http://$IP_VIP_API:35357
