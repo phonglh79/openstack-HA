@@ -70,8 +70,8 @@ function nova_config {
         ops_edit $ctl_nova_conf DEFAULT my_ip IP_ADDRESS
         ops_edit $ctl_nova_conf DEFAULT use_neutron true
         ops_edit $ctl_nova_conf DEFAULT firewall_driver nova.virt.firewall.NoopFirewallDriver
-        ops_edit $ctl_nova_conf DEFAULT osapi_compute_listen \$ip
-        ops_edit $ctl_nova_conf DEFAULT metadata_listen \$ip
+        ops_edit $ctl_nova_conf DEFAULT osapi_compute_listen \$my_ip
+        ops_edit $ctl_nova_conf DEFAULT metadata_listen \$my_ip
         
         ops_edit $ctl_nova_conf api_database connection  mysql+pymysql://nova:$PASS_DATABASE_NOVA_API@$IP_VIP_DB/nova_api
         ops_edit $ctl_nova_conf database connection  mysql+pymysql://nova:$PASS_DATABASE_NOVA@$IP_VIP_DB/nova
@@ -95,9 +95,9 @@ function nova_config {
         ops_edit $ctl_nova_conf keystone_authtoken username nova
         ops_edit $ctl_nova_conf keystone_authtoken password $NOVA_PASS
 
-        ops_edit $ctl_nova_conf vnc vncserver_listen \$ip
-        ops_edit $ctl_nova_conf vnc vncserver_proxyclient_address \$ip
-        ops_edit $ctl_nova_conf vnc novncproxy_host \$ip
+        ops_edit $ctl_nova_conf vnc vncserver_listen \$my_ip
+        ops_edit $ctl_nova_conf vnc vncserver_proxyclient_address \$my_ip
+        ops_edit $ctl_nova_conf vnc novncproxy_host \$my_ip
         
         ops_edit $ctl_nova_conf glance api_servers http://$IP_VIP_API:9292
         
@@ -106,7 +106,7 @@ function nova_config {
         for IP_ADD in $CTL2_IP_NIC3 $CTL3_IP_NIC3
         do            
                 scp $ctl_nova_conf root@$IP_ADD:/etc/nova/
-                ssh root@$IP_ADD "sed -i 's/my_ip = IP_ADDRESS/my_ip = $IP_ADD/g' $ctl_nova_conf"                  
+                ssh root@$IP_ADD "sed -i 's/IP_ADDRESS/$IP_ADD/g' $ctl_nova_conf"                  
         done
 }
 

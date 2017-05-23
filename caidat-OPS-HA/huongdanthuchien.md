@@ -14,11 +14,11 @@
 - Tiếp tục thực hiện restart mariadb trên các node còn lại để join cluster ` systemctl restart mariadb`
 - Sau khi join lại xong, kiểm tra bằng lệnh sau để xem số node trong cluter đã ok hay chưa ()
   ```sh
-  mysql -u root -p -e "SHOW STATUS LIKE 'wsrep_cluster_size'"
+  mysql -u root -p'Ec0net#!2017' -e "SHOW STATUS LIKE 'wsrep_cluster_size'"
   ```
   - Kết quả lệnh trên như sau:
     ```sh
-    [root@db3 ~]# mysql -u root -p -e "SHOW STATUS LIKE 'wsrep_cluster_size'"
+    [root@db3 ~]# mysql -u root -p'Ec0net#!2017' -e "SHOW STATUS LIKE 'wsrep_cluster_size'"
     Enter password:
     +--------------------+-------+
     | Variable_name      | Value |
