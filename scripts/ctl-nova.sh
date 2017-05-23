@@ -65,7 +65,6 @@ function nova_config {
 
         ops_edit $ctl_nova_conf DEFAULT enabled_apis osapi_compute,metadata
         ops_edit $ctl_nova_conf DEFAULT rpc_backend rabbit
-        ops_edit $ctl_nova_conf DEFAULT memcached_servers $CTL1_IP_NIC1:11211,$CTL2_IP_NIC1:11211,$CTL3_IP_NIC1:11211
         ops_edit $ctl_nova_conf DEFAULT auth_strategy keystone
         ops_edit $ctl_nova_conf DEFAULT my_ip IP_ADDRESS
         ops_edit $ctl_nova_conf DEFAULT use_neutron true
