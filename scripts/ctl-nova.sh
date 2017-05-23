@@ -30,15 +30,14 @@ function ops_del {
 }
 
 function nova_create_db {
-mysql -uroot -p$PASS_DATABASE_ROOT -h $DB1_IP_NIC2 -e "CREATE DATABASE nova_api;
-CREATE DATABASE nova;
-GRANT ALL PRIVILEGES ON nova_api.* TO 'nova_api'@'localhost' IDENTIFIED BY '$PASS_DATABASE_NOVA_API';
-GRANT ALL PRIVILEGES ON nova_api.* TO 'nova_api'@'%' IDENTIFIED BY '$PASS_DATABASE_NOVA_API';
+      mysql -uroot -p$PASS_DATABASE_ROOT -h $DB1_IP_NIC2 -e "CREATE DATABASE nova_api;
+      GRANT ALL PRIVILEGES ON nova_api.* TO 'nova'@'localhost' IDENTIFIED BY '$PASS_DATABASE_NOVA_API';
+      GRANT ALL PRIVILEGES ON nova_api.* TO 'nova'@'%' IDENTIFIED BY '$PASS_DATABASE_NOVA_API';
+      CREATE DATABASE nova;
+      GRANT ALL PRIVILEGES ON nova.* TO 'nova'@'localhost' IDENTIFIED BY '$PASS_DATABASE_NOVA';
+      GRANT ALL PRIVILEGES ON nova.* TO 'nova'@'%' IDENTIFIED BY '$PASS_DATABASE_NOVA';
 
-GRANT ALL PRIVILEGES ON nova.* TO 'nova'@'localhost' IDENTIFIED BY '$PASS_DATABASE_NOVA';
-GRANT ALL PRIVILEGES ON nova.* TO 'nova'@'%' IDENTIFIED BY '$PASS_DATABASE_NOVA';
-
-FLUSH PRIVILEGES;"
+      FLUSH PRIVILEGES;"
 }
 
 function nova_user_endpoint {
@@ -74,8 +73,8 @@ function nova_config {
         ops_edit $ctl_nova_conf DEFAULT osapi_compute_listen \$ip
         ops_edit $ctl_nova_conf DEFAULT metadata_listen \$ip
         
-        ops_edit $ctl_nova_conf api_database connection  mysql+pymysql://nova:$PASS_DATABASE_NOVA_API@$IP_VIP_DB/nova_api
-        ops_edit $ctl_nova_conf api_database connection  mysql+pymysql://nova:$PASS_DATABASE_NOVA@$IP_VIP_DB/nova
+        ops_edit $ctl_nova_conf api_database connection  mysql+pymysql://nova_api:$PASS_DATABASE_NOVA_API@$IP_VIP_DB/nova_api
+        ops_edit $ctl_nova_conf database connection  mysql+pymysql://nova:$PASS_DATABASE_NOVA@$IP_VIP_DB/nova
         
         ops_edit $ctl_nova_conf oslo_messaging_rabbit rabbit_hosts $MQ1_IP_NIC1:5672,$MQ2_IP_NIC1:5672,$MQ3_IP_NIC1:5672:5672
         ops_edit $ctl_nova_conf oslo_messaging_rabbit rabbit_ha_queues true
