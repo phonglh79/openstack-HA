@@ -24,7 +24,6 @@ function ops_edit {
 ###			filekeystone=/etc/keystone/keystone.conf
 ###			ops_edit_file $filekeystone DEFAULT rpc_backend rabbit
 
-
 # Ham de del mot dong trong file cau hinh
 function ops_del {
     crudini --del $1 $2 $3
@@ -55,8 +54,8 @@ function nova_install {
         for IP_ADD in $CTL1_IP_NIC3 $CTL2_IP_NIC3 $CTL3_IP_NIC3
         do
             ssh root@$IP_ADD "yum -y install openstack-nova-api openstack-nova-conductor \
-  openstack-nova-console openstack-nova-novncproxy \
-  openstack-nova-scheduler"
+                              openstack-nova-console openstack-nova-novncproxy \
+                              openstack-nova-scheduler"
         done  
 
 }
@@ -65,9 +64,6 @@ function nova_config {
         ctl_nova_conf=/etc/nova/nova.conf
         cp $ctl_nova_conf $ctl_nova_conf.orig
 
-
-        ###nova
-        
         ops_edit $ctl_nova_conf DEFAULT enabled_apis osapi_compute,metadata
         ops_edit $ctl_nova_conf DEFAULT rpc_backend rabbit
         ops_edit $ctl_nova_conf DEFAULT memcached_servers $CTL1_IP_NIC1:11211,$CTL2_IP_NIC1:11211,$CTL3_IP_NIC1:11211
@@ -107,10 +103,8 @@ function nova_config {
         ops_edit $ctl_nova_conf glance api_servers http://$virtual_ip:9292
         
         ops_edit $ctl_nova_conf oslo_concurrency lock_path /var/lib/nova/tmp   
-        
-        
-       
 }
+
 function nova_syncdb {
         su -s /bin/sh -c "nova-manage api_db sync" nova
         su -s /bin/sh -c "nova-manage db sync" nova
@@ -120,8 +114,7 @@ function nova_syncdb {
         done
 }
 
-
-function glance_enable_restart {
+function nova_enable_restart {
         for IP_ADD in $CTL1_IP_NIC3 $CTL2_IP_NIC3 $CTL3_IP_NIC3
         do
             ssh root@$IP_ADD "systemctl enable openstack-nova-api.service"
