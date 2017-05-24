@@ -107,8 +107,7 @@ function neutron_config {
         ops_edit $ctl_ml2_conf ml2 type_drivers flat,vlan
         ops_edit $ctl_ml2_conf ml2 tenant_network_types 
         ops_edit $ctl_ml2_conf ml2 mechanism_drivers linuxbridge
-        ops_edit $ctl_ml2_conf ml2 extension_drivers port_security  
-        
+        ops_edit $ctl_ml2_conf ml2 extension_drivers port_security          
         ops_edit $ctl_ml2_conf ml2_type_flat flat_networks provider
         ops_edit $ctl_ml2_conf ml2_type_vlan network_vlan_ranges provider
         
