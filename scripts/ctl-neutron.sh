@@ -121,12 +121,14 @@ function neutron_config {
         # ops_edit $ctl_linuxbridge_agent securitygroup enable_security_group True
         # ops_edit $ctl_linuxbridge_agent securitygroup firewall_driver neutron.agent.linux.iptables_firewall.IptablesFirewallDriver
         
-        ln -s /etc/neutron/plugins/ml2/ml2_conf.ini /etc/neutron/plugin.ini
+        
    
         for IP_ADD in $CTL1_IP_NIC1 $CTL2_IP_NIC1 $CTL3_IP_NIC1 
         do            
                 scp $ctl_neutron_conf root@$IP_ADD:/etc/neutron/                 
-                scp $ctl_ml2_conf root@$IP_ADD:/etc/neutron/                 
+                scp $ctl_ml2_conf root@$IP_ADD:/etc/neutron/plugins/ml2
+                ln -s /etc/neutron/plugins/ml2/ml2_conf.ini /etc/neutron/plugin.ini
+                chown -R root:neutron /etc/neutron/
         done
 }
 
@@ -140,7 +142,6 @@ function neutron_enable_restart {
         for IP_ADD in $CTL1_IP_NIC3 $CTL2_IP_NIC3 $CTL3_IP_NIC3
         do
             ssh root@$IP_ADD "systemctl enable neutron-server.service"
-            
             ssh root@$IP_ADD "systemctl start neutron-server.service"
         done  
 }

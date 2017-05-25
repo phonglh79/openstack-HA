@@ -192,8 +192,37 @@ systemctl start httpd.service
 systemctl restart httpd.service
 
 
-### 
+### Cai byobu
 curl -O http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-9.noarch.rpm
 rpm -ivh epel-release-7-9.noarch.rpm
 sudo yum install byobu -y --enablerepo=epel-testing
+
+
+
+### Chu y khi cai NEUTRON
+
+# Goi tham khao 
+yum -y install openstack-neutron 
+yum -y install openstack-neutron-ml2
+yum -y install ebtables
+yum -y install openstack-neutron-linuxbridge 
+
+## Cai tren cac CTL 
+yum -y install openstack-neutron 
+yum -y install openstack-neutron-ml2
+
+## Dung tren ctl1
+## Tao db cho neutron 
+mysql -uroot -p'Ec0net#!2017' -h 192.168.20.51 -e "CREATE DATABASE neutron;
+GRANT ALL PRIVILEGES ON neutron.* TO 'neutron'@'localhost' IDENTIFIED BY 'Ec0net#!2017';
+GRANT ALL PRIVILEGES ON neutron.* TO 'neutron'@'%' IDENTIFIED BY 'Ec0net#!2017';
+FLUSH PRIVILEGES;"
+
+## Tao user neutron va cac endpoint cho dich vu neutron 
+openstack user create  neutron --domain default --password 'Ec0net#!2017'
+openstack role add --project service --user neutron admin
+openstack service create --name neutron --description "OpenStack Networking" network
+openstack endpoint create --region RegionOne network public http://10.10.20.30:9696
+openstack endpoint create --region RegionOne network internal  http://10.10.20.30:9696
+openstack endpoint create --region RegionOne network admin  http://10.10.20.30:9696
 
