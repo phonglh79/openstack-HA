@@ -3,6 +3,7 @@
 ### Script cai dat cac goi bo tro cho CTL
 
 ### Khai bao bien de thuc hien
+160 -> 192 -> 224 -> 256 -> 161 -> 193
 cat <<EOF> /root/ctl-config.cfg
 
 ## Hostname
@@ -11,7 +12,7 @@ CTL1_HOSTNAME=ctl1
 CTL2_HOSTNAME=ctl2
 CTL3_HOSTNAME=ctl3
 
-## IP Address
+## IP Address CONTROLLER
 ### IP cho bond0 cho cac may CONTROLLER
 CTL1_IP_NIC1=10.10.20.61
 CTL2_IP_NIC1=10.10.20.62
@@ -31,6 +32,43 @@ CTL3_IP_NIC3=192.168.20.63
 CTL1_IP_NIC4=10.10.0.61
 CTL2_IP_NIC4=10.10.0.62
 CTL3_IP_NIC4=10.10.0.63
+
+### Hostname cho cac may COMPUTE
+COM1_HOSTNAME=com1
+COM2_HOSTNAME=com3
+COM3_HOSTNAME=com3
+
+## IP Address CONTROLLER
+### IP cho NIC1 - API cho cac may COMPUTE
+COM1_IP_NIC1=10.10.20.71
+COM2_IP_NIC1=10.10.20.72
+COM3_IP_NIC1=10.10.20.73
+
+### IP cho NIC2 - DB_MQ cho cac may COMPUTE
+COM1_IP_NIC2=10.10.10.71
+COM2_IP_NIC2=10.10.10.72
+COM3_IP_NIC2=10.10.10.73
+
+### IP cho NIC3 - Provider VM cho cac may COMPUTE
+COM1_IP_NIC3=192.168.50.71
+COM2_IP_NIC3=192.168.50.72
+COM3_IP_NIC3=192.168.50.73
+
+### IP cho NIC4 - Provider VM cho cac may COMPUTE
+COM1_IP_NIC4=192.168.20.71
+COM2_IP_NIC4=192.168.20.72
+COM3_IP_NIC4=192.168.20.73
+
+### IP cho NIC5 - DATA_VM cho cac may COMPUTE
+COM1_IP_NIC5=172.16.20.71
+COM2_IP_NIC5=172.16.20.72
+COM3_IP_NIC5=172.16.20.73
+
+
+### IP cho NIC5 - COMPUTE_CEPH cho cac may COMPUTE
+COM1_IP_NIC6=10.10.0.71
+COM2_IP_NIC6=10.10.0.71
+COM3_IP_NIC6=10.10.0.71
 
 #########DB
 ## Hostname
@@ -107,7 +145,6 @@ PASS_DATABASE_CEILOMTER=\$PASS_DATABASE_ROOT
 PASS_DATABASE_AODH=\$PASS_DATABASE_ROOT
 PASS_DATABASE_GNOCCHI=\$PASS_DATABASE_ROOT
 
-
 ### Password openstack service
 RABBIT_PASS=Welcome123
 METADATA_SECRET=\$PASS_DATABASE_ROOT
@@ -120,6 +157,7 @@ CINDER_PASS=\$PASS_DATABASE_ROOT
 NEUTRON_PASS=\$PASS_DATABASE_ROOT
 
 EOF
+
 
 chmod +x ctl-config.cfg
 source ctl-config.cfg
@@ -244,7 +282,6 @@ function install_memcached {
         IP_LOCAL=`ip -o -4 addr show dev bond2 | sed 's/.* inet \([^/]*\).*/\1/'`
         sed -i "s/-l 127.0.0.1,::1/-l 127.0.0.1,::1,$IP_LOCAL/g" /etc/sysconfig/memcached
 }
-
 
 ##############################################################################
 # Thuc thi cac functions

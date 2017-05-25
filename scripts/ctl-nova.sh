@@ -113,11 +113,13 @@ function nova_config {
         ops_edit $ctl_nova_conf neutron service_metadata_proxy True
         ops_edit $ctl_nova_conf neutron password $METADATA_SECRET
         
-        for IP_ADD in $CTL1_IP_NIC3 $CTL2_IP_NIC3 $CTL3_IP_NIC1 
-        do            
+        for IP_ADD in $CTL1_IP_NIC3 $CTL2_IP_NIC3 $CTL3_IP_NIC3 
+        do      
+                echocolor "Copytile cau hinh cho $IP_ADD"
                 scp $ctl_nova_conf root@$IP_ADD:/etc/nova/                                
         done
         
+        ssh root@$CTL1_IP_NIC3 "sed -i 's/IP_ADDRESS/$CTL1_IP_NIC1/g' $ctl_nova_conf"  
         ssh root@$CTL2_IP_NIC3 "sed -i 's/IP_ADDRESS/$CTL2_IP_NIC1/g' $ctl_nova_conf"  
         ssh root@$CTL3_IP_NIC3 "sed -i 's/IP_ADDRESS/$CTL3_IP_NIC1/g' $ctl_nova_conf"  
 }

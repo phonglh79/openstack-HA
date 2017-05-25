@@ -48,7 +48,7 @@ if [ "$1" == "controller" ]; then
       exit 1
 fi
 
-echo "NAME=ens160" >> /etc/sysconfig/network-scripts/ifcfg-ens160
+echo "NAME=ens224" >> /etc/sysconfig/network-scripts/ifcfg-ens224
 nmcli con reload
 nmcli con show
 curl -O https://raw.githubusercontent.com/congto/openstack-HA/master/scripts/rabbitmq-bonding.sh
@@ -60,11 +60,11 @@ sudo systemctl start NetworkManager
 curl -O https://raw.githubusercontent.com/congto/openstack-HA/master/scripts/rabbitmq1-ipadd.sh && bash rabbitmq1-ipadd.sh
 
 - Đổi tên connection 
-nmcli c modify "ens1" connection.id ens160
+nmcli c modify "ens1" connection.id ens224
 
 160 -> 192 -> 224 -> 256 -> 161 -> 193 -> 225 -> 257 -> 163 -> 194 -> 226 -> 258
 
-ens160 -> ens192
+ens224 -> ens192
 ens224 -> ens256
 ens161 -> ens193 
 ens225 -> ens257
@@ -226,3 +226,103 @@ openstack endpoint create --region RegionOne network public http://10.10.20.30:9
 openstack endpoint create --region RegionOne network internal  http://10.10.20.30:9696
 openstack endpoint create --region RegionOne network admin  http://10.10.20.30:9696
 
+
+###COMPUTENODE
+##Dat IP cho COMPUTE1
+
+hostnamectl set-hostname com1
+
+echo "Setup IP  ens160"
+nmcli c modify ens160 ipv4.addresses 10.10.20.71/24
+nmcli c modify ens160 ipv4.method manual
+nmcli con mod ens160 connection.autoconnect yes
+
+echo "Setup IP  ens192"
+nmcli c modify ens192 ipv4.addresses 10.10.10.71/24
+nmcli c modify ens192 ipv4.method manual
+nmcli con mod ens192 connection.autoconnect yes
+
+
+echo "Setup IP  ens224"
+nmcli c modify ens224 ipv4.addresses 192.168.50.71/24
+nmcli c modify ens224 ipv4.method manual
+nmcli con mod ens224 connection.autoconnect yes
+
+echo "Setup IP  ens256"
+nmcli c modify ens256 ipv4.addresses 192.168.20.71/24
+nmcli c modify ens256 ipv4.gateway 192.168.20.254
+nmcli c modify ens256 ipv4.dns 8.8.8.8
+nmcli c modify ens256 ipv4.method manual
+nmcli con mod ens256 connection.autoconnect yes
+
+echo "Setup IP  ens161"
+nmcli c modify ens161 ipv4.addresses 172.16.20.71/24
+nmcli c modify ens161 ipv4.method manual
+nmcli con mod ens161 connection.autoconnect yes
+
+
+echo "Setup IP  ens193"
+nmcli c modify ens193 ipv4.addresses 10.10.10.71/24
+nmcli c modify ens193 ipv4.method manual
+nmcli con mod ens193 connection.autoconnect yes
+
+
+sudo systemctl disable firewalld
+sudo systemctl stop firewalld
+sudo systemctl disable NetworkManager
+sudo systemctl stop NetworkManager
+sudo systemctl enable network
+sudo systemctl start network
+
+sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux
+sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
+
+
+##Dat IP cho COMPUTE2
+
+hostnamectl set-hostname com2
+
+echo "Setup IP  ens160"
+nmcli c modify ens160 ipv4.addresses 10.10.20.72/24
+nmcli c modify ens160 ipv4.method manual
+nmcli con mod ens160 connection.autoconnect yes
+
+echo "Setup IP  ens192"
+nmcli c modify ens192 ipv4.addresses 10.10.10.72/24
+nmcli c modify ens192 ipv4.method manual
+nmcli con mod ens192 connection.autoconnect yes
+
+
+echo "Setup IP  ens224"
+nmcli c modify ens224 ipv4.addresses 192.168.50.72/24
+nmcli c modify ens224 ipv4.method manual
+nmcli con mod ens224 connection.autoconnect yes
+
+echo "Setup IP  ens256"
+nmcli c modify ens256 ipv4.addresses 192.168.20.72/24
+nmcli c modify ens256 ipv4.gateway 192.168.20.254
+nmcli c modify ens256 ipv4.dns 8.8.8.8
+nmcli c modify ens256 ipv4.method manual
+nmcli con mod ens256 connection.autoconnect yes
+
+echo "Setup IP  ens161"
+nmcli c modify ens161 ipv4.addresses 172.16.20.72/24
+nmcli c modify ens161 ipv4.method manual
+nmcli con mod ens161 connection.autoconnect yes
+
+
+echo "Setup IP  ens193"
+nmcli c modify ens193 ipv4.addresses 10.10.10.72/24
+nmcli c modify ens193 ipv4.method manual
+nmcli con mod ens193 connection.autoconnect yes
+
+
+sudo systemctl disable firewalld
+sudo systemctl stop firewalld
+sudo systemctl disable NetworkManager
+sudo systemctl stop NetworkManager
+sudo systemctl enable network
+sudo systemctl start network
+
+sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux
+sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config

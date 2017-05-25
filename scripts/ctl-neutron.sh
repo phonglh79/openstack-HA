@@ -123,12 +123,12 @@ function neutron_config {
         
         
    
-        for IP_ADD in $CTL1_IP_NIC1 $CTL2_IP_NIC1 $CTL3_IP_NIC1 
+        for IP_ADD in $ $CTL1_IP_NIC3 $CTL2_IP_NIC3 $CTL3_IP_NIC3
         do            
                 scp $ctl_neutron_conf root@$IP_ADD:/etc/neutron/                 
                 scp $ctl_ml2_conf root@$IP_ADD:/etc/neutron/plugins/ml2
-                ln -s /etc/neutron/plugins/ml2/ml2_conf.ini /etc/neutron/plugin.ini
-                chown -R root:neutron /etc/neutron/
+                ssh root@$IP_ADD 'ln -s /etc/neutron/plugins/ml2/ml2_conf.ini /etc/neutron/plugin.ini'
+                ssh root@$IP_ADD 'chown -R root:neutron /etc/neutron/'
         done
 }
 
@@ -141,6 +141,7 @@ function neutron_syncdb {
 function neutron_enable_restart {
         for IP_ADD in $CTL1_IP_NIC3 $CTL2_IP_NIC3 $CTL3_IP_NIC3
         do
+            echocolor "Khoi dong dich vu NEUTRON tren $IP_ADD"
             ssh root@$IP_ADD "systemctl enable neutron-server.service"
             ssh root@$IP_ADD "systemctl start neutron-server.service"
         done  
@@ -150,29 +151,29 @@ function neutron_enable_restart {
 # Thuc thi cac functions
 ## Goi cac functions
 ############################
-echocolor "Bat dau cai dat NOVA"
-echocolor "Tao DB NOVA"
+echocolor "Bat dau cai dat NEUTRON"
+echocolor "Tao DB NEUTRON"
 sleep 3
 neutron_create_db
 
-echocolor "Tao user va endpoint cho NOVA"
+echocolor "Tao user va endpoint cho NEUTRON"
 sleep 3
 neutron_user_endpoint
 
-echocolor "Cai dat NOVA"
+echocolor "Cai dat NEUTRON"
 sleep 3
 neutron_install
 
-echocolor "Cau hinh cho NOVA"
+echocolor "Cau hinh cho NEUTRON"
 sleep 3
 neutron_config
 
-echocolor "Dong bo DB cho NOVA"
+echocolor "Dong bo DB cho NEUTRON"
 sleep 3
 neutron_syncdb
 
-echocolor "Restart dich vu NOVA"
+echocolor "Restart dich vu NEUTRON"
 sleep 3
 neutron_enable_restart
 
-echocolor "Da cai dat xong NOVA"
+echocolor "Da cai dat xong NEUTRON"
