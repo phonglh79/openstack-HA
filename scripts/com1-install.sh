@@ -164,7 +164,7 @@ echocolor "Restart dich vu NOVA"
 sleep 3
 com_nova_config
 
-echocolor "Restart dich vu NOVA"
+echocolor "Config dich vu NOVA"
 sleep 3
 com_nova_restart
 
@@ -172,7 +172,7 @@ echocolor "Install dich vu NEUTRON"
 sleep 3
 com_neutron_install
 
-echocolor "Restart dich vu NEUTRON"
+echocolor "Config dich vu NEUTRON"
 sleep 3
 com_neutron_config
 
