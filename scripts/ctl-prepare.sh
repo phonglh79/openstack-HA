@@ -3,7 +3,6 @@
 ### Script cai dat cac goi bo tro cho CTL
 
 ### Khai bao bien de thuc hien
-160 -> 192 -> 224 -> 256 -> 161 -> 193
 cat <<EOF> /root/ctl-config.cfg
 
 ## Hostname
