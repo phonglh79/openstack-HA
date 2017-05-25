@@ -50,6 +50,8 @@ function install_proxy() {
         yum -y update
 }
 function install_repo_galera {
+echocolor "Cai dat repo cho Galera"
+sleep 3
 echo '[mariadb]
 name = MariaDB
 baseurl = http://yum.mariadb.org/10.1/centos7-amd64
@@ -60,6 +62,8 @@ yum -y upgrade
 }
 
 function install_repo {
+        echocolor "Cai dat repo cho OpenStack"
+        sleep 3
         yum -y install centos-release-openstack-newton
         yum -y upgrade
         yum -y install crudini wget vim
@@ -73,23 +77,22 @@ function khai_bao_host {
         echo "$CTL1_IP_NIC3 ctl1" >> /etc/hosts
         echo "$CTL2_IP_NIC3 ctl2" >> /etc/hosts
         echo "$CTL3_IP_NIC3 ctl3" >> /etc/hosts
-        echo "$COM1_HOSTNAME com1" >> /etc/hosts
-        echo "$COM2_HOSTNAME com2" >> /etc/hosts
-        echo "$COM3_HOSTNAME com3" >> /etc/hosts
+        echo "$COM1_IP_NIC4 com1" >> /etc/hosts
+        echo "$COM2_IP_NIC4 com2" >> /etc/hosts
+        echo "$COM3_IP_NIC4 com3" >> /etc/hosts
 }
 
 function install_ntp_server {
-        source ctl-config.cfg
         yum -y install chrony       
         systemctl enable chronyd.service
         systemctl start chronyd.service
         systemctl restart chronyd.service
         echocolor "Cau hinh NTP cho `hostname`"
         sleep 5             
-        sed -i 's/server 0.centos.pool.ntp.org iburst/server $CTL1_IP_NIC3 iburst/g' /etc/chrony.conf
-        sed -i 's/server 1.centos.pool.ntp.org iburst/#/g' /etc/chrony.conf
-        sed -i 's/server 2.centos.pool.ntp.org iburst/#/g' /etc/chrony.conf
-        sed -i 's/server 3.centos.pool.ntp.org iburst/#/g' /etc/chrony.conf
+        sed -i "s/server 0.centos.pool.ntp.org iburst/server $CTL1_IP_NIC3 iburst/g" /etc/chrony.conf
+        sed -i "s/server 1.centos.pool.ntp.org iburst/#/g" /etc/chrony.conf
+        sed -i "s/server 2.centos.pool.ntp.org iburst/#/g" /etc/chrony.conf
+        sed -i "s/server 3.centos.pool.ntp.org iburst/#/g" /etc/chrony.conf
         systemctl enable chronyd.service
         systemctl start chronyd.service
         systemctl restart chronyd.service
@@ -102,6 +105,7 @@ function install_ntp_server {
 ##############################################################################
 
 echocolor "Bat dau cai dat cho COMPUTE"
+source ctl-config.cfg
 
 echocolor "Cai dat Proxy"
 sleep 3
@@ -109,8 +113,8 @@ install_proxy
 
 echocolor "Cai dat repos openstack va mariadb"
 sleep 3
-install_repo
 install_repo_galera
+install_repo
 
 echocolor "Khai bao hostname"
 sleep 3
@@ -119,3 +123,7 @@ khai_bao_host
 echocolor "Cai dat va cau hinh NTP"
 sleep 3
 install_ntp_server
+
+echocolor "Reboot"
+sleep 3
+init 6
