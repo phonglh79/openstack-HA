@@ -28,7 +28,7 @@ function ops_del {
     crudini --del $1 $2 $3
 }
 
-function com_install_nova {
+function com_nova_install {
         yum install -y python-openstackclient openstack-selinux openstack-utils
         yum install -y openstack-nova-compute
 }
@@ -76,10 +76,26 @@ function com_nova_config {
  
 }
 
-function  com_restart_nova {
+function  com_nova_restart {
         systemctl enable libvirtd.service openstack-nova-compute.service
         systemctl start libvirtd.service openstack-nova-compute.service
 }
+
+function com_neutron_install {
+        yum install -y openstack-neutron-ml2 openstack-neutron-linuxbridge ebtables
+        yum install -y openstack-neutron-linuxbridge ebtables ipset
+}
+
+function com_neutron_config {
+        com_neutron_conf=/etc/neutron/neutron.conf
+        com_ml2_conf=/etc/neutron/plugins/ml2/ml2_conf.ini
+        com_linuxbridge_agent=/etc/neutron/plugins/ml2/linuxbridge_agent.ini
+        cp $com_neutron_conf $ctl_neutron_conf.orig
+        cp $com_ml2_conf $ctl_ml2_conf.orig
+        cp $com_linuxbridge_agent $ctl_linuxbridge_agent.orig
+
+}
+
 
 ##############################################################################
 # Thuc thi cac functions
@@ -88,7 +104,7 @@ function  com_restart_nova {
 
 echocolor "Install dich vu NOVA"
 sleep 3
-com_install_nova
+com_nova_install
 
 echocolor "Restart dich vu NOVA"
 sleep 3
@@ -96,4 +112,4 @@ com_nova_config
 
 echocolor "Restart dich vu NOVA"
 sleep 3
-com_restart_nova
+com_nova_restart

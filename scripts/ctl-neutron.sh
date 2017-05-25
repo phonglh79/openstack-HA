@@ -65,8 +65,8 @@ function neutron_config {
         ops_edit $ctl_neutron_conf DEFAULT core_plugin ml2
         ops_edit $ctl_neutron_conf DEFAULT service_plugins
         ops_edit $ctl_neutron_conf DEFAULT auth_strategy keystone    
-        ops_edit $ctl_neutron_conf DEFAULT notify_nova_on_port_status_changes True   
-        ops_edit $ctl_neutron_conf DEFAULT notify_nova_on_port_data_changes True   
+        ops_edit $ctl_neutron_conf DEFAULT notify_nova_on_port_status_changes True
+        ops_edit $ctl_neutron_conf DEFAULT notify_nova_on_port_data_changes True  
         ops_edit $ctl_neutron_conf DEFAULT allow_overlapping_ips True 
         ops_edit $ctl_neutron_conf DEFAULT rpc_backend rabbit
         ops_edit $ctl_neutron_conf DEFAULT dhcp_agents_per_network 2
