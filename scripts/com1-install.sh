@@ -91,3 +91,11 @@ function  com_restart_nova {
 # Thuc thi cac functions
 ## Goi cac functions
 ##############################################################################
+
+echocolor "Install dich vu NOVA"
+sleep 3
+com_install_nova
+
+echocolor "Restart dich vu NOVA"
+sleep 3
+com_restart_nova
