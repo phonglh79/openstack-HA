@@ -69,7 +69,7 @@ function khai_bao_host() {
 }
 
 function install_rabbitmq() {
-        yum -y install rabbitmq-server
+        yum -y install rabbitmq-server vim
         systemctl enable rabbitmq-server.service
         systemctl start rabbitmq-server.service
         rabbitmq-plugins enable rabbitmq_management

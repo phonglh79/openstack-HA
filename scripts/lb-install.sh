@@ -78,7 +78,7 @@ function khai_bao_host() {
 }
 
 function install_nginx {
-        yum -y install wget 
+        yum -y install wget vim
 cat << EOF > /etc/yum.repos.d/nginx.repo
 [nginx]
 name=nginx repo

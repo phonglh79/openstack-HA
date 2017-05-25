@@ -183,7 +183,7 @@ yum -y upgrade
 function install_repo() {
         yum -y install centos-release-openstack-newton
         yum -y upgrade
-        yum -y install crudini wget
+        yum -y install crudini wget vim
         yum -y install python-openstackclient openstack-selinux
         yum -y install mariadb mariadb-server python2-PyMySQL
         
