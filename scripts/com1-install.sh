@@ -44,10 +44,6 @@ function nova_config {
         ops_edit $com_nova_conf DEFAULT use_neutron true
         ops_edit $com_nova_conf DEFAULT firewall_driver nova.virt.firewall.NoopFirewallDriver
 
-        
-        ops_edit $com_nova_conf api_database connection  mysql+pymysql://nova:$PASS_DATABASE_NOVA_API@$IP_VIP_DB/nova_api
-        ops_edit $com_nova_conf database connection  mysql+pymysql://nova:$PASS_DATABASE_NOVA@$IP_VIP_DB/nova
-        
         ops_edit $com_nova_conf oslo_messaging_rabbit rabbit_hosts $MQ1_IP_NIC1:5672,$MQ2_IP_NIC1:5672,$MQ3_IP_NIC1:5672
         ops_edit $com_nova_conf oslo_messaging_rabbit rabbit_ha_queues true
         ops_edit $com_nova_conf oslo_messaging_rabbit rabbit_retry_interval 1
