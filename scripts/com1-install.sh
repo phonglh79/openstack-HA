@@ -76,13 +76,13 @@ function com_nova_config {
  
 }
 
-function  com_nova_restart {
+function com_nova_restart {
         systemctl enable libvirtd.service openstack-nova-compute.service
         systemctl start libvirtd.service openstack-nova-compute.service
 }
 
 function com_neutron_install {
-        yum install -y openstack-neutron-ml2 openstack-neutron-linuxbridge ebtables
+        yum install -y  openstack-neutron openstack-neutron-ml2 openstack-neutron-linuxbridge ebtables
         yum install -y openstack-neutron-linuxbridge ebtables ipset
 }
 
@@ -90,12 +90,60 @@ function com_neutron_config {
         com_neutron_conf=/etc/neutron/neutron.conf
         com_ml2_conf=/etc/neutron/plugins/ml2/ml2_conf.ini
         com_linuxbridge_agent=/etc/neutron/plugins/ml2/linuxbridge_agent.ini
-        cp $com_neutron_conf $ctl_neutron_conf.orig
-        cp $com_ml2_conf $ctl_ml2_conf.orig
-        cp $com_linuxbridge_agent $ctl_linuxbridge_agent.orig
-
+        com_dhcp_agent=/etc/neutron/dhcp_agent.ini
+        com_metadata_agent=/etc/neutron/metadata_agent.ini
+        
+        
+        cp $com_neutron_conf $com_neutron_conf.orig
+        cp $com_ml2_conf $com_ml2_conf.orig
+        cp $com_linuxbridge_agent $com_linuxbridge_agent.orig
+        cp $com_dhcp_agent $com_dhcp_agent.orig
+        cp $com_metadata_agent $com_metadata_agent.orig
+        
+        ops_edit $com_neutron_conf DEFAULT auth_strategy keystone
+        ops_edit $com_neutron_conf DEFAULT core_plugin ml2
+        ops_edit $com_neutron_conf DEFAULT rpc_backend rabbit
+        
+        ops_edit $com_neutron_conf oslo_messaging_rabbit rabbit_hosts $MQ1_IP_NIC1:5672,$MQ2_IP_NIC1:5672,$MQ3_IP_NIC1:5672
+        ops_edit $com_neutron_conf oslo_messaging_rabbit rabbit_ha_queues true
+        ops_edit $com_neutron_conf oslo_messaging_rabbit rabbit_retry_interval 1
+        ops_edit $com_neutron_conf oslo_messaging_rabbit rabbit_retry_backoff 2
+        ops_edit $com_neutron_conf oslo_messaging_rabbit rabbit_max_retries 0
+        ops_edit $com_neutron_conf oslo_messaging_rabbit rabbit_durable_queues true
+        ops_edit $com_neutron_conf oslo_messaging_rabbit rabbit_userid openstack
+        ops_edit $com_neutron_conf oslo_messaging_rabbit rabbit_password $RABBIT_PASS
+        
+        ops_edit $com_neutron_conf keystone_authtoken auth_uri http://$IP_VIP_API:5000
+        ops_edit $com_neutron_conf keystone_authtoken auth_url http://$IP_VIP_API:35357
+        ops_edit $com_neutron_conf keystone_authtoken memcached_servers $CTL1_IP_NIC1:11211,$CTL2_IP_NIC1:11211,$CTL3_IP_NIC1:11211
+        ops_edit $com_neutron_conf keystone_authtoken auth_type password
+        ops_edit $com_neutron_conf keystone_authtoken project_domain_name Default
+        ops_edit $com_neutron_conf keystone_authtoken user_domain_name Default
+        ops_edit $com_neutron_conf keystone_authtoken project_name service
+        ops_edit $com_neutron_conf keystone_authtoken username neutron
+        ops_edit $com_neutron_conf keystone_authtoken password $NEUTRON_PASS
+        
+        ops_edit $com_neutron_conf oslo_concurrency lock_path /var/lib/neutron/tmp
+        
+        ops_edit $com_linuxbridge_agent linux_bridge physical_interface_mappings = provider:$(ip addr show dev ens224 scope global | grep "inet " | sed -e 's#.*inet ##g' -e 's#/.*##g')
+        ops_edit $com_linuxbridge_agent vxlan enable_vxlan False
+        ops_edit $com_linuxbridge_agent securitygroup enable_security_group True
+        ops_edit $com_linuxbridge_agent securitygroup firewall_driver neutron.agent.linux.iptables_firewall.IptablesFirewallDriver
+        
+        ops_edit $com_metadata_agent DEFAULT nova_metadata_ip $IP_VIP_API
+        ops_edit $com_metadata_agent DEFAULT metadata_proxy_shared_secret $METADATA_SECRET
+        
+        ops_edit $com_dhcp_agent DEFAULT interface_driver linuxbridge
+        ops_edit $com_dhcp_agent DEFAULT enable_isolated_metadata True
+        ops_edit $com_dhcp_agent DEFAULT dhcp_driver neutron.agent.linux.dhcp.Dnsmasq
+        ops_edit $com_dhcp_agent DEFAULT force_metadata = True
 }
 
+function com_neuton_restart {
+        systemctl enable neutron-linuxbridge-agent.service
+        systemctl start neutron-dhcp-agent.service
+        systemctl neutron-metadata-agent.service
+}
 
 ##############################################################################
 # Thuc thi cac functions
@@ -113,3 +161,15 @@ com_nova_config
 echocolor "Restart dich vu NOVA"
 sleep 3
 com_nova_restart
+
+echocolor "Install dich vu NEUTRON"
+sleep 3
+com_neutron_install
+
+echocolor "Restart dich vu NEUTRON"
+sleep 3
+com_neutron_config
+
+echocolor "Restart dich vu NEUTRON"
+sleep 3
+com_neutron_restart
