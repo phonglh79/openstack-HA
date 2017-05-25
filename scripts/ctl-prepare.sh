@@ -157,10 +157,8 @@ NEUTRON_PASS=\$PASS_DATABASE_ROOT
 
 EOF
 
-
 chmod +x ctl-config.cfg
 source ctl-config.cfg
-
 
 function echocolor {
     echo "#######################################################################"
