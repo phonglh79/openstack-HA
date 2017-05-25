@@ -125,7 +125,7 @@ function com_neutron_config {
         
         ops_edit $com_neutron_conf oslo_concurrency lock_path /var/lib/neutron/tmp
         
-        ops_edit $com_linuxbridge_agent linux_bridge physical_interface_mappings = provider:$(ip addr show dev ens224 scope global | grep "inet " | sed -e 's#.*inet ##g' -e 's#/.*##g')
+        ops_edit $com_linuxbridge_agent linux_bridge physical_interface_mappings provider:ens224
         ops_edit $com_linuxbridge_agent vxlan enable_vxlan False
         ops_edit $com_linuxbridge_agent securitygroup enable_security_group True
         ops_edit $com_linuxbridge_agent securitygroup firewall_driver neutron.agent.linux.iptables_firewall.IptablesFirewallDriver
@@ -136,13 +136,19 @@ function com_neutron_config {
         ops_edit $com_dhcp_agent DEFAULT interface_driver linuxbridge
         ops_edit $com_dhcp_agent DEFAULT enable_isolated_metadata True
         ops_edit $com_dhcp_agent DEFAULT dhcp_driver neutron.agent.linux.dhcp.Dnsmasq
-        ops_edit $com_dhcp_agent DEFAULT force_metadata = True
+        ops_edit $com_dhcp_agent DEFAULT force_metadata True
 }
 
-function com_neuton_restart {
+function com_neutron_restart {
         systemctl enable neutron-linuxbridge-agent.service
+        systemctl enable neutron-metadata-agent.service
+        systemctl enable neutron-dhcp-agent.service
+        
+        systemctl start neutron-linuxbridge-agent.service
+        systemctl start neutron-metadata-agent.service
         systemctl start neutron-dhcp-agent.service
-        systemctl neutron-metadata-agent.service
+
+       
 }
 
 ##############################################################################
