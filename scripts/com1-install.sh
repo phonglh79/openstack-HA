@@ -33,7 +33,7 @@ function com_install_nova {
         yum install -y openstack-nova-compute
 }
 
-function nova_config {
+function com_nova_config {
         com_nova_conf=/etc/nova/nova.conf
         cp $com_nova_conf $com_nova_conf.orig
 
@@ -79,8 +79,6 @@ function nova_config {
 function  com_restart_nova {
         systemctl enable libvirtd.service openstack-nova-compute.service
         systemctl start libvirtd.service openstack-nova-compute.service
-        systemctl enable openstack-nova-compute.service
-        systemctl start openstack-nova-compute.service
 }
 
 ##############################################################################
@@ -91,6 +89,10 @@ function  com_restart_nova {
 echocolor "Install dich vu NOVA"
 sleep 3
 com_install_nova
+
+echocolor "Restart dich vu NOVA"
+sleep 3
+com_nova_config
 
 echocolor "Restart dich vu NOVA"
 sleep 3
