@@ -360,3 +360,100 @@ openstack server create --flavor m1.nano --image cirros \
   --nic net-id=33c96f0e-d3b5-4f9b-96cf-15dd44c87229 --security-group default \
   provider-instance
   
+########
+
+## CEPH1
+hostnamectl set-hostname ceph1
+
+echo "Setup IP  ens160"
+nmcli c modify ens160 ipv4.addresses 192.168.20.91/24
+nmcli c modify ens160 ipv4.gateway 192.168.20.254
+nmcli c modify ens160 ipv4.dns 8.8.8.8
+nmcli c modify ens160 ipv4.method manual
+nmcli con mod ens160 connection.autoconnect yes
+
+echo "Setup IP  ens224"
+nmcli c modify ens224 ipv4.addresses 10.10.0.91/24
+nmcli c modify ens224 ipv4.method manual
+nmcli con mod ens224 connection.autoconnect yes
+
+echo "Setup IP  ens161"
+nmcli c modify ens161 ipv4.addresses 172.16.10.91/24
+nmcli c modify ens161 ipv4.method manual
+nmcli con mod ens161 connection.autoconnect yes
+
+sudo systemctl disable firewalld
+sudo systemctl stop firewalld
+sudo systemctl disable NetworkManager
+sudo systemctl stop NetworkManager
+sudo systemctl enable network
+sudo systemctl start network
+
+sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux
+sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
+
+init 6
+
+## CEPH2
+hostnamectl set-hostname ceph2
+
+echo "Setup IP  ens160"
+nmcli c modify ens160 ipv4.addresses 192.168.20.92/24
+nmcli c modify ens160 ipv4.gateway 192.168.20.254
+nmcli c modify ens160 ipv4.dns 8.8.8.8
+nmcli c modify ens160 ipv4.method manual
+nmcli con mod ens160 connection.autoconnect yes
+
+echo "Setup IP  ens224"
+nmcli c modify ens224 ipv4.addresses 10.10.0.92/24
+nmcli c modify ens224 ipv4.method manual
+nmcli con mod ens224 connection.autoconnect yes
+
+echo "Setup IP  ens161"
+nmcli c modify ens161 ipv4.addresses 172.16.10.92/24
+nmcli c modify ens161 ipv4.method manual
+nmcli con mod ens161 connection.autoconnect yes
+
+sudo systemctl disable firewalld
+sudo systemctl stop firewalld
+sudo systemctl disable NetworkManager
+sudo systemctl stop NetworkManager
+sudo systemctl enable network
+sudo systemctl start network
+
+sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux
+sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
+
+init 6
+
+## CEPH3
+hostnamectl set-hostname ceph3
+
+echo "Setup IP  ens160"
+nmcli c modify ens160 ipv4.addresses 192.168.20.93/24
+nmcli c modify ens160 ipv4.gateway 192.168.20.254
+nmcli c modify ens160 ipv4.dns 8.8.8.8
+nmcli c modify ens160 ipv4.method manual
+nmcli con mod ens160 connection.autoconnect yes
+
+echo "Setup IP  ens224"
+nmcli c modify ens224 ipv4.addresses 10.10.0.93/24
+nmcli c modify ens224 ipv4.method manual
+nmcli con mod ens224 connection.autoconnect yes
+
+echo "Setup IP  ens161"
+nmcli c modify ens161 ipv4.addresses 172.16.10.93/24
+nmcli c modify ens161 ipv4.method manual
+nmcli con mod ens161 connection.autoconnect yes
+
+sudo systemctl disable firewalld
+sudo systemctl stop firewalld
+sudo systemctl disable NetworkManager
+sudo systemctl stop NetworkManager
+sudo systemctl enable network
+sudo systemctl start network
+
+sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux
+sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
+
+init 6
