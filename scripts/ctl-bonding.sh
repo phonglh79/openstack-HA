@@ -117,10 +117,10 @@ sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux
 sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
 sudo systemctl disable firewalld
 sudo systemctl stop firewalld
-#sudo systemctl stop NetworkManager
-#sudo systemctl disable NetworkManager
-#sudo systemctl enable network
-#sudo systemctl start network
+sudo systemctl stop NetworkManager
+sudo systemctl disable NetworkManager
+sudo systemctl enable network
+sudo systemctl start network
 init 6
 
 
