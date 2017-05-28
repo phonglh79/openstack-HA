@@ -38,8 +38,7 @@ INTERFACE5=ens161
 INTERFACE6=ens193
 BOND2_NIC=bond2
 BOND2_IP=$4
-
-
+BOND2_NETMASK=24
 
 echo "Dat hostname"
 hostnamectl set-hostname $1
