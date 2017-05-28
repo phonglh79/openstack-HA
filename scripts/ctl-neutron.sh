@@ -49,7 +49,7 @@ function neutron_user_endpoint {
 function neutron_install {
         for IP_ADD in $CTL1_IP_NIC3 $CTL2_IP_NIC3 $CTL3_IP_NIC3
         do
-            ssh root@$IP_ADD "yum -y install openstack-neutron openstack-neutron-ml2 openstack-neutron-linuxbridge ebtables"
+            ssh root@$IP_ADD "yum -y update && yum -y install openstack-neutron openstack-neutron-ml2 openstack-neutron-linuxbridge ebtables"
         done  
 
 }

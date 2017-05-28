@@ -166,16 +166,17 @@ function com_neutron_restart {
 # Thuc thi cac functions
 ## Goi cac functions
 ##############################################################################
+yum -y update 
 
 echocolor "Install dich vu NOVA"
 sleep 3
 com_nova_install
 
-echocolor "Restart dich vu NOVA"
+echocolor "Config dich vu NOVA"
 sleep 3
 com_nova_config
 
-echocolor "Config dich vu NOVA"
+echocolor "Restart dich vu NOVA"
 sleep 3
 com_nova_restart
 
