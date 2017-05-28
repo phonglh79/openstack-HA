@@ -6,7 +6,7 @@
 ### Kiem tra cu phap khi thuc hien shell 
 if [ $# -ne 4 ]
     then
-        echo -e "Nhap du 5 thong so: \e[38;5;82m HOSTNAME IP_NIC1 IP_NIC2 IP_NIC3 IP_NIC4 \e[0m"
+        echo -e "Nhap du 4 thong so: \e[38;5;82m HOSTNAME IP_NIC1 IP_NIC2 IP_NIC3 \e[0m"
         echo ""
         echo -e "Thuc hien tren may chu CEPH1: \e[31m bash $0 CEPH1_HOSTNAME CEPH1_IP_NIC1 CEPH1_IP_NIC2 CEPH1_IP_NIC3 \e[0m"
         echo -e "Thuc hien tren may chu CEPH2: \e[31m bash $0 CEPH2_HOSTNAME CEPH2_IP_NIC1 CEPH2_IP_NIC2 CEPH2_IP_NIC3 \e[0m"
