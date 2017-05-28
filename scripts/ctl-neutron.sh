@@ -109,18 +109,9 @@ function neutron_config {
         ops_edit $ctl_ml2_conf ml2 mechanism_drivers linuxbridge
         ops_edit $ctl_ml2_conf ml2 extension_drivers port_security          
         ops_edit $ctl_ml2_conf ml2_type_flat flat_networks provider
-        ops_edit $ctl_ml2_conf ml2_type_vlan network_vlan_ranges provider
         
         ops_edit $ctl_ml2_conf securitygroup enable_ipset True
-        ops_edit $ctl_ml2_conf securitygroup firewall_driver iptables_hybrid
-        ops_edit $ctl_ml2_conf securitygroup enable_security_group True
-                
-        #ops_edit $ctl_linuxbridge_agent linux_bridge physical_interface_mappings provider:PROVIDER_INTERFACE_NAME
-        # ops_edit $ctl_linuxbridge_agent vxlan enable_vxlan False
-        # ops_edit $ctl_linuxbridge_agent securitygroup enable_security_group True
-        # ops_edit $ctl_linuxbridge_agent securitygroup firewall_driver neutron.agent.linux.iptables_firewall.IptablesFirewallDriver
-        
-        
+    
    
         for IP_ADD in $ $CTL1_IP_NIC3 $CTL2_IP_NIC3 $CTL3_IP_NIC3
         do            

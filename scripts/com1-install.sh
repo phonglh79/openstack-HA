@@ -81,8 +81,6 @@ function com_nova_config {
         ops_edit $com_nova_conf neutron username neutron
         ops_edit $com_nova_conf neutron password $NEUTRON_PASS
         
-        
-        
         ops_edit $com_nova_conf libvirt virt_type  $(count=$(egrep -c '(vmx|svm)' /proc/cpuinfo); if [ $count -eq 0 ];then   echo "qemu"; else   echo "kvm"; fi)
  
 }
@@ -114,6 +112,8 @@ function com_neutron_config {
         ops_edit $com_neutron_conf DEFAULT auth_strategy keystone
         ops_edit $com_neutron_conf DEFAULT core_plugin ml2
         ops_edit $com_neutron_conf DEFAULT rpc_backend rabbit
+        ops_edit $com_neutron_conf DEFAULT notify_nova_on_port_status_changes true
+        ops_edit $com_neutron_conf DEFAULT notify_nova_on_port_data_changes true
         
         ops_edit $com_neutron_conf oslo_messaging_rabbit rabbit_hosts $MQ1_IP_NIC1:5672,$MQ2_IP_NIC1:5672,$MQ3_IP_NIC1:5672
         ops_edit $com_neutron_conf oslo_messaging_rabbit rabbit_ha_queues true
@@ -144,7 +144,7 @@ function com_neutron_config {
         ops_edit $com_metadata_agent DEFAULT nova_metadata_ip $IP_VIP_API
         ops_edit $com_metadata_agent DEFAULT metadata_proxy_shared_secret $METADATA_SECRET
         
-        ops_edit $com_dhcp_agent DEFAULT interface_driver linuxbridge
+        ops_edit $com_dhcp_agent DEFAULT interface_driver neutron.agent.linux.interface.BridgeInterfaceDriver
         ops_edit $com_dhcp_agent DEFAULT enable_isolated_metadata True
         ops_edit $com_dhcp_agent DEFAULT dhcp_driver neutron.agent.linux.dhcp.Dnsmasq
         ops_edit $com_dhcp_agent DEFAULT force_metadata True
