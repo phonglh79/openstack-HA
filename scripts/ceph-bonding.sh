@@ -43,22 +43,6 @@ BOND2_NETMASK=24
 echo "Dat hostname"
 hostnamectl set-hostname $1
 
-echo "Cau hinh BOND0"
-nmcli con add type bond con-name $BOND0_NIC ifname $BOND0_NIC mode active-backup
-nmcli con add type bond-slave con-name $BOND0_NIC-$INTERFACE1 ifname $INTERFACE1 master $BOND0_NIC
-nmcli con add type bond-slave con-name $BOND0_NIC-$INTERFACE2 ifname $INTERFACE2 master $BOND0_NIC
-nmcli con up $BOND0_NIC-$INTERFACE1
-nmcli con up $BOND0_NIC-$INTERFACE2
-nmcli con up $BOND0_NIC
-
-nmcli con modify $BOND0_NIC ipv6.method ignore;
-nmcli con modify $BOND0_NIC ipv4.addresses $BOND0_IP/$BOND0_NETMASK
-nmcli con modify $BOND0_NIC ipv4.dns $BOND0_DNS
-nmcli con modify $BOND0_NIC ipv4.gateway $BOND0_DEAFAUL_GATEWAY
-nmcli con modify $BOND0_NIC ipv4.method manual
-nmcli con modify $BOND0_NIC connection.autoconnect yes
-
-
 echo "Cau hinh BOND1"
 nmcli con add type bond con-name $BOND1_NIC ifname $BOND1_NIC mode active-backup
 nmcli con add type bond-slave con-name $BOND1_NIC-$INTERFACE3 ifname $INTERFACE3 master $BOND1_NIC
@@ -85,7 +69,22 @@ nmcli con modify $BOND2_NIC ipv4.method manual
 nmcli con modify $BOND2_NIC connection.autoconnect yes
 nmcli con up $BOND2_NIC
 
-##########
+echo "Cau hinh BOND0"
+nmcli con add type bond con-name $BOND0_NIC ifname $BOND0_NIC mode active-backup
+nmcli con add type bond-slave con-name $BOND0_NIC-$INTERFACE1 ifname $INTERFACE1 master $BOND0_NIC
+nmcli con add type bond-slave con-name $BOND0_NIC-$INTERFACE2 ifname $INTERFACE2 master $BOND0_NIC
+nmcli con up $BOND0_NIC-$INTERFACE1
+nmcli con up $BOND0_NIC-$INTERFACE2
+nmcli con up $BOND0_NIC
+
+nmcli con modify $BOND0_NIC ipv6.method ignore;
+nmcli con modify $BOND0_NIC ipv4.addresses $BOND0_IP/$BOND0_NETMASK
+nmcli con modify $BOND0_NIC ipv4.dns $BOND0_DNS
+nmcli con modify $BOND0_NIC ipv4.gateway $BOND0_DEAFAUL_GATEWAY
+nmcli con modify $BOND0_NIC ipv4.method manual
+nmcli con modify $BOND0_NIC connection.autoconnect yes
+
+#########
 echo "Vo hieu hoa firewall va reboot may"
 
 sed -i 's/BONDING_OPTS=mode=active-backup/BONDING_OPTS="mode=active-backup miimon=100"/g'  /etc/sysconfig/network-scripts/ifcfg-$BOND0_NIC
