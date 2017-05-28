@@ -117,8 +117,8 @@ function neutron_config {
         do            
                 scp $ctl_neutron_conf root@$IP_ADD:/etc/neutron/                 
                 scp $ctl_ml2_conf root@$IP_ADD:/etc/neutron/plugins/ml2
-                ssh root@$IP_ADD 'ln -s /etc/neutron/plugins/ml2/ml2_conf.ini /etc/neutron/plugin.ini'
-                ssh root@$IP_ADD 'chown -R root:neutron /etc/neutron/'
+                ssh root@$IP_ADD "ln -s /etc/neutron/plugins/ml2/ml2_conf.ini /etc/neutron/plugin.ini"
+                ssh root@$IP_ADD "chown -R root:neutron /etc/neutron/"
         done
 }
 
