@@ -45,7 +45,7 @@ hostnamectl set-hostname $1
 
 echo "Cau hinh BOND0"
 nmcli con add type bond con-name $BOND0_NIC ifname $BOND0_NIC mode active-backup
-nmcli con add type bond-slave con-name $BOND0_NIC-$INTERFACE1  ifname $INTERFACE1 master $BOND0_NIC
+nmcli con add type bond-slave con-name $BOND0_NIC-$INTERFACE1 ifname $INTERFACE1 master $BOND0_NIC
 nmcli con add type bond-slave con-name $BOND0_NIC-$INTERFACE2 ifname $INTERFACE2 master $BOND0_NIC
 nmcli con up $BOND0_NIC-$INTERFACE1
 nmcli con up $BOND0_NIC-$INTERFACE2

@@ -353,8 +353,8 @@ openstack network list
 
 ## Tao fule 
 
-openstack security group rule create --proto icmp default
-openstack security group rule create --proto tcp --dst-port 22 default
+openstack security group rule create --proto icmp ea8d888e-fa12-4478-9c72-bbf4a154cf8f
+openstack security group rule create --proto tcp --dst-port 22 ea8d888e-fa12-4478-9c72-bbf4a154cf8f
 
 openstack server create --flavor m1.nano --image cirros \
   --nic net-id=33c96f0e-d3b5-4f9b-96cf-15dd44c87229 --security-group default \
