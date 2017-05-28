@@ -49,6 +49,7 @@ nmcli con add type bond-slave con-name $BOND0_NIC-$INTERFACE1 ifname $INTERFACE1
 nmcli con add type bond-slave con-name $BOND0_NIC-$INTERFACE2 ifname $INTERFACE2 master $BOND0_NIC
 nmcli con up $BOND0_NIC-$INTERFACE1
 nmcli con up $BOND0_NIC-$INTERFACE2
+nmcli con up $BOND0_NIC
 
 nmcli con modify $BOND0_NIC ipv6.method ignore;
 nmcli con modify $BOND0_NIC ipv4.addresses $BOND0_IP/$BOND0_NETMASK
@@ -56,7 +57,7 @@ nmcli con modify $BOND0_NIC ipv4.dns $BOND0_DNS
 nmcli con modify $BOND0_NIC ipv4.gateway $BOND0_DEAFAUL_GATEWAY
 nmcli con modify $BOND0_NIC ipv4.method manual
 nmcli con modify $BOND0_NIC connection.autoconnect yes
-nmcli con up $BOND0_NIC
+
 
 echo "Cau hinh BOND1"
 nmcli con add type bond con-name $BOND1_NIC ifname $BOND1_NIC mode active-backup
