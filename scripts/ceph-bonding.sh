@@ -8,11 +8,11 @@ if [ $# -ne 5 ]
     then
         echo -e "Nhap du 5 thong so: \e[38;5;82m HOSTNAME IP_NIC1 IP_NIC2 IP_NIC3 IP_NIC4 \e[0m"
         echo ""
-        echo -e "Thuc hien tren may chu CEPH1: \e[31m bash $0 CEPH1_HOSTNAME CEPH1_IP_NIC1 CEPH1_IP_NIC2 CEPH1_IP_NIC3 CEPH1_IP_NIC4 \e[0m"
-        echo -e "Thuc hien tren may chu CEPH2: \e[31m bash $0 CEPH2_HOSTNAME CEPH2_IP_NIC1 CEPH2_IP_NIC2 CEPH2_IP_NIC3 CEPH2_IP_NIC4 \e[0m"
-        echo -e "Thuc hien tren may chu CEPH3: \e[31m bash $0 CEPH3_HOSTNAME CEPH3_IP_NIC1 CEPH3_IP_NIC2 CEPH3_IP_NIC3 CEPH3_IP_NIC4 \e[0m"
+        echo -e "Thuc hien tren may chu CTL1: \e[31m bash $0 CTL1_HOSTNAME CTL1_IP_NIC1 CTL1_IP_NIC2 CTL1_IP_NIC3 CTL1_IP_NIC4 \e[0m"
+        echo -e "Thuc hien tren may chu CTL2: \e[31m bash $0 CTL2_HOSTNAME CTL2_IP_NIC1 CTL2_IP_NIC2 CTL2_IP_NIC3 CTL2_IP_NIC4 \e[0m"
+        echo -e "Thuc hien tren may chu CTL3: \e[31m bash $0 CTL3_HOSTNAME CTL3_IP_NIC1 CTL3_IP_NIC2 CTL3_IP_NIC3 CTL3_IP_NIC4 \e[0m"
         echo ""
-        echo -e "Vi du:\e[101mbash $0 CEPH1 10.10.20.91 192.168.20.91 10.10.0.61 172.16.10.91 \e[0m"
+        echo -e "Vi du:\e[101mbash $0 ctl1 10.10.20.61 10.10.10.61 192.168.20.61 10.10.0.61 \e[0m"
         exit 1;
 fi
 
@@ -66,18 +66,18 @@ nmcli con up $BOND0_NIC
 
 echo "Cau hinh BOND1"
 nmcli con add type bond con-name $BOND1_NIC ifname $BOND1_NIC mode active-backup
-nmcli con add type bond-slave con-name $BOND1_NIC-$INTERFACE3  ifname $INTERFACE3 master $BOND1_NIC
+nmcli con add type bond-slave con-name $BOND1_NIC-$INTERFACE3 ifname $INTERFACE3 master $BOND1_NIC
 nmcli con add type bond-slave con-name $BOND1_NIC-$INTERFACE4 ifname $INTERFACE4 master $BOND1_NIC
 nmcli con up $BOND1_NIC-$INTERFACE3
 nmcli con up $BOND1_NIC-$INTERFACE4
-nmcli con up $BOND1_NIC
 
+nmcli con modify $BOND1_NIC ipv6.method ignore;
 nmcli con modify $BOND1_NIC ipv4.addresses $BOND1_IP/$BOND1_NETMASK
 nmcli con modify $BOND1_NIC ipv4.dns $BOND1_DNS
 nmcli con modify $BOND1_NIC ipv4.gateway $BOND1_DEAFAUL_GATEWAY
 nmcli con modify $BOND1_NIC ipv4.method manual
 nmcli con modify $BOND1_NIC connection.autoconnect yes
-
+nmcli con up $BOND1_NIC
 
 echo "Cau hinh BOND2"
 nmcli con add type bond con-name $BOND2_NIC ifname $BOND2_NIC mode active-backup
