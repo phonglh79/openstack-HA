@@ -113,7 +113,6 @@ function neutron_config {
         
         ops_edit $ctl_ml2_conf securitygroup enable_ipset True
         ops_edit $ctl_ml2_conf securitygroup firewall_driver iptables_hybrid
-        ops_edit $ctl_ml2_conf securitygroup enable_ipset True
         ops_edit $ctl_ml2_conf securitygroup enable_security_group True
                 
         #ops_edit $ctl_linuxbridge_agent linux_bridge physical_interface_mappings provider:PROVIDER_INTERFACE_NAME

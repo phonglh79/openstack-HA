@@ -72,6 +72,17 @@ function com_nova_config {
         
         ops_edit $com_nova_conf oslo_concurrency lock_path /var/lib/nova/tmp
         
+        ops_edit $com_nova_conf neutron url http://$IP_VIP_API:9696
+        ops_edit $com_nova_conf neutron auth_url http://$IP_VIP_API:35357
+        ops_edit $com_nova_conf neutron auth_type password
+        ops_edit $com_nova_conf neutron project_domain_name Default
+        ops_edit $com_nova_conf neutron user_domain_name Default
+        ops_edit $com_nova_conf neutron project_name service
+        ops_edit $com_nova_conf neutron username neutron
+        ops_edit $com_nova_conf neutron password $NEUTRON_PASS
+        
+        
+        
         ops_edit $com_nova_conf libvirt virt_type  $(count=$(egrep -c '(vmx|svm)' /proc/cpuinfo); if [ $count -eq 0 ];then   echo "qemu"; else   echo "kvm"; fi)
  
 }

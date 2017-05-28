@@ -111,7 +111,7 @@ function nova_config {
         ops_edit $ctl_nova_conf neutron username neutron
         ops_edit $ctl_nova_conf neutron password $NEUTRON_PASS
         ops_edit $ctl_nova_conf neutron service_metadata_proxy True
-        ops_edit $ctl_nova_conf neutron password $METADATA_SECRET
+        ops_edit $ctl_nova_conf neutron metadata_proxy_shared_secret $METADATA_SECRET
         
         for IP_ADD in $CTL1_IP_NIC3 $CTL2_IP_NIC3 $CTL3_IP_NIC3 
         do      
