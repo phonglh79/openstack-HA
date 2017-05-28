@@ -133,6 +133,7 @@ function nova_syncdb {
 function nova_enable_restart {
         for IP_ADD in $CTL1_IP_NIC3 $CTL2_IP_NIC3 $CTL3_IP_NIC3
         do
+            echocolor "Restart dich vu nova tren $IP_ADD"
             ssh root@$IP_ADD "systemctl enable openstack-nova-api.service"
             ssh root@$IP_ADD "systemctl enable openstack-nova-consoleauth.service"
             ssh root@$IP_ADD "systemctl enable openstack-nova-scheduler.service"

@@ -123,6 +123,7 @@
   
 ### 4.2. Thực hiện cài đặt các gói chuẩn bị.
 - Đăng nhập vào máy chủ `CTL1` và thực hiện script sau.
+- Script tự động thực hiện cài đặt từ xa trên CTL2 và CTL3
   ```sh
   curl -O https://raw.githubusercontent.com/congto/openstack-HA/master/scripts/ctl-prepare.sh
   bash ctl-prepare.sh
@@ -131,6 +132,7 @@
 ### 4.3. Thực hiện cài đặt keystone 
 - Bước này thực hiện trên máy chủ CTL1 (CONTROLLER1)
 - Tải script cài đặt keystone 
+- Script tự động thực hiện cài đặt từ xa trên CTL2 và CTL3
   ```sh
   curl -O https://raw.githubusercontent.com/congto/openstack-HA/master/scripts/ctl-keystone.sh
   bash ctl-keystone.sh
@@ -139,9 +141,26 @@
 ### 4.4. Thực hiện cài đặt Glance 
 - Bước này thực hiện trên máy chủ CTL1 (CONTROLLER1)
 - Tải script cài đặt Glance 
+- Script tự động thực hiện cài đặt từ xa trên CTL2 và CTL3
   ```sh
   curl -O https://raw.githubusercontent.com/congto/openstack-HA/master/scripts/ctl-glance.sh
   bash ctl-glance.sh
   ```
 
+### 4.5. Thực hiện cài đặt Nova
+- Bước này thực hiện trên máy chủ CTL1 (CONTROLLER1)
+- Tải script cài đặt nova 
+- Script tự động thực hiện cài đặt từ xa trên CTL2 và CTL3
+  ```sh
+  curl -O https://raw.githubusercontent.com/congto/openstack-HA/master/scripts/ctl-nova.sh
+  bash ctl-nova.sh
+  ```
 
+  ### 4.6. Thực hiện cài đặt Neutron
+- Bước này thực hiện trên máy chủ CTL1 (CONTROLLER1)
+- Tải script cài đặt neutron
+- Script tự động thực hiện cài đặt từ xa trên CTL2 và CTL3
+  ```sh
+  curl -O https://raw.githubusercontent.com/congto/openstack-HA/master/scripts/ctl-neutron.sh
+  bash ctl-neutron.sh
+  ```
