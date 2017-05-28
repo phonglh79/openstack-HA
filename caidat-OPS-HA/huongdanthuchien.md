@@ -64,7 +64,7 @@ nmcli c modify "ens1" connection.id ens224
 
 160 -> 192 -> 224 -> 256 -> 161 -> 193 -> 225 -> 257 -> 163 -> 194 -> 226 -> 258
 
-ens224 -> ens192
+ens160 -> ens192
 ens224 -> ens256
 ens161 -> ens193 
 ens225 -> ens257
