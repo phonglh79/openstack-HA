@@ -326,3 +326,37 @@ sudo systemctl start network
 
 sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux
 sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
+
+
+### Tao nmay ao
+
+
+# tao flavor
+openstack flavor create --id 0 --vcpus 1 --ram 64 --disk 1 m1.nano
+
+## Tao network
+
+openstack network create  --share --external \
+  --provider-physical-network provider \
+  --provider-network-type flat provider
+  
+  
+  
+openstack subnet create --network provider \
+  --allocation-pool start=192.168.50.10,end=192.168.50.50 \
+  --dns-nameserver 8.8.8.8 --gateway 192.168.50.254 \
+  --subnet-range 192.168.50.0/24 provider
+
+
+openstack network list
+
+
+## Tao fule 
+
+openstack security group rule create --proto icmp default
+openstack security group rule create --proto tcp --dst-port 22 default
+
+openstack server create --flavor m1.nano --image cirros \
+  --nic net-id=33c96f0e-d3b5-4f9b-96cf-15dd44c87229 --security-group default \
+  provider-instance
+  
