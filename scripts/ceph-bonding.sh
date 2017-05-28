@@ -4,7 +4,7 @@
 
 ### Khai bao bien de thuc hien
 ### Kiem tra cu phap khi thuc hien shell 
-if [ $# -ne 5 ]
+if [ $# -ne 4 ]
     then
         echo -e "Nhap du 5 thong so: \e[38;5;82m HOSTNAME IP_NIC1 IP_NIC2 IP_NIC3 IP_NIC4 \e[0m"
         echo ""
