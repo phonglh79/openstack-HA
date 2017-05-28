@@ -12,7 +12,7 @@ if [ $# -ne 5 ]
         echo -e "Thuc hien tren may chu CTL2: \e[31m bash $0 CTL2_HOSTNAME CTL2_IP_NIC1 CTL2_IP_NIC2 CTL2_IP_NIC3 CTL2_IP_NIC4 \e[0m"
         echo -e "Thuc hien tren may chu CTL3: \e[31m bash $0 CTL3_HOSTNAME CTL3_IP_NIC1 CTL3_IP_NIC2 CTL3_IP_NIC3 CTL3_IP_NIC4 \e[0m"
         echo ""
-        echo -e "Vi du:\e[101mbash $0 ctl1 10.10.20.61 10.10.10.61 192.168.20.61 10.10.0.61 \e[0m"
+        echo -e "Vi du:\e[101mbash $0 ctl1 10.10.20.91 192.168.20.91 10.10.0.91 172.16.10.91 \e[0m"
         exit 1;
 fi
 
