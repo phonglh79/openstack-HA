@@ -101,7 +101,9 @@ sudo systemctl stop firewalld
 #sudo systemctl disable NetworkManager
 #sudo systemctl enable network
 #sudo systemctl start network
+nmcli reload
 echo "test" > test.txt
+
 init 6
 
 
