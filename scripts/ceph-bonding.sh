@@ -30,6 +30,8 @@ INTERFACE4=ens256
 BOND1_NIC=bond1
 BOND1_IP=$3
 BOND1_NETMASK=24
+BOND1_DEAFAUL_GATEWAY=192.168.20.254
+BOND1_DNS=8.8.8.8
 
 ## Bien cho bond2
 INTERFACE5=ens161
@@ -37,8 +39,7 @@ INTERFACE6=ens193
 BOND2_NIC=bond2
 BOND2_IP=$4
 BOND2_NETMASK=24
-BOND2_DEAFAUL_GATEWAY=192.168.20.254
-BOND2_DNS=8.8.8.8
+
 
 ##Bien cho bond3
 INTERFACE7=ens225
@@ -65,16 +66,18 @@ nmcli con up $BOND0_NIC
 
 echo "Cau hinh BOND1"
 nmcli con add type bond con-name $BOND1_NIC ifname $BOND1_NIC mode active-backup
-nmcli con add type bond-slave con-name $BOND1_NIC-$INTERFACE3 ifname $INTERFACE3 master $BOND1_NIC
+nmcli con add type bond-slave con-name $BOND1_NIC-$INTERFACE3  ifname $INTERFACE3 master $BOND1_NIC
 nmcli con add type bond-slave con-name $BOND1_NIC-$INTERFACE4 ifname $INTERFACE4 master $BOND1_NIC
 nmcli con up $BOND1_NIC-$INTERFACE3
 nmcli con up $BOND1_NIC-$INTERFACE4
+nmcli con up $BOND1_NIC
 
-nmcli con modify $BOND1_NIC ipv6.method ignore;
 nmcli con modify $BOND1_NIC ipv4.addresses $BOND1_IP/$BOND1_NETMASK
+nmcli con modify $BOND1_NIC ipv4.dns $BOND1_DNS
+nmcli con modify $BOND1_NIC ipv4.gateway $BOND1_DEAFAUL_GATEWAY
 nmcli con modify $BOND1_NIC ipv4.method manual
 nmcli con modify $BOND1_NIC connection.autoconnect yes
-nmcli con up $BOND1_NIC
+
 
 echo "Cau hinh BOND2"
 nmcli con add type bond con-name $BOND2_NIC ifname $BOND2_NIC mode active-backup
@@ -85,8 +88,6 @@ nmcli con up $BOND2_NIC-$INTERFACE6
 
 nmcli con modify $BOND2_NIC ipv6.method ignore;
 nmcli con modify $BOND2_NIC ipv4.addresses $BOND2_IP/$BOND2_NETMASK
-nmcli con modify $BOND2_NIC ipv4.dns $BOND2_DNS
-nmcli con modify $BOND2_NIC ipv4.gateway $BOND2_DEAFAUL_GATEWAY
 nmcli con modify $BOND2_NIC ipv4.method manual
 nmcli con modify $BOND2_NIC connection.autoconnect yes
 nmcli con up $BOND2_NIC
