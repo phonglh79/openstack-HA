@@ -141,8 +141,9 @@ ceph osd dump |grep pool
 ####### Cấu hình CEPH làm việc với OpenStack (có HA)
 
 ## Tích hợp CEPH với Glance
-- Đứng trên CTL1, CTL2, CTL3 cài gói sau
+- Đứng trên CTL1, CTL2, CTL3, COM1, COM2 cài gói sau
 - Cài các gói bổ trợ để cấu hình tích hợp với CEPH 
+yum -y update
 sudo yum install -y yum-utils
 
 sudo yum-config-manager --add-repo https://dl.fedoraproject.org/pub/epel/7/x86_64/ 
@@ -164,7 +165,7 @@ EOF
 
 - Update va cac goi can thiet
 yum -y update
-yum -y install python-rbd
+yum -y install python-rbd  ceph-common
 
 mkdir /etc/ceph
 
@@ -172,14 +173,15 @@ mkdir /etc/ceph
 ### Đứng trên node CEPH1 và thực hiện các thao tác sau:
 
 ## Tạo các pools để sẵn sàng làm việc với OpenStack
-ceph osd pool create volumes 128 128
 ceph osd pool create images 128 128
+ceph osd pool create volumes 128 128
 ceph osd pool create backups 128 128
 ceph osd pool create vms 128 128
 
 ## Cấu hình tích hợp CEPH làm backend cho glance
 ## Đứng trên CEPH1 đẩy các file key về cac node CTL.
 ceph auth get-or-create client.glance mon 'allow r' osd 'allow class-read object_prefix rbd_children, allow rwx pool=images'
+
 
 sudo ceph auth get-or-create client.glance  > ceph.client.glance.keyring
 
@@ -216,4 +218,45 @@ rbd -p images ls
  - Kết quả: a842a992-3c21-4f22-b0ea-94a6aac16b01
 
 
-##################NHAP
+## Cấu hình tích hợp CEPH làm backend cho cinder
+
+###Dung tren CEPH1
+ceph auth get-or-create client.cinder mon 'allow r' osd 'allow class-read object_prefix rbd_children, allow rwx pool=volumes, allow rwx pool=vms, allow rwx pool=images'
+ceph auth get-or-create client.cinder-backup mon 'allow r' osd 'allow class-read object_prefix rbd_children, allow rwx pool=backups'
+
+
+###Dung tren CTL1
+ssh 192.168.20.91 ceph auth get-or-create client.cinder |  sudo tee /etc/ceph/ceph.client.cinder.keyring
+sudo chown cinder:cinder /etc/ceph/ceph.client.cinder.keyring
+
+scp /etc/ceph/ceph.client.cinder.keyring root@192.168.20.62:/etc/ceph/
+scp /etc/ceph/ceph.client.cinder.keyring root@192.168.20.63:/etc/ceph/
+
+ssh root@192.168.20.62 "sudo chown cinder:cinder /etc/ceph/ceph.client.cinder.keyring"
+ssh root@192.168.20.63 "sudo chown cinder:cinder /etc/ceph/ceph.client.cinder.keyring"
+
+
+ssh 192.168.20.91 ceph auth get-or-create client.cinder-backup |  sudo tee /etc/ceph/ceph.client.cinder-backup.keyring
+sudo chown cinder:cinder /etc/ceph/ceph.client.cinder-backup.keyring
+
+scp /etc/ceph/ceph.client.cinder-backup.keyring root@192.168.20.62:/etc/ceph/
+scp /etc/ceph/ceph.client.cinder-backup.keyring root@192.168.20.63:/etc/ceph/
+
+ssh root@192.168.20.62 "sudo chown cinder:cinder /etc/ceph/ceph.client.cinder-backup.keyring"
+ssh root@192.168.20.63 "sudo chown cinder:cinder /etc/ceph/ceph.client.cinder-backup.keyring"
+
+
+## Dung tren compute 
+
+ssh 192.168.20.91 ceph auth get-or-create client.cinder | sudo tee /etc/ceph/ceph.client.cinder.keyring
+ssh 192.168.20.91 ceph auth get-key client.cinder |  tee client.cinder.key
+
+## Dung tren CTL khai bao config 
+
+
+
+
+
+
+
+

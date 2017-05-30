@@ -56,7 +56,7 @@ function cinder_user_endpoint {
 function cinder_install {
         for IP_ADD in $CTL1_IP_NIC3 $CTL2_IP_NIC3 $CTL3_IP_NIC3
         do
-            ssh root@$IP_ADD " yum -y install openstack-cinder"
+            ssh root@$IP_ADD " yum -y install openstack-cinder targetcli"
         done  
 
 }
@@ -73,6 +73,7 @@ function cinder_config {
         ops_edit $ctl_cinder_conf DEFAULT control_exchange cinder
         ops_edit $ctl_cinder_conf DEFAULT glance_api_servers http://$IP_VIP_API:9292
         ops_edit $ctl_cinder_conf DEFAULT glance_api_version 2
+        ops_edit $ctl_cinder_conf DEFAULT enabled_backends lvm
         
         ops_edit $ctl_cinder_conf database connection  mysql+pymysql://cinder:$PASS_DATABASE_CINDER@$IP_VIP_DB/cinder
 
@@ -86,14 +87,14 @@ function cinder_config {
         ops_edit $ctl_cinder_conf keystone_authtoken username cinder
         ops_edit $ctl_cinder_conf keystone_authtoken password $CINDER_PASS
         
-                ops_edit $ctl_nova_conf oslo_messaging_rabbit rabbit_hosts $MQ1_IP_NIC1:5672,$MQ2_IP_NIC1:5672,$MQ3_IP_NIC1:5672
-        ops_edit $ctl_nova_conf oslo_messaging_rabbit rabbit_ha_queues true
-        ops_edit $ctl_nova_conf oslo_messaging_rabbit rabbit_retry_interval 1
-        ops_edit $ctl_nova_conf oslo_messaging_rabbit rabbit_retry_backoff 2
-        ops_edit $ctl_nova_conf oslo_messaging_rabbit rabbit_max_retries 0
-        ops_edit $ctl_nova_conf oslo_messaging_rabbit rabbit_durable_queues true
-        ops_edit $ctl_nova_conf oslo_messaging_rabbit rabbit_userid openstack
-        ops_edit $ctl_nova_conf oslo_messaging_rabbit rabbit_password $RABBIT_PASS
+        ops_edit $ctl_cinder_conf oslo_messaging_rabbit rabbit_hosts $MQ1_IP_NIC1:5672,$MQ2_IP_NIC1:5672,$MQ3_IP_NIC1:5672
+        ops_edit $ctl_cinder_conf oslo_messaging_rabbit rabbit_ha_queues true
+        ops_edit $ctl_cinder_conf oslo_messaging_rabbit rabbit_retry_interval 1
+        ops_edit $ctl_cinder_conf oslo_messaging_rabbit rabbit_retry_backoff 2
+        ops_edit $ctl_cinder_conf oslo_messaging_rabbit rabbit_max_retries 0
+        ops_edit $ctl_cinder_conf oslo_messaging_rabbit rabbit_durable_queues true
+        ops_edit $ctl_cinder_conf oslo_messaging_rabbit rabbit_userid openstack
+        ops_edit $ctl_cinder_conf oslo_messaging_rabbit rabbit_password $RABBIT_PASS
         
         ops_edit $ctl_cinder_conf oslo_concurrency lock_path /var/lib/cinder/tmp
         
@@ -117,8 +118,10 @@ function cinder_enable_restart {
         for IP_ADD in $CTL1_IP_NIC3 $CTL2_IP_NIC3 $CTL3_IP_NIC3
         do
             echocolor "Restart dich vu cinder tren $IP_ADD"
-            ssh root@$IP_ADD "systemctl enable openstack-cinder-api.service openstack-cinder-scheduler.service"
-            ssh root@$IP_ADD "systemctl start openstack-cinder-api.service openstack-cinder-scheduler.service"
+            ssh root@$IP_ADD "systemctl enable openstack-cinder-api.service openstack-cinder-scheduler.service openstack-cinder-backup.service"
+            ssh root@$IP_ADD "systemctl start openstack-cinder-api.service openstack-cinder-scheduler.service openstack-cinder-backup.service"
+            ssh root@$IP_ADD "systemctl enable openstack-cinder-volume.service target.service"
+            ssh root@$IP_ADD "systemctl start openstack-cinder-volume.service target.service"
          done  
 }
 
