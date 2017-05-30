@@ -74,6 +74,9 @@ function cinder_config {
         ops_edit $ctl_cinder_conf DEFAULT glance_api_servers http://$IP_VIP_API:9292
         ops_edit $ctl_cinder_conf DEFAULT glance_api_version 2
         
+        ops_edit $ctl_cinder_conf database connection  mysql+pymysql://nova:$PASS_DATABASE_CINDER@$IP_VIP_DB/cinder
+
+        
         ops_edit $ctl_cinder_conf oslo_concurrency lock_path /var/lib/cinder/tmp
         
         for IP_ADD in $CTL1_IP_NIC3 $CTL2_IP_NIC3 $CTL3_IP_NIC3 

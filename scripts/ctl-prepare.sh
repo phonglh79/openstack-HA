@@ -4,7 +4,6 @@
 
 ### Khai bao bien de thuc hien
 cat <<EOF> /root/ctl-config.cfg
-
 ## Hostname
 ### Hostname cho cac may CONTROLLER
 CTL1_HOSTNAME=ctl1
@@ -62,7 +61,6 @@ COM3_IP_NIC4=192.168.20.73
 COM1_IP_NIC5=172.16.20.71
 COM2_IP_NIC5=172.16.20.72
 COM3_IP_NIC5=172.16.20.73
-
 
 ### IP cho NIC5 - COMPUTE_CEPH cho cac may COMPUTE
 COM1_IP_NIC6=10.10.0.71
@@ -155,7 +153,6 @@ NOVA_PASS=\$PASS_DATABASE_ROOT
 NOVA_API_PASS=\$PASS_DATABASE_ROOT
 CINDER_PASS=\$PASS_DATABASE_ROOT
 NEUTRON_PASS=\$PASS_DATABASE_ROOT
-
 EOF
 
 chmod +x ctl-config.cfg
