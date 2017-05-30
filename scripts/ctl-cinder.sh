@@ -72,6 +72,7 @@ function cinder_config {
         ops_edit $ctl_cinder_conf DEFAULT osapi_volume_listen  \$my_ip
         ops_edit $ctl_cinder_conf DEFAULT control_exchange cinder
         ops_edit $ctl_cinder_conf DEFAULT glance_api_servers http://$IP_VIP_API:9292
+        ops_edit $ctl_cinder_conf DEFAULT  glance_api_version 2
         
         ops_edit $ctl_cinder_conf oslo_concurrency lock_path /var/lib/cinder/tmp
         
