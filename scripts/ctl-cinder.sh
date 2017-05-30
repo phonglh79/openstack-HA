@@ -74,8 +74,26 @@ function cinder_config {
         ops_edit $ctl_cinder_conf DEFAULT glance_api_servers http://$IP_VIP_API:9292
         ops_edit $ctl_cinder_conf DEFAULT glance_api_version 2
         
-        ops_edit $ctl_cinder_conf database connection  mysql+pymysql://nova:$PASS_DATABASE_CINDER@$IP_VIP_DB/cinder
+        ops_edit $ctl_cinder_conf database connection  mysql+pymysql://cinder:$PASS_DATABASE_CINDER@$IP_VIP_DB/cinder
 
+        ops_edit $ctl_cinder_conf keystone_authtoken auth_uri http://$IP_VIP_API:5000
+        ops_edit $ctl_cinder_conf keystone_authtoken auth_url http://$IP_VIP_API:35357
+        ops_edit $ctl_cinder_conf keystone_authtoken memcached_servers $CTL1_IP_NIC1:11211,$CTL2_IP_NIC1:11211,$CTL3_IP_NIC1:11211
+        ops_edit $ctl_cinder_conf keystone_authtoken auth_type password
+        ops_edit $ctl_cinder_conf keystone_authtoken project_domain_name Default
+        ops_edit $ctl_cinder_conf keystone_authtoken user_domain_name Default
+        ops_edit $ctl_cinder_conf keystone_authtoken project_name service
+        ops_edit $ctl_cinder_conf keystone_authtoken username cinder
+        ops_edit $ctl_cinder_conf keystone_authtoken password $CINDER_PASS
+        
+                ops_edit $ctl_nova_conf oslo_messaging_rabbit rabbit_hosts $MQ1_IP_NIC1:5672,$MQ2_IP_NIC1:5672,$MQ3_IP_NIC1:5672
+        ops_edit $ctl_nova_conf oslo_messaging_rabbit rabbit_ha_queues true
+        ops_edit $ctl_nova_conf oslo_messaging_rabbit rabbit_retry_interval 1
+        ops_edit $ctl_nova_conf oslo_messaging_rabbit rabbit_retry_backoff 2
+        ops_edit $ctl_nova_conf oslo_messaging_rabbit rabbit_max_retries 0
+        ops_edit $ctl_nova_conf oslo_messaging_rabbit rabbit_durable_queues true
+        ops_edit $ctl_nova_conf oslo_messaging_rabbit rabbit_userid openstack
+        ops_edit $ctl_nova_conf oslo_messaging_rabbit rabbit_password $RABBIT_PASS
         
         ops_edit $ctl_cinder_conf oslo_concurrency lock_path /var/lib/cinder/tmp
         
