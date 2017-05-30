@@ -1,0 +1,219 @@
+
+###Thuc hien tren ca 3 hosts
+echo "192.168.20.91 ceph1" >> /etc/hosts
+echo "10.10.0.91 ceph1" >> /etc/hosts
+echo "172.16.10.91 ceph1" >> /etc/hosts
+
+echo "192.168.20.92 ceph2" >> /etc/hosts
+echo "10.10.0.92 ceph2" >> /etc/hosts
+echo "172.16.10.92 ceph2" >> /etc/hosts
+
+echo "192.168.20.93 ceph3" >> /etc/hosts
+echo "10.10.0.93 ceph3" >> /etc/hosts
+echo "172.16.10.93 ceph3" >> /etc/hosts
+
+###Tao user `cephuser` tren ca 3 node
+useradd -d /home/cephuser -m cephuser
+passwd cephuser
+
+echo "cephuser ALL = (root) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/cephuser
+chmod 0440 /etc/sudoers.d/cephuser
+
+### Cai dat chrony (NTP Server ) cho ca 3 node
+- Tro NTP ve Controller1
+
+
+#######THUC HIEN TREN CEPH1#########
+### Khai bao repos cho CEPH
+
+sudo yum install -y yum-utils
+
+sudo yum-config-manager --add-repo https://dl.fedoraproject.org/pub/epel/7/x86_64/ 
+sudo yum install --nogpgcheck -y epel-release 
+sudo rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-7 
+sudo rm /etc/yum.repos.d/dl.fedoraproject.org*
+
+### Tao file repos
+cat << EOF > /etc/yum.repos.d/ceph.repo
+[Ceph-noarch]
+name=Ceph noarch packages
+baseurl=http://download.ceph.com/rpm-jewel/el7/noarch
+enabled=1
+gpgcheck=1
+type=rpm-md
+gpgkey=https://download.ceph.com/keys/release.asc
+priority=1
+EOF
+
+# cap nhat os
+yum -y update 
+
+
+###Tao key tren ceph1
+su - cephuser
+ssh-keygen -t rsa
+
+###Copy key vua tao o tren 
+ssh-copy-id cephuser@ceph1
+ssh-copy-id cephuser@ceph2
+ssh-copy-id cephuser@ceph3
+
+
+###Cai ceph ceph-deploy
+
+sudo yum install -y ceph-deploy
+
+###Cai dat MON 
+ceph-deploy new ceph1 ceph2 ceph3
+
+# Them cac dong duoi vao file ceph.conf vua tao
+
+echo "osd pool default size = 3" >> ceph.conf
+echo "osd crush chooseleaf type = 0" >> ceph.conf
+echo "osd journal size = 8000" >> ceph.conf
+echo "public network = 10.10.0.0/24" >> ceph.conf
+echo "cluster network = 172.16.10.0/24" >> ceph.conf
+
+##Cai dat ceph
+ceph-deploy install --release jewel ceph1 ceph2 ceph3
+
+##Thiet lap mon 
+ceph-deploy mon create-initial
+
+##Kiem tra cac o cung tren cac may
+ceph-deploy disk list ceph1
+ceph-deploy disk list ceph2
+ceph-deploy disk list ceph3
+
+
+##Thiep lap cac OSD, su dung sdb lam journal
+
+ceph-deploy osd prepare ceph1:sdc:/dev/sdb 
+ceph-deploy osd prepare ceph1:sdd:/dev/sdb 
+ceph-deploy osd prepare ceph1:sde:/dev/sdb 
+
+ceph-deploy osd prepare ceph2:sdc:/dev/sdb 
+ceph-deploy osd prepare ceph2:sdd:/dev/sdb 
+ceph-deploy osd prepare ceph2:sde:/dev/sdb 
+
+ceph-deploy osd prepare ceph3:sdc:/dev/sdb 
+ceph-deploy osd prepare ceph3:sdd:/dev/sdb 
+ceph-deploy osd prepare ceph3:sde:/dev/sdb 
+
+##Active cac OSD vua tao
+ceph-deploy osd activate ceph1:/dev/sdc1:/dev/sdb1
+ceph-deploy osd activate ceph1:/dev/sdd1:/dev/sdb2
+ceph-deploy osd activate ceph1:/dev/sde1:/dev/sdb3
+
+
+ceph-deploy osd activate ceph2:/dev/sdc1:/dev/sdb1
+ceph-deploy osd activate ceph2:/dev/sdd1:/dev/sdb2
+ceph-deploy osd activate ceph2:/dev/sde1:/dev/sdb3
+
+ceph-deploy osd activate ceph3:/dev/sdc1:/dev/sdb1
+ceph-deploy osd activate ceph3:/dev/sdd1:/dev/sdb2
+ceph-deploy osd activate ceph3:/dev/sde1:/dev/sdb3
+
+
+##Kiem tra lai cac OSD vua tao
+ceph osd tree
+  -Ket qua http://prntscr.com/fdb20j
+
+  
+###Copy key cho cac node ceph
+ceph-deploy admin ceph1 ceph2 ceph3
+
+###Cac lenh kiem tra ceph sau khi cai xong 
+
+##Kiem tra tinh trang cua ceph
+ceph health  hoac ceph -s   
+
+##Kiem tra hoat dong cua cac osd
+ceph osd tree
+ 
+##Liet ke cac pool van tat
+ceph osd pool ls
+
+##Liet ke cac pool chi tiet
+ceph osd dump |grep pool
+
+
+####### Cấu hình CEPH làm việc với OpenStack (có HA)
+
+## Tích hợp CEPH với Glance
+- Đứng trên CTL1, CTL2, CTL3 cài gói sau
+- Cài các gói bổ trợ để cấu hình tích hợp với CEPH 
+sudo yum install -y yum-utils
+
+sudo yum-config-manager --add-repo https://dl.fedoraproject.org/pub/epel/7/x86_64/ 
+sudo yum install --nogpgcheck -y epel-release 
+sudo rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-7 
+sudo rm /etc/yum.repos.d/dl.fedoraproject.org*
+
+- Tao file repos
+cat << EOF > /etc/yum.repos.d/ceph.repo
+[Ceph-noarch]
+name=Ceph noarch packages
+baseurl=http://download.ceph.com/rpm-jewel/el7/noarch
+enabled=1
+gpgcheck=1
+type=rpm-md
+gpgkey=https://download.ceph.com/keys/release.asc
+priority=1
+EOF
+
+- Update va cac goi can thiet
+yum -y update
+yum -y install python-rbd
+
+mkdir /etc/ceph
+
+## Khai báo các cấu hình CEPH để tích hợp với OpenStack 
+### Đứng trên node CEPH1 và thực hiện các thao tác sau:
+
+## Tạo các pools để sẵn sàng làm việc với OpenStack
+ceph osd pool create volumes 128 128
+ceph osd pool create images 128 128
+ceph osd pool create backups 128 128
+ceph osd pool create vms 128 128
+
+## Cấu hình tích hợp CEPH làm backend cho glance
+## Đứng trên CEPH1 đẩy các file key về cac node CTL.
+ceph auth get-or-create client.glance mon 'allow r' osd 'allow class-read object_prefix rbd_children, allow rwx pool=images'
+
+sudo ceph auth get-or-create client.glance  > ceph.client.glance.keyring
+
+
+sudo scp /etc/ceph/ceph.conf root@192.168.20.61:/etc/ceph
+sudo scp /home/cephuser/ceph.client.glance.keyring root@192.168.20.61:/etc/ceph
+sudo ssh 192.168.20.61 sudo chown glance:glance /etc/ceph/ceph.client.glance.keyring
+
+sudo scp /etc/ceph/ceph.conf root@192.168.20.62:/etc/ceph
+sudo scp /home/cephuser/ceph.client.glance.keyring root@192.168.20.62:/etc/ceph
+sudo ssh 192.168.20.62 sudo chown glance:glance /etc/ceph/ceph.client.glance.keyring
+
+sudo scp /etc/ceph/ceph.conf root@192.168.20.63:/etc/ceph
+sudo scp /home/cephuser/ceph.client.glance.keyring root@192.168.20.63:/etc/ceph
+sudo ssh 192.168.20.63 sudo chown glance:glance /etc/ceph/ceph.client.glance.keyring
+
+
+### Chuyen sang CTL1,CTL2 va CTL3 thuc hien restart dich vu glance
+
+### Dung tren CTL1 thuc hien update de thu xem da tich hop thanh cong hay chua
+
+wget http://download.cirros-cloud.net/0.3.5/cirros-0.3.5-x86_64-disk.img
+
+
+openstack image create "cirros1" --file cirros-0.3.5-x86_64-disk.img \
+      --disk-format qcow2 --container-format bare \
+      --public
+
+      
+### Đứng trên node CEPH1 thực hiện kiểm tra xem pool images đã có hay chưa.
+
+rbd -p images ls
+ 
+ - Kết quả: a842a992-3c21-4f22-b0ea-94a6aac16b01
+
+
+##################NHAP
