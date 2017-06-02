@@ -156,7 +156,7 @@
   bash ctl-nova.sh
   ```
 
-  ### 4.6. Thực hiện cài đặt Neutron
+### 4.6. Thực hiện cài đặt Neutron
 - Bước này thực hiện trên máy chủ CTL1 (CONTROLLER1)
 - Tải script cài đặt neutron
 - Script tự động thực hiện cài đặt từ xa trên CTL2 và CTL3
@@ -164,3 +164,33 @@
   curl -O https://raw.githubusercontent.com/congto/openstack-HA/master/scripts/ctl-neutron.sh
   bash ctl-neutron.sh
   ```
+  
+### 4.7. Thực hiện cài đặt Cinder
+- Bước này thực hiện trên máy chủ CTL1 (CONTROLLER1)
+- Tải script cài đặt Cinder 
+- Script tự động thực hiện cài đặt từ xa trên CTL2 và CTL3
+  ```sh
+  curl -O https://raw.githubusercontent.com/congto/openstack-HA/master/scripts/ctl-cinder.sh
+  bash ctl-cinder.sh
+  ```
+
+## 5. Cài đặt trên các node `CEILOMETER`
+### 5.1. Thực hiện script cấu hình bonding cho các node CEILOMTER
+- Đứng trên máy chủ CEI1, tải và thực hiện script để cấu hình bonding
+  ```sh
+  curl -O https://raw.githubusercontent.com/congto/openstack-HA/master/scripts/cei-bonding.sh
+  bash ctl-bonding.sh cei1 10.10.20.81 10.10.10.81 192.168.20.81 10.10.0.81
+  ```
+
+- Đứng trên máy chủ CEI1, tải và thực hiện script để cấu hình bonding
+  ```sh
+  curl -O https://raw.githubusercontent.com/congto/openstack-HA/master/scripts/cei-bonding.sh
+  bash ctl-bonding.sh cei2 10.10.20.82 10.10.10.82 192.168.20.82 10.10.0.82
+  ```
+
+- Đứng trên máy chủ CEI1, tải và thực hiện script để cấu hình bonding
+  ```sh
+  curl -O https://raw.githubusercontent.com/congto/openstack-HA/master/scripts/cei-bonding.sh
+  bash ctl-bonding.sh cei1 10.10.20.83 10.10.10.83 192.168.20.83 10.10.0.83
+  ```
+  
