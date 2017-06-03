@@ -111,18 +111,14 @@ function com_neutron_config {
         ops_edit $com_neutron_conf DEFAULT notify_nova_on_port_status_changes true
         ops_edit $com_neutron_conf DEFAULT notify_nova_on_port_data_changes true
         
-        ops_edit $com_neutron_conf oslo_messaging_rabbit rabbit_hosts $MQ1_IP_NIC1:5672,$MQ2_IP_NIC1:5672,$MQ3_IP_NIC1:5672
-        ops_edit $com_neutron_conf oslo_messaging_rabbit rabbit_ha_queues true
-        ops_edit $com_neutron_conf oslo_messaging_rabbit rabbit_retry_interval 1
-        ops_edit $com_neutron_conf oslo_messaging_rabbit rabbit_retry_backoff 2
-        ops_edit $com_neutron_conf oslo_messaging_rabbit rabbit_max_retries 0
-        ops_edit $com_neutron_conf oslo_messaging_rabbit rabbit_durable_queues true
+        ops_edit $com_neutron_conf oslo_messaging_rabbit rabbit_host $CTL1_IP_NIC1
+        ops_edit $com_neutron_conf oslo_messaging_rabbit rabbit_port 5672
         ops_edit $com_neutron_conf oslo_messaging_rabbit rabbit_userid openstack
         ops_edit $com_neutron_conf oslo_messaging_rabbit rabbit_password $RABBIT_PASS
         
-        ops_edit $com_neutron_conf keystone_authtoken auth_uri http://$IP_VIP_API:5000
-        ops_edit $com_neutron_conf keystone_authtoken auth_url http://$IP_VIP_API:35357
-        ops_edit $com_neutron_conf keystone_authtoken memcached_servers $CTL1_IP_NIC1:11211,$CTL2_IP_NIC1:11211,$CTL3_IP_NIC1:11211
+        ops_edit $com_neutron_conf keystone_authtoken auth_uri http://$CTL1_IP_NIC1:5000
+        ops_edit $com_neutron_conf keystone_authtoken auth_url http://$CTL1_IP_NIC1:35357
+        ops_edit $com_neutron_conf keystone_authtoken memcached_servers $CTL1_IP_NIC1:11211
         ops_edit $com_neutron_conf keystone_authtoken auth_type password
         ops_edit $com_neutron_conf keystone_authtoken project_domain_name Default
         ops_edit $com_neutron_conf keystone_authtoken user_domain_name Default
@@ -132,12 +128,12 @@ function com_neutron_config {
         
         ops_edit $com_neutron_conf oslo_concurrency lock_path /var/lib/neutron/tmp
         
-        ops_edit $com_linuxbridge_agent linux_bridge physical_interface_mappings provider:ens224
+        ops_edit $com_linuxbridge_agent linux_bridge physical_interface_mappings provider:ens256
         ops_edit $com_linuxbridge_agent vxlan enable_vxlan False
         ops_edit $com_linuxbridge_agent securitygroup enable_security_group True
         ops_edit $com_linuxbridge_agent securitygroup firewall_driver neutron.agent.linux.iptables_firewall.IptablesFirewallDriver
         
-        ops_edit $com_metadata_agent DEFAULT nova_metadata_ip $IP_VIP_API
+        ops_edit $com_metadata_agent DEFAULT nova_metadata_ip $CTL1_IP_NIC1
         ops_edit $com_metadata_agent DEFAULT metadata_proxy_shared_secret $METADATA_SECRET
         
         ops_edit $com_dhcp_agent DEFAULT interface_driver neutron.agent.linux.interface.BridgeInterfaceDriver

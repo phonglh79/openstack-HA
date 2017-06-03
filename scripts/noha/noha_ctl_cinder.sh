@@ -4,7 +4,7 @@
 
 ### Khai bao bien de thuc hien
 
-source ctl-config.cfg
+source config.cfg
 
 function echocolor {
     echo "#######################################################################"
@@ -54,7 +54,7 @@ function cinder_user_endpoint {
 
 }
 
-function cinder_config {
+function cinder_install_config {
         echocolor "Cai dat cinder"
         sleep 3
         yum -y install openstack-cinder targetcli
@@ -144,13 +144,9 @@ echocolor "Tao user va endpoint cho CINDER"
 sleep 3
 cinder_user_endpoint
 
-echocolor "Cai dat CINDER"
+echocolor "Cai dat va cau hinh CINDER"
 sleep 3
-cinder_install
-
-echocolor "Cau hinh cho CINDER"
-sleep 3
-cinder_config
+cinder_install_config
 
 echocolor "Dong bo DB cho CINDER"
 sleep 3
