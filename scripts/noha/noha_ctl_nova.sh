@@ -73,7 +73,8 @@ function nova_config {
         ops_edit $ctl_nova_conf api_database connection  mysql+pymysql://nova:$PASS_DATABASE_NOVA_API@$CTL1_IP_NIC1/nova_api
         ops_edit $ctl_nova_conf database connection  mysql+pymysql://nova:$PASS_DATABASE_NOVA@$CTL1_IP_NIC1/nova
         
-        ops_edit $ctl_nova_conf oslo_messaging_rabbit rabbit_host $CTL1_IP_NIC1:5672
+        ops_edit $ctl_nova_conf oslo_messaging_rabbit rabbit_host $CTL1_IP_NIC1
+        ops_edit $ctl_nova_conf oslo_messaging_rabbit rabbit_port 5672
         ops_edit $ctl_nova_conf oslo_messaging_rabbit rabbit_userid openstack
         ops_edit $ctl_nova_conf oslo_messaging_rabbit rabbit_password $RABBIT_PASS
 
