@@ -457,3 +457,40 @@ sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux
 sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
 
 init 6
+
+
+############### GHI CHU KHI CAI CEILOMETER - GNOCCHI - AODH 
+############################################################
+
+Tao endpoint cho ceilomter
+
+openstack user create ceilometer --domain default --password 'Ec0net#!2017'
+openstack role add --project service --user ceilometer admin
+openstack service create --name ceilometer --description "Telemetry" metering
+
+
+openstack user create gnocchi --domain default --password 'Ec0net#!2017'
+openstack service create --name gnocchi --description "Metric Service" metric
+
+openstack endpoint create --region RegionOne metric public http://10.10.20.30:8041
+openstack endpoint create --region RegionOne metric internal http://10.10.20.30:8041
+openstack endpoint create --region RegionOne metric admin http://10.10.20.30:8041
+
+yum install openstack-ceilometer-collector openstack-ceilometer-notification \
+  openstack-ceilometer-central python-ceilometerclient
+  
+  
+yum install -y openstack-ceilometer-api \
+		openstack-ceilometer-central \
+		openstack-ceilometer-collector \
+		openstack-ceilometer-common \
+		openstack-ceilometer-compute \
+		openstack-ceilometer-polling \
+		openstack-ceilometer-notification \
+		python-ceilometerclient \
+		python-ceilometer \
+		python-ceilometerclient-doc \
+		openstack-utils \
+		openstack-selinux
+
+

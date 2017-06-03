@@ -179,18 +179,18 @@
 - Đứng trên máy chủ CEI1, tải và thực hiện script để cấu hình bonding
   ```sh
   curl -O https://raw.githubusercontent.com/congto/openstack-HA/master/scripts/cei-bonding.sh
-  bash ctl-bonding.sh cei1 10.10.20.81 10.10.10.81 192.168.20.81 10.10.0.81
+  bash cei-bonding.sh cei1 10.10.20.81 10.10.10.81 192.168.20.81 10.10.0.81
   ```
 
 - Đứng trên máy chủ CEI2, tải và thực hiện script để cấu hình bonding
   ```sh
   curl -O https://raw.githubusercontent.com/congto/openstack-HA/master/scripts/cei-bonding.sh
-  bash ctl-bonding.sh cei2 10.10.20.82 10.10.10.82 192.168.20.82 10.10.0.82
+  bash cei-bonding.sh cei2 10.10.20.82 10.10.10.82 192.168.20.82 10.10.0.82
   ```
 
 - Đứng trên máy chủ CEI3, tải và thực hiện script để cấu hình bonding
   ```sh
   curl -O https://raw.githubusercontent.com/congto/openstack-HA/master/scripts/cei-bonding.sh
-  bash ctl-bonding.sh cei3 10.10.20.83 10.10.10.83 192.168.20.83 10.10.0.83
+  bash cei-bonding.sh cei3 10.10.20.83 10.10.10.83 192.168.20.83 10.10.0.83
   ```
   
