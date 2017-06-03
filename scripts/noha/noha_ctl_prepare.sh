@@ -161,22 +161,22 @@ copykey
 setup_config
 
 
-echocolor "Cai dat proxy tren"
+echocolor "Cai dat proxy tren cac node"
 sleep 3
 install_proxy
 
-echocolor "Cai dat repo tren"
+echocolor "Cai dat repo tren cac node"
 sleep 3
 install_repo_galera
 install_repo
 
-echocolor "Cấu hình hostname"
+echocolor "Cấu hình hostname tren cac node"
 sleep 3
 khai_bao_host
 
 
 # Cai dat NTP 
-echocolor "Cai dat Memcached tren"
+echocolor "Cai dat Memcached tren cac node"
 install_ntp_server
 install_memcached
 ###
