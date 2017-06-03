@@ -67,6 +67,7 @@ function keystone_config_http {
 }
 
 function keystone_endpoint {
+        source admin-openrc
         openstack project create service --domain default --description "Service Project" 
         openstack project create demo --domain default --description "Demo Project" 
         openstack user create demo --domain default --password $DEMO_PASS
@@ -128,7 +129,7 @@ echocolor "Sync DB cho keystone"
 sleep 3
 keystone_syncdb
 
-echocolor "Tao endpoint"
+echocolor "Thu hien bootstrap cho keystone"
 sleep 3
 keystone_bootstrap
 
