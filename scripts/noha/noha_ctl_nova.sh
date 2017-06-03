@@ -4,7 +4,7 @@
 
 ### Khai bao bien de thuc hien
 
-source ctl-config.cfg
+source config.cfg
 
 function echocolor {
     echo "#######################################################################"
@@ -126,7 +126,7 @@ function nova_enable_restart {
             systemctl start openstack-nova-scheduler.service
             systemctl start openstack-nova-conductor.service
             systemctl start openstack-nova-novncproxy.service
-        done  
+        
 }
 
 ############################
