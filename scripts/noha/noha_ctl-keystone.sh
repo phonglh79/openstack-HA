@@ -34,6 +34,7 @@ function create_keystone_db {
         mysql -uroot -p$PASS_DATABASE_ROOT -e "CREATE DATABASE keystone;
         GRANT ALL PRIVILEGES ON keystone.* TO 'keystone'@'localhost' IDENTIFIED BY '$PASS_DATABASE_KEYSTONE';
         GRANT ALL PRIVILEGES ON keystone.* TO 'keystone'@'%' IDENTIFIED BY '$PASS_DATABASE_KEYSTONE';
+        GRANT ALL PRIVILEGES ON keystone.* TO 'keystone'@'$CTL1_IP_NIC1' IDENTIFIED BY '$PASS_DATABASE_KEYSTONE';
         FLUSH PRIVILEGES;"
 }
 
