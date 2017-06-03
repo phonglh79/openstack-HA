@@ -90,6 +90,11 @@ function cinder_config {
         
         ops_edit $ctl_cinder_conf oslo_concurrency lock_path /var/lib/cinder/tmp
         
+        ops_edit $ctl_cinder_conf lvm volume_driver cinder.volume.drivers.lvm.LVMVolumeDriver
+        ops_edit $ctl_cinder_conf lvm volume_group cinder-volumes
+        ops_edit $ctl_cinder_conf lvm iscsi_protocol iscsi
+        ops_edit $ctl_cinder_conf lvm iscsi_helper lioadm
+        
 }
 
 function cinder_syncdb {
@@ -99,13 +104,29 @@ function cinder_syncdb {
 
 function cinder_enable_restart {
 
-            echocolor "Restart dich vu cinder"
-            sleep 3
-            systemctl enable openstack-cinder-api.service openstack-cinder-scheduler.service openstack-cinder-backup.service
-            systemctl start openstack-cinder-api.service openstack-cinder-scheduler.service openstack-cinder-backup.service
-            systemctl enable openstack-cinder-volume.service target.service
-            systemctl start openstack-cinder-volume.service target.service
+        echocolor "Restart dich vu cinder"
+        sleep 3
+        systemctl enable openstack-cinder-api.service openstack-cinder-scheduler.service openstack-cinder-backup.service
+        systemctl start openstack-cinder-api.service openstack-cinder-scheduler.service openstack-cinder-backup.service
+        systemctl enable openstack-cinder-volume.service target.service
+        systemctl start openstack-cinder-volume.service target.service
 
+}
+
+function create_lvm {
+        echocolor "Cai dat LVM"
+        sleep 3
+        yum -y install lvm2
+        systemctl enable lvm2-lvmetad.service
+        systemctl start lvm2-lvmetad.service
+
+        pvcreate /dev/sdb
+        vgcreate cinder-volumes /dev/sdb
+
+        cp /etc/lvm/lvm.conf /etc/lvm/lvm.conf.orig
+        sed  -r -i 's#(filter = )(\[ "a/\.\*/" \])#\1["a\/sdb\/", "r/\.\*\/"]#g' \
+            /etc/lvm/lvm.conf
+         
 }
 
 ############################
@@ -113,6 +134,8 @@ function cinder_enable_restart {
 ## Goi cac functions
 ############################
 echocolor "Bat dau cai dat CINDER"
+create_lvm
+
 echocolor "Tao DB CINDER"
 sleep 3
 cinder_create_db

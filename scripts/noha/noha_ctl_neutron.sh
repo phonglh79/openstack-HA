@@ -147,8 +147,7 @@ echocolor "Cau hinh cho NEUTRON"
 sleep 3
 neutron_config
 
-echocolor "Dong bo DB cho NEUTRON"
-sleep 3
+#Dong bo DB cho NEUTRON"
 neutron_syncdb
 
 echocolor "Restart dich vu NEUTRON"
