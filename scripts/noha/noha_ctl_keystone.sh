@@ -91,9 +91,9 @@ EOF
 
 sleep 5
 echocolor "Execute environment script"
-chmod +x admin-openrc
-cat  admin-openrc >> /etc/profile
-source admin-openrc
+chmod +x /root/admin-openrc
+cat  /root/admin-openrc >> /etc/profile
+source /root/admin-openrc
 
 
 cat << EOF > /root/demo-openrc
@@ -107,7 +107,7 @@ export OS_IDENTITY_API_VERSION=3
 export OS_IMAGE_API_VERSION=2
 
 EOF
-chmod +x demo-openrc
+chmod +x /root/demo-openrc
 }
 
 ############################
@@ -140,7 +140,7 @@ keystone_config_http
 echocolor "Tao bien moi truong"
 sleep 3
 keystone_create_adminrc
-source admin-openrc
+source /root/admin-openrc
 
 echocolor "Tao Endpoint"
 sleep 3
