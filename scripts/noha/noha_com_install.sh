@@ -2,7 +2,7 @@
 ##############################################################################
 ### Script cai dat cac goi bo tro cho CTL
 
-source ctl-config.cfg
+source config.cfg
 
 function echocolor {
     echo "#######################################################################"
@@ -44,20 +44,20 @@ function com_nova_config {
         ops_edit $com_nova_conf DEFAULT use_neutron true
         ops_edit $com_nova_conf DEFAULT firewall_driver nova.virt.firewall.NoopFirewallDriver
 
-        ops_edit $ctl_nova_conf oslo_messaging_rabbit rabbit_host $CTL1_IP_NIC1
-        ops_edit $ctl_nova_conf oslo_messaging_rabbit rabbit_port 5672
-        ops_edit $ctl_nova_conf oslo_messaging_rabbit rabbit_userid openstack
-        ops_edit $ctl_nova_conf oslo_messaging_rabbit rabbit_password $RABBIT_PASS
+        ops_edit $com_nova_conf oslo_messaging_rabbit rabbit_host $CTL1_IP_NIC1
+        ops_edit $com_nova_conf oslo_messaging_rabbit rabbit_port 5672
+        ops_edit $com_nova_conf oslo_messaging_rabbit rabbit_userid openstack
+        ops_edit $com_nova_conf oslo_messaging_rabbit rabbit_password $RABBIT_PASS
 
-        ops_edit $ctl_nova_conf keystone_authtoken auth_uri http://$CTL1_IP_NIC1:5000
-        ops_edit $ctl_nova_conf keystone_authtoken auth_url http://$CTL1_IP_NIC1:35357
-        ops_edit $ctl_nova_conf keystone_authtoken memcached_servers $CTL1_IP_NIC1:11211
-        ops_edit $ctl_nova_conf keystone_authtoken auth_type password
-        ops_edit $ctl_nova_conf keystone_authtoken project_domain_name Default
-        ops_edit $ctl_nova_conf keystone_authtoken user_domain_name Default
-        ops_edit $ctl_nova_conf keystone_authtoken project_name service
-        ops_edit $ctl_nova_conf keystone_authtoken username nova
-        ops_edit $ctl_nova_conf keystone_authtoken password $NOVA_PASS
+        ops_edit $com_nova_conf keystone_authtoken auth_uri http://$CTL1_IP_NIC1:5000
+        ops_edit $com_nova_conf keystone_authtoken auth_url http://$CTL1_IP_NIC1:35357
+        ops_edit $com_nova_conf keystone_authtoken memcached_servers $CTL1_IP_NIC1:11211
+        ops_edit $com_nova_conf keystone_authtoken auth_type password
+        ops_edit $com_nova_conf keystone_authtoken project_domain_name Default
+        ops_edit $com_nova_conf keystone_authtoken user_domain_name Default
+        ops_edit $com_nova_conf keystone_authtoken project_name service
+        ops_edit $com_nova_conf keystone_authtoken username nova
+        ops_edit $com_nova_conf keystone_authtoken password $NOVA_PASS
 
         ops_edit $com_nova_conf vnc enabled True
         ops_edit $com_nova_conf vnc vncserver_listen 0.0.0.0
