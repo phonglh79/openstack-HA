@@ -34,6 +34,7 @@ function create_keystone_db {
         mysql -uroot -p$PASS_DATABASE_ROOT -e "CREATE DATABASE keystone;
         GRANT ALL PRIVILEGES ON keystone.* TO 'keystone'@'localhost' IDENTIFIED BY '$PASS_DATABASE_KEYSTONE';
         GRANT ALL PRIVILEGES ON keystone.* TO 'keystone'@'%' IDENTIFIED BY '$PASS_DATABASE_KEYSTONE';
+        GRANT ALL PRIVILEGES ON keystone.* TO 'keystone'@'$CTL1_IP_NIC1' IDENTIFIED BY '$PASS_DATABASE_KEYSTONE';
         FLUSH PRIVILEGES;"
 }
 
@@ -51,7 +52,7 @@ function keystone_syncdb {
 }
 
 function keystone_bootstrap {
-          keystone-manage bootstrap --bootstrap-password $CTL1_IP_NIC1 \
+          keystone-manage bootstrap --bootstrap-password $ADMIN_PASS \
           --bootstrap-admin-url http://$CTL1_IP_NIC1:35357/v3/ \
           --bootstrap-internal-url http://$CTL1_IP_NIC1:5000/v3/ \
           --bootstrap-public-url http://$CTL1_IP_NIC1:5000/v3/ \
