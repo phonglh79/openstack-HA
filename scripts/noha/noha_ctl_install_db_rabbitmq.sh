@@ -46,6 +46,7 @@ EOF
 
 function set_pass_db {
           echocolor "Dat pass cho DB"
+          sleep 3
 cat << EOF | mysql -uroot
 GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY '$PASS_DATABASE_ROOT' WITH GRANT OPTION ;FLUSH PRIVILEGES;
 GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' IDENTIFIED BY '$PASS_DATABASE_ROOT' WITH GRANT OPTION ;FLUSH PRIVILEGES;
@@ -60,11 +61,34 @@ EOF
 
 function restart_db {
         echocolor "Khoi dong lai DB"
+        sleep 3
         systemctl enable mariadb.service
         systemctl start mariadb.service
+}
+
+function rabbitmq_install {
+        echocolor "Cai dat rabbitmq"
+        sleep 3
+        yum -y install rabbitmq-server
+
+        systemctl enable rabbitmq-server.service
+        systemctl start rabbitmq-server.service
+        rabbitmq-plugins enable rabbitmq_management
+        systemctl restart rabbitmq-server
+        curl -O http://localhost:15672/cli/rabbitmqadmin
+        chmod a+x rabbitmqadmin
+        mv rabbitmqadmin /usr/sbin/
+        rabbitmqadmin list users
+
+        rabbitmqctl add_user openstack $RABBIT_PASS
+        rabbitmqctl set_permissions openstack ".*" ".*" ".*"
+        rabbitmqctl set_user_tags openstack administrator
+
 }
 
 ### Thuc hien ham
 install_mariadb_galera
 set_pass_db
 restart_db
+
+rabbitmq_install
