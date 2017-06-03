@@ -95,17 +95,15 @@ EOF
 }
 
 function khai_bao_host {
-        source ctl-config.cfg
-        echo "$CTL1_HOSTNAME ctl1" >> /etc/hosts
-        echo "$COM1_HOSTNAME com1" >> /etc/hosts
-        echo "$COM2_HOSTNAME com2" >> /etc/hosts
+        echo "$CTL1_IP_NIC1 ctl1" >> /etc/hosts
+        echo "$COM1_IP_NIC1 com1" >> /etc/hosts
+        echo "$COM2_IP_NIC1 com2" >> /etc/hosts
         scp /etc/hosts root@$COM1_IP_NIC1:/etc/
         scp /etc/hosts root@$COM2_IP_NIC1:/etc/
 }
 
 # Cai dat NTP server 
 function install_ntp_server {
-        source ctl-config.cfg
         yum -y install chrony
         for IP_ADD in $CTL1_IP_NIC1 $COM1_IP_NIC1 $COM2_IP_NIC1
         do 
@@ -170,10 +168,9 @@ sleep 3
 install_repo_galera
 install_repo
 
-echocolor "Cấu hình hostname tren cac node"
+echocolor "Cau hinh hostname"
 sleep 3
 khai_bao_host
-
 
 # Cai dat NTP 
 echocolor "Cai dat Memcached tren cac node"
@@ -182,4 +179,7 @@ install_memcached
 ###
 echocolor "XONG & KHOI DONG LAI MAY CHU"
 sleep 5
+
+ssh root@$COM1_IP_NIC1 'init 6'
+ssh root@$COM2_IP_NIC1 'init 6'
 init 6

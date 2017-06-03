@@ -4,7 +4,7 @@
 
 ### Khai bao bien de thuc hien
 
-source ctl-config.cfg
+source config.cfg
 
 function echocolor {
     echo "#######################################################################"
@@ -31,45 +31,30 @@ function ops_del {
 }
 
 function create_keystone_db {
-mysql -uroot -p$PASS_DATABASE_ROOT -h $DB1_IP_NIC2 -e "CREATE DATABASE keystone;
-GRANT ALL PRIVILEGES ON keystone.* TO 'keystone'@'localhost' IDENTIFIED BY '$PASS_DATABASE_KEYSTONE';
-GRANT ALL PRIVILEGES ON keystone.* TO 'keystone'@'%' IDENTIFIED BY '$PASS_DATABASE_KEYSTONE';
-FLUSH PRIVILEGES;"
+        mysql -uroot -p$PASS_DATABASE_ROOT -e "CREATE DATABASE keystone;
+        GRANT ALL PRIVILEGES ON keystone.* TO 'keystone'@'localhost' IDENTIFIED BY '$PASS_DATABASE_KEYSTONE';
+        GRANT ALL PRIVILEGES ON keystone.* TO 'keystone'@'%' IDENTIFIED BY '$PASS_DATABASE_KEYSTONE';
+        FLUSH PRIVILEGES;"
 }
 
-function keystone_install {
-        for IP_ADD in $CTL1_IP_NIC3 $CTL2_IP_NIC3 $CTL3_IP_NIC3
-        do
-            ssh root@$IP_ADD "yum -y install openstack-keystone httpd mod_wsgi"
-        done       
-}
-
-function keystone_config {
+function keystone_install_config {
+        yum -y install openstack-keystone httpd mod_wsgi
         keystone_conf=/etc/keystone/keystone.conf
         cp $keystone_conf $keystone_conf.orig        
-        ops_edit $keystone_conf database connection mysql+pymysql://keystone:$PASS_DATABASE_KEYSTONE@$IP_VIP_DB/keystone
+        ops_edit $keystone_conf database connection mysql+pymysql://keystone:$PASS_DATABASE_KEYSTONE@$CTL1_IP_NIC1/keystone
         ops_edit $keystone_conf token provider fernet
 }
 function keystone_syncdb {
           su -s /bin/sh -c "keystone-manage db_sync" keystone
           keystone-manage fernet_setup --keystone-user keystone --keystone-group keystone
           keystone-manage credential_setup --keystone-user keystone --keystone-group keystone
-          for IP_ADD in $CTL2_IP_NIC3 $CTL3_IP_NIC3
-          do  
-            echocolor "Copy file cau hinh, credential-keys va fernet-keys cho $IP_ADD"
-            scp $keystone_conf root@$IP_ADD:/etc/keystone/
-            scp -r /etc/keystone/credential-keys root@$IP_ADD:/etc/keystone/
-            scp -r /etc/keystone/fernet-keys root@$IP_ADD:/etc/keystone/
-            ssh root@$IP_ADD "chown -R keystone:keystone /etc/keystone/credential-keys/"
-            ssh root@$IP_ADD "chown -R keystone:keystone /etc/keystone/fernet-keys/"
-          done
 }
 
 function keystone_bootstrap {
-          keystone-manage bootstrap --bootstrap-password $ADMIN_PASS \
-          --bootstrap-admin-url http://$IP_VIP_API:35357/v3/ \
-          --bootstrap-internal-url http://$IP_VIP_API:5000/v3/ \
-          --bootstrap-public-url http://$IP_VIP_API:5000/v3/ \
+          keystone-manage bootstrap --bootstrap-password $CTL1_IP_NIC1 \
+          --bootstrap-admin-url http://$CTL1_IP_NIC1:35357/v3/ \
+          --bootstrap-internal-url http://$CTL1_IP_NIC1:5000/v3/ \
+          --bootstrap-public-url http://$CTL1_IP_NIC1:5000/v3/ \
           --bootstrap-region-id RegionOne
 }
 
@@ -96,7 +81,7 @@ export OS_USER_DOMAIN_NAME=Default
 export OS_PROJECT_NAME=admin
 export OS_USERNAME=admin
 export OS_PASSWORD=$ADMIN_PASS
-export OS_AUTH_URL=http://$IP_VIP_API:35357/v3
+export OS_AUTH_URL=http://$CTL1_IP_NIC1:35357/v3
 export OS_IDENTITY_API_VERSION=3
 export OS_IMAGE_API_VERSION=2
 
@@ -115,7 +100,7 @@ export OS_USER_DOMAIN_NAME=Default
 export OS_PROJECT_NAME=demo
 export OS_USERNAME=demo
 export OS_PASSWORD=DEMO_PASS
-export OS_AUTH_URL=http://$IP_VIP_API:5000/v3
+export OS_AUTH_URL=http://$CTL1_IP_NIC1:5000/v3
 export OS_IDENTITY_API_VERSION=3
 export OS_IMAGE_API_VERSION=2
 
@@ -134,13 +119,9 @@ echocolor "Tao DB keystone"
 sleep 3
 create_keystone_db
 
-echocolor "Cai dat keystone"
+echocolor "Cai dat va cau hinh keystone"
 sleep 3
-keystone_install
-
-echocolor "Config keystone"
-sleep 3
-keystone_config
+keystone_install_config
 
 echocolor "Sync DB cho keystone"
 sleep 3
@@ -152,11 +133,7 @@ keystone_bootstrap
 
 echocolor "Cau hinh http"
 sleep 3
-for IP_ADD in $CTL1_IP_NIC3 $CTL2_IP_NIC3 $CTL3_IP_NIC3
-do
-    echo "Cai dat keystone_config_http $IP_ADD"
-    ssh root@$IP_ADD "$(typeset -f); keystone_config_http"
-done
+keystone_config_http
 
 echocolor "Tao bien moi truong"
 sleep 3
