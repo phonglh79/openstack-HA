@@ -83,10 +83,10 @@ function cinder_install_config {
         ops_edit $ctl_cinder_conf keystone_authtoken username cinder
         ops_edit $ctl_cinder_conf keystone_authtoken password $CINDER_PASS
         
-        ops_edit $ctl_nova_conf oslo_messaging_rabbit rabbit_host $CTL1_IP_NIC1
-        ops_edit $ctl_nova_conf oslo_messaging_rabbit rabbit_port 5672
-        ops_edit $ctl_nova_conf oslo_messaging_rabbit rabbit_userid openstack
-        ops_edit $ctl_nova_conf oslo_messaging_rabbit rabbit_password $RABBIT_PASS
+        ops_edit $ctl_cinder_conf oslo_messaging_rabbit rabbit_host $CTL1_IP_NIC1
+        ops_edit $ctl_cinder_conf oslo_messaging_rabbit rabbit_port 5672
+        ops_edit $ctl_cinder_conf oslo_messaging_rabbit rabbit_userid openstack
+        ops_edit $ctl_cinder_conf oslo_messaging_rabbit rabbit_password $RABBIT_PASS
         
         ops_edit $ctl_cinder_conf oslo_concurrency lock_path /var/lib/cinder/tmp
         

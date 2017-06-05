@@ -343,10 +343,14 @@ openstack network create  --share --external \
   
   
 openstack subnet create --network provider \
-  --allocation-pool start=192.168.50.10,end=192.168.50.50 \
-  --dns-nameserver 8.8.8.8 --gateway 192.168.50.254 \
-  --subnet-range 192.168.50.0/24 provider
+  --allocation-pool start=192.168.40.200,end=192.168.40.250 \
+  --dns-nameserver 8.8.8.8 --gateway 192.168.40.254 \
+  --subnet-range 192.168.40.0/24 provider
 
+
+neutron subnet-update --name provider --gateway 192.168.40.254 --dns-nameserver 8.8.8.8  \
+--allocation-pool start=192.168.40.200,end=192.168.40.250 \
+--subnet-range 192.168.40.0/24
 
 
 
