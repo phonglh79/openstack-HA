@@ -121,6 +121,7 @@ function glance_create_image {
 ############################
 source config.cfg
 source /root/admin-openrc
+############################
 
 echocolor "Bat dau cai dat Glance"
 echocolor "Tao DB Glance"

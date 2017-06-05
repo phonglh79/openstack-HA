@@ -134,6 +134,10 @@ function nova_enable_restart {
 # Thuc thi cac functions
 ## Goi cac functions
 ############################
+source config.cfg
+source /root/admin-openrc
+############################
+
 echocolor "Bat dau cai dat NOVA"
 echocolor "Tao DB NOVA"
 sleep 3

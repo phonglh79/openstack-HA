@@ -73,10 +73,10 @@ function neutron_config {
                 
         ops_edit $ctl_neutron_conf database connection  mysql+pymysql://neutron:$PASS_DATABASE_NEUTRON@$CTL1_IP_NIC1/neutron
         
-        ops_edit $ctl_nova_conf oslo_messaging_rabbit rabbit_host $CTL1_IP_NIC1
-        ops_edit $ctl_nova_conf oslo_messaging_rabbit rabbit_port 5672
-        ops_edit $ctl_nova_conf oslo_messaging_rabbit rabbit_userid openstack
-        ops_edit $ctl_nova_conf oslo_messaging_rabbit rabbit_password $RABBIT_PASS
+        ops_edit $ctl_neutron_conf oslo_messaging_rabbit rabbit_host $CTL1_IP_NIC1
+        ops_edit $ctl_neutron_conf oslo_messaging_rabbit rabbit_port 5672
+        ops_edit $ctl_neutron_conf oslo_messaging_rabbit rabbit_userid openstack
+        ops_edit $ctl_neutron_conf oslo_messaging_rabbit rabbit_password $RABBIT_PASS
 
         ops_edit $ctl_neutron_conf keystone_authtoken auth_uri http://$CTL1_IP_NIC1:5000
         ops_edit $ctl_neutron_conf keystone_authtoken auth_url http://$CTL1_IP_NIC1:35357
@@ -130,6 +130,10 @@ function neutron_enable_restart {
 # Thuc thi cac functions
 ## Goi cac functions
 ############################
+source config.cfg
+source /root/admin-openrc
+############################
+
 echocolor "Bat dau cai dat NEUTRON"
 echocolor "Tao DB NEUTRON"
 sleep 3
