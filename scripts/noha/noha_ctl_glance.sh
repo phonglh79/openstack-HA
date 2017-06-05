@@ -120,6 +120,8 @@ function glance_create_image {
 ## Goi cac functions
 ############################
 source config.cfg
+source /root/admin-openrc
+
 echocolor "Bat dau cai dat Glance"
 echocolor "Tao DB Glance"
 sleep 3

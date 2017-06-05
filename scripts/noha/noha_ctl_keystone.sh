@@ -67,7 +67,6 @@ function keystone_config_http {
 }
 
 function keystone_endpoint {
-        source admin-openrc
         openstack project create service --domain default --description "Service Project" 
         openstack project create demo --domain default --description "Demo Project" 
         openstack user create demo --domain default --password $DEMO_PASS
@@ -144,4 +143,5 @@ source /root/admin-openrc
 
 echocolor "Tao Endpoint"
 sleep 3
+source /root/admin-openrc
 keystone_endpoint
