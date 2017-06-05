@@ -348,16 +348,19 @@ openstack subnet create --network provider \
   --subnet-range 192.168.50.0/24 provider
 
 
-openstack network list
 
 
 ## Tao fule 
 
-openstack security group rule create --proto icmp ea8d888e-fa12-4478-9c72-bbf4a154cf8f
-openstack security group rule create --proto tcp --dst-port 22 ea8d888e-fa12-4478-9c72-bbf4a154cf8f
+openstack security group rule create --proto icmp default
+openstack security group rule create --proto tcp --dst-port 22 default
 
-openstack server create --flavor m1.nano --image cirros1 \
-  --nic net-id=33c96f0e-d3b5-4f9b-96cf-15dd44c87229 --security-group ea8d888e-fa12-4478-9c72-bbf4a154cf8f \
+
+openstack network list #lay ID cua network thay xuong duoi 
+
+
+openstack server create --flavor m1.nano --image cirros \
+  --nic net-id=a0d5f513-99fe-49da-80e8-076c21410de3 --security-group default \
   provider-instance
   
 ########

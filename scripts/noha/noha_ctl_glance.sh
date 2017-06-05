@@ -24,7 +24,6 @@ function ops_edit {
 ###			filekeystone=/etc/keystone/keystone.conf
 ###			ops_edit_file $filekeystone DEFAULT rpc_backend rabbit
 
-
 # Ham de del mot dong trong file cau hinh
 function ops_del {
     crudini --del $1 $2 $3
@@ -39,6 +38,7 @@ FLUSH PRIVILEGES;"
 
 }
 
+#Tao endpoint,user cho glance
 function glance_user_endpoint {
         openstack user create  glance --domain default --password $GLANCE_PASS
         openstack role add --project service --user glance admin
@@ -48,8 +48,9 @@ function glance_user_endpoint {
         openstack endpoint create --region RegionOne image admin http://$CTL1_IP_NIC1:9292
 }
 
-
+#Cau hinh va cai dat glance
 function glance_install_config {
+
         yum -y install openstack-glance
         glance_api_conf=/etc/glance/glance-api.conf
         glance_registry_conf=/etc/glance/glance-registry.conf
@@ -91,6 +92,8 @@ function glance_install_config {
         ops_edit $glance_registry_conf paste_deploy flavor keystone
 
 }
+
+#Dong bo DB cho lance
 function glance_syncdb {
         su -s /bin/sh -c "glance-manage db_sync" glance
 }
@@ -116,6 +119,7 @@ function glance_create_image {
 # Thuc thi cac functions
 ## Goi cac functions
 ############################
+source config.cfg
 echocolor "Bat dau cai dat Glance"
 echocolor "Tao DB Glance"
 sleep 3
