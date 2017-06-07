@@ -43,6 +43,10 @@ function com_nova_config {
         ops_edit $com_nova_conf DEFAULT my_ip $(ip addr show dev ens160 scope global | grep "inet " | sed -e 's#.*inet ##g' -e 's#/.*##g')
         ops_edit $com_nova_conf DEFAULT use_neutron true
         ops_edit $com_nova_conf DEFAULT firewall_driver nova.virt.firewall.NoopFirewallDriver
+        
+        ops_edit $com_nova_conf DEFAULT instance_usage_audit True
+        ops_edit $com_nova_conf DEFAULT instance_usage_audit_period hour
+        ops_edit $com_nova_conf DEFAULT notify_on_state_change vm_and_task_state
 
         ops_edit $com_nova_conf oslo_messaging_rabbit rabbit_host $CTL1_IP_NIC1
         ops_edit $com_nova_conf oslo_messaging_rabbit rabbit_port 5672
@@ -78,6 +82,7 @@ function com_nova_config {
         ops_edit $com_nova_conf neutron password $NEUTRON_PASS
         
         ops_edit $com_nova_conf libvirt virt_type  $(count=$(egrep -c '(vmx|svm)' /proc/cpuinfo); if [ $count -eq 0 ];then   echo "qemu"; else   echo "kvm"; fi)
+        ops_edit $com_nova_conf oslo_messaging_notifications driver messagingv2
  
 }
 
@@ -125,8 +130,10 @@ function com_neutron_config {
         ops_edit $com_neutron_conf keystone_authtoken project_name service
         ops_edit $com_neutron_conf keystone_authtoken username neutron
         ops_edit $com_neutron_conf keystone_authtoken password $NEUTRON_PASS
-        
+                
         ops_edit $com_neutron_conf oslo_concurrency lock_path /var/lib/neutron/tmp
+        
+        ops_edit $com_neutron_conf oslo_messaging_notifications driver messagingv2
         
         ops_edit $com_linuxbridge_agent linux_bridge physical_interface_mappings provider:ens256
         ops_edit $com_linuxbridge_agent vxlan enable_vxlan False
@@ -151,7 +158,6 @@ function com_neutron_restart {
         systemctl start neutron-metadata-agent.service
         systemctl start neutron-dhcp-agent.service
 
-       
 }
 
 ##############################################################################

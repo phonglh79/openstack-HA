@@ -364,8 +364,8 @@ openstack network list #lay ID cua network thay xuong duoi
 
 
 openstack server create --flavor m1.nano --image cirros \
-  --nic net-id=a0d5f513-99fe-49da-80e8-076c21410de3 --security-group default \
-  provider-instance
+  --nic net-id=16dc3074-e44a-4112-af79-189988cb5610 --security-group default \
+  vm03
   
 ########
 

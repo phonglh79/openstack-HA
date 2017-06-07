@@ -88,6 +88,8 @@ function neutron_config {
         ops_edit $ctl_neutron_conf keystone_authtoken username neutron
         ops_edit $ctl_neutron_conf keystone_authtoken password $NEUTRON_PASS
         
+        ops_edit $ctl_neutron_conf oslo_messaging_notifications driver messagingv2
+        
         
         ops_edit $ctl_neutron_conf nova auth_url http://$CTL1_IP_NIC1:35357
         ops_edit $ctl_neutron_conf nova auth_type password

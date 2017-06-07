@@ -75,7 +75,8 @@ function glance_install_config {
         ops_edit $glance_api_conf keystone_authtoken password $GLANCE_PASS
 
         ops_edit $glance_api_conf paste_deploy flavor keystone
-        
+        ops_edit $glance_api_conf oslo_messaging_notifications driver messagingv2
+
         ###glance_registry_conf
         ops_edit $glance_registry_conf database connection mysql+pymysql://glance:$PASS_DATABASE_GLANCE@$CTL1_IP_NIC1/glance
 
@@ -90,7 +91,9 @@ function glance_install_config {
         ops_edit $glance_registry_conf keystone_authtoken password $GLANCE_PASS
 
         ops_edit $glance_registry_conf paste_deploy flavor keystone
-
+        
+        ops_edit $glance_registry_conf oslo_messaging_notifications driver messagingv2
+        
 }
 
 #Dong bo DB cho lance

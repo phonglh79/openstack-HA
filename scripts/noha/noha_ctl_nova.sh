@@ -70,6 +70,11 @@ function nova_config {
         ops_edit $ctl_nova_conf DEFAULT osapi_compute_listen \$my_ip
         ops_edit $ctl_nova_conf DEFAULT metadata_listen \$my_ip
         
+        ops_edit $ctl_nova_conf DEFAULT instance_usage_audit True
+        ops_edit $ctl_nova_conf DEFAULT instance_usage_audit_period hour
+        ops_edit $ctl_nova_conf DEFAULT notify_on_state_change vm_and_task_state
+
+        
         ops_edit $ctl_nova_conf api_database connection  mysql+pymysql://nova:$PASS_DATABASE_NOVA_API@$CTL1_IP_NIC1/nova_api
         ops_edit $ctl_nova_conf database connection  mysql+pymysql://nova:$PASS_DATABASE_NOVA@$CTL1_IP_NIC1/nova
         
@@ -106,6 +111,8 @@ function nova_config {
         ops_edit $ctl_nova_conf neutron password $NEUTRON_PASS
         ops_edit $ctl_nova_conf neutron service_metadata_proxy True
         ops_edit $ctl_nova_conf neutron metadata_proxy_shared_secret $METADATA_SECRET
+        
+        ops_edit $ctl_nova_conf oslo_messaging_notifications driver messagingv2
 }
 
 function nova_syncdb {
