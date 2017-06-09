@@ -1,7 +1,6 @@
 #!/bin/bash -ex 
 ##############################################################################
 ### Script cai dat cac goi bo tro cho CTL
-
 ### Khai bao bien de thuc hien
 
 source config.cfg

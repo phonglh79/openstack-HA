@@ -78,14 +78,11 @@ crudini --set /etc/ceilometer/ceilometer.conf DEFAULT libvirt_type qemu
 
 crudini --set /etc/ceilometer/ceilometer.conf DEFAULT debug false
 
-
 crudini --set /etc/ceilometer/ceilometer.conf database metering_time_to_live 604800
 crudini --set /etc/ceilometer/ceilometer.conf database time_to_live 604800
 crudini --set /etc/ceilometer/ceilometer.conf database event_time_to_live 604800
 
 crudini --set /etc/ceilometer/ceilometer.conf DEFAULT notification_topics notifications
-
- 
  
 # Hello Gnocchi !!
 # crudini --set /etc/ceilometer/ceilometer.conf DEFAULT dispatcher gnocchi
@@ -121,6 +118,7 @@ crudini --set /etc/ceilometer/ceilometer.conf service_types neutron_lbaas_versio
 
 crudini --set /etc/ceilometer/ceilometer.conf oslo_messaging_notifications topics notifications
 crudini --set /etc/ceilometer/ceilometer.conf oslo_messaging_notifications driver messagingv2
+
 crudini --set /etc/ceilometer/ceilometer.conf exchange_control heat_control_exchange heat
 crudini --set /etc/ceilometer/ceilometer.conf exchange_control glance_control_exchange glance
 crudini --set /etc/ceilometer/ceilometer.conf exchange_control keystone_control_exchange keystone
@@ -131,6 +129,7 @@ crudini --set /etc/ceilometer/ceilometer.conf exchange_control magnum_control_ex
 crudini --set /etc/ceilometer/ceilometer.conf exchange_control trove_control_exchange trove
 crudini --set /etc/ceilometer/ceilometer.conf exchange_control nova_control_exchange nova
 crudini --set /etc/ceilometer/ceilometer.conf exchange_control neutron_control_exchange neutron
+
 crudini --set /etc/ceilometer/ceilometer.conf publisher_notifier telemetry_driver messagingv2
 crudini --set /etc/ceilometer/ceilometer.conf publisher_notifier metering_topic metering
 crudini --set /etc/ceilometer/ceilometer.conf publisher_notifier event_topic event
@@ -148,7 +147,6 @@ chown ceilometer.ceilometer /var/lib/ceilometer/tmp
 cp /etc/ceilometer/polling.yaml /etc/ceilometer/polling.yaml.orig 
 wget -O /etc/ceilometer/polling.yaml https://raw.githubusercontent.com/tigerlinux/openstack-ocata-installer-centos7/master/libs/ceilometer/polling.yaml 
 sed -r -i "s/METRICINTERVAL/60/g" /etc/ceilometer/polling.yaml
-
 
 systemctl start openstack-ceilometer-compute
 systemctl enable openstack-ceilometer-compute
