@@ -73,6 +73,11 @@ function glance_install_config {
         ops_edit $glance_api_conf keystone_authtoken project_name service
         ops_edit $glance_api_conf keystone_authtoken username glance
         ops_edit $glance_api_conf keystone_authtoken password $GLANCE_PASS
+        
+        ops_edit $glance_api_conf oslo_messaging_rabbit rabbit_host $CTL1_IP_NIC1
+        ops_edit $glance_api_conf oslo_messaging_rabbit rabbit_port 5672
+        ops_edit $glance_api_conf oslo_messaging_rabbit rabbit_userid openstack
+        ops_edit $glance_api_conf oslo_messaging_rabbit rabbit_password $RABBIT_PASS
 
         ops_edit $glance_api_conf paste_deploy flavor keystone
         ops_edit $glance_api_conf oslo_messaging_notifications driver messagingv2
@@ -89,6 +94,11 @@ function glance_install_config {
         ops_edit $glance_registry_conf keystone_authtoken project_name service
         ops_edit $glance_registry_conf keystone_authtoken username glance
         ops_edit $glance_registry_conf keystone_authtoken password $GLANCE_PASS
+        
+        ops_edit $glance_registry_conf oslo_messaging_rabbit rabbit_host $CTL1_IP_NIC1
+        ops_edit $glance_registry_conf oslo_messaging_rabbit rabbit_port 5672
+        ops_edit $glance_registry_conf oslo_messaging_rabbit rabbit_userid openstack
+        ops_edit $glance_registry_conf oslo_messaging_rabbit rabbit_password $RABBIT_PASS
 
         ops_edit $glance_registry_conf paste_deploy flavor keystone
         

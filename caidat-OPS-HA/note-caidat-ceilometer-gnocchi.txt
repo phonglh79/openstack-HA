@@ -29,7 +29,6 @@ openstack user create --domain default --password 'Ec0net#!2017' ceilometer
 openstack role add --project service --user ceilometer admin
 openstack service create --name ceilometer --description "Telemetry" metering
 
-
 openstack role create ResellerAdmin
 openstack role add --project service --user ceilometer ResellerAdmin
 
@@ -75,7 +74,7 @@ openstack-gnocchi-metricd \
 openstack-gnocchi-statsd \
 python2-gnocchiclient
 
-### Cai dat gnocchi package
+### Cai dat aodh package
 yum install -y openstack-aodh-api \
 openstack-aodh-evaluator \
 openstack-aodh-notifier \
@@ -102,7 +101,6 @@ crudini --set /etc/ceilometer/ceilometer.conf keystone_authtoken username ceilom
 crudini --set /etc/ceilometer/ceilometer.conf keystone_authtoken password 'Ec0net#!2017'
 crudini --set /etc/ceilometer/ceilometer.conf keystone_authtoken project_domain_name Default
 crudini --set /etc/ceilometer/ceilometer.conf keystone_authtoken user_domain_name Default
-
 crudini --set /etc/ceilometer/ceilometer.conf keystone_authtoken project_name service
 
 crudini --set /etc/ceilometer/ceilometer.conf keystone_authtoken auth_uri http://192.168.20.33:5000
@@ -130,7 +128,6 @@ crudini --set /etc/ceilometer/ceilometer.conf service_credentials user_domain_na
 crudini --set /etc/ceilometer/ceilometer.conf service_credentials project_name service
 # End of Keystone Section
 
-
 crudini --set /etc/ceilometer/ceilometer.conf DEFAULT metering_api_port 8777
 crudini --set /etc/ceilometer/ceilometer.conf DEFAULT auth_strategy keystone
 crudini --set /etc/ceilometer/ceilometer.conf DEFAULT log_dir /var/log/ceilometer
@@ -150,9 +147,9 @@ crudini --set /etc/ceilometer/ceilometer.conf DEFAULT libvirt_type qemu
 
 crudini --set /etc/ceilometer/ceilometer.conf DEFAULT debug false
 
-crudini --set /etc/ceilometer/ceilometer.conf database metering_time_to_live 604800
-crudini --set /etc/ceilometer/ceilometer.conf database time_to_live 604800
-crudini --set /etc/ceilometer/ceilometer.conf database event_time_to_live 604800
+# crudini --set /etc/ceilometer/ceilometer.conf database metering_time_to_live 604800
+# crudini --set /etc/ceilometer/ceilometer.conf database time_to_live 604800
+# crudini --set /etc/ceilometer/ceilometer.conf database event_time_to_live 604800
 
 crudini --set /etc/ceilometer/ceilometer.conf DEFAULT notification_topics notifications
 
@@ -164,11 +161,10 @@ crudini --set /etc/ceilometer/ceilometer.conf oslo_messaging_rabbit rabbit_port 
 crudini --set /etc/ceilometer/ceilometer.conf oslo_messaging_rabbit rabbit_userid openstack
 crudini --set /etc/ceilometer/ceilometer.conf oslo_messaging_rabbit rabbit_password 'Ec0net#!2017'
 
-crudini --set /etc/ceilometer/ceilometer.conf notification messaging_urls 'rabbit://openstack:Ec0net#!2017@192.168.20.33:5672/openstack'
+# crudini --set /etc/ceilometer/ceilometer.conf notification messaging_urls 'rabbit://openstack:Ec0net#!2017@192.168.20.33:5672/openstack'
 
 crudini --set /etc/ceilometer/ceilometer.conf alarm evaluation_service ceilometer.alarm.service.SingletonAlarmService
 crudini --set /etc/ceilometer/ceilometer.conf alarm partition_rpc_topic alarm_partition_coordination
-
 
 crudini --set /etc/ceilometer/ceilometer.conf api port 8777
 crudini --set /etc/ceilometer/ceilometer.conf api host 0.0.0.0
@@ -178,7 +174,6 @@ crudini --set /etc/ceilometer/ceilometer.conf DEFAULT control_exchange ceilomete
 crudini --set /etc/ceilometer/ceilometer.conf DEFAULT http_control_exchanges nova
 
 sed -r -i 's/http_control_exchanges\ =\ nova/http_control_exchanges\ =\ nova\nhttp_control_exchanges\ =\ glance\nhttp_control_exchanges\ =\ cinder\nhttp_control_exchanges\ =\ neutron\n/' /etc/ceilometer/ceilometer.conf
-
 
 crudini --set /etc/ceilometer/ceilometer.conf service_types neutron network
 crudini --set /etc/ceilometer/ceilometer.conf service_types nova compute
@@ -229,23 +224,18 @@ chmod 700 /var/lib/ceilometer/tmp-signing
 
 chown ceilometer.ceilometer /var/log/ceilometer/*
 
-
-
 ### Cau hinh cho AODH
 
 cp /etc/aodh/aodh.conf /etc/aodh/aodh.conf.orig 
 cp /etc/aodh/api_paste.ini /etc/aodh/api_paste.ini.orig
 
-
 crudini --set /etc/aodh/aodh.conf DEFAULT debug false
-
 
 crudini --set /etc/aodh/aodh.conf database connection 'mysql+pymysql://aodhdbuser:Ec0net#!2017@192.168.20.33/aodhdb'
 
-cp /etc/aodh/api_paste.ini /etc/aodh/api_paste.ini.orig 
+cp /etc/aodh/api_paste.ini /etc/aodh/api_paste.ini.orig1 
 
 wget -O /etc/aodh/api_paste.ini https://raw.githubusercontent.com/tigerlinux/openstack-ocata-installer-centos7/master/libs/aodh/api_paste.ini 
-
 
 crudini --set /etc/aodh/aodh.conf DEFAULT auth_strategy keystone
 crudini --set /etc/aodh/aodh.conf DEFAULT host `hostname`
@@ -295,7 +285,6 @@ crudini --set /etc/aodh/aodh.conf oslo_messaging_notifications driver messagingv
 crudini --set /etc/aodh/aodh.conf oslo_messaging_notifications topics notifications
 
 
-
 mkdir -p /var/lib/aodh/tmp-signing
 chown aodh.aodh /var/lib/aodh/tmp-signing
 chmod 0700 /var/lib/aodh/tmp-signing
@@ -321,6 +310,9 @@ systemctl start httpd
 sleep 5
 
 
+systemctl stop openstack-aodh-api.service 
+systemctl disable openstack-aodh-api.service 
+
 
 mkdir -p /var/lib/ceilometer/tmp
 chown ceilometer.ceilometer /var/lib/ceilometer/tmp
@@ -337,7 +329,6 @@ cp /etc/gnocchi/api-paste.ini /etc/gnocchi/api-paste.ini.orig
 cp /etc/gnocchi/policy.json  /etc/gnocchi/policy.json.orig 
 cp /etc/gnocchi/gnocchi.conf /etc/gnocchi/gnocchi.conf.orig 
 cp /etc/ceilometer/gnocchi_resources.yaml /etc/ceilometer/gnocchi_resources.yaml.orig 
-
 
 crudini --set /etc/gnocchi/gnocchi.conf DEFAULT debug false
 crudini --set /etc/gnocchi/gnocchi.conf DEFAULT log_file /var/log/gnocchi/gnocchi.log
@@ -375,7 +366,6 @@ crudini --set /etc/gnocchi/gnocchi.conf service_credentials password 'Ec0net#!20
 crudini --set /etc/gnocchi/gnocchi.conf service_credentials interface internalURL
 crudini --set /etc/gnocchi/gnocchi.conf service_credentials region_name RegionOne
 
-
 crudini --set /etc/gnocchi/gnocchi.conf storage driver file
 crudini --set /etc/gnocchi/gnocchi.conf storage file_basepath '/var/lib/gnocchi'
 crudini --set /etc/gnocchi/gnocchi.conf storage coordination_url 'file:///var/lib/gnocchi/locks'
@@ -400,12 +390,12 @@ systemctl enable httpd
 systemctl stop httpd
 sleep 5
 systemctl start httpd
-sleep 5
 
 systemctl start openstack-gnocchi-metricd
 systemctl enable openstack-gnocchi-metricd
 
-
+systemctl stop openstack-gnocchi-metricd
+systemctl disable openstack-gnocchi-metricd
 
 cat /etc/ceilometer/ceilometer.conf |grep -v _dispatchers > /etc/ceilometer/ceilometer.conf.TEMP
 cat /etc/ceilometer/ceilometer.conf.TEMP > /etc/ceilometer/ceilometer.conf
@@ -423,6 +413,7 @@ crudini --set /etc/ceilometer/ceilometer.conf dispatcher_gnocchi resources_defin
 
 ceilometer-upgrade --skip-metering-database
 
+gnocchi-upgrade --create-legacy-resource-types
 
 systemctl start openstack-ceilometer-compute
 systemctl enable openstack-ceilometer-compute

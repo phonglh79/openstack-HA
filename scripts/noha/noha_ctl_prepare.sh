@@ -87,8 +87,7 @@ function install_repo {
 yum -y install centos-release-openstack-newton
 yum -y upgrade
 yum -y install crudini wget vim
-yum -y install python-openstackclient openstack-selinux
-yum -y install mariadb mariadb-server python2-PyMySQL
+yum -y install python-openstackclient openstack-selinux python2-PyMySQL
 yum -y update
 EOF
         done

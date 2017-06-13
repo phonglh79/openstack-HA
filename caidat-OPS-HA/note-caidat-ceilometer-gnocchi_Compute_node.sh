@@ -78,9 +78,9 @@ crudini --set /etc/ceilometer/ceilometer.conf DEFAULT libvirt_type qemu
 
 crudini --set /etc/ceilometer/ceilometer.conf DEFAULT debug false
 
-crudini --set /etc/ceilometer/ceilometer.conf database metering_time_to_live 604800
-crudini --set /etc/ceilometer/ceilometer.conf database time_to_live 604800
-crudini --set /etc/ceilometer/ceilometer.conf database event_time_to_live 604800
+# crudini --set /etc/ceilometer/ceilometer.conf database metering_time_to_live 604800
+# crudini --set /etc/ceilometer/ceilometer.conf database time_to_live 604800
+# crudini --set /etc/ceilometer/ceilometer.conf database event_time_to_live 604800
 
 crudini --set /etc/ceilometer/ceilometer.conf DEFAULT notification_topics notifications
  
