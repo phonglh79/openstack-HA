@@ -5,6 +5,7 @@
 2. Cài đặt trên các máy chủ RABBITMQ
 3. Cài đặt trên các máy chủ DATABASE
 4. Cài đặt trên các máy chủ CONTROLLER
+5. Cài đặt trên các máy chủ CEILOMETER
 
 
 ### Môi trường lab
