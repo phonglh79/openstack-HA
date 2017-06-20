@@ -11,13 +11,15 @@
 - OS: Centos Minimal 7.3 - 64 bit
 
 ### Mô hình
-[Topo-chieungang_v1.4_IP_Planning.png](../images/Topo-chieungang_v1.4_IP_Planning.png)
+![Topo-chieungang_v1.4_IP_Planning.png](../images/Topo-chieungang_v1.4_IP_Planning.png)
 
 ### IP Planning
 
-[ip_planning_lb.png](../images/ip_planning_lb.png)
+![ip_planning_lb.png](../images/ip_planning_lb.png)
 
-[ip_planning_mq.png](../images/ip_planning_mq.png)
+![ip_planning_mq.png](../images/ip_planning_mq.png)
+
+![ip_planning_db.png](../images/ip_planning_db.png)
 
 
 
