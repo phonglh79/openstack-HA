@@ -21,7 +21,11 @@
 
 ![ip_planning_db.png](../images/ip_planning_db.png)
 
+![ip_planning_ctl.png](../images/ip_planning_ctl.png)
 
+![ip_planning_ceph.png](../images/ip_planning_ceph.png)
+
+![ip_planning_cei.png](../images/ip_planning_cei.png)
 
 
 ## 1. Cài đặt trên các node LoadBalancer (Pacemaker, Corosync, Nginx)
