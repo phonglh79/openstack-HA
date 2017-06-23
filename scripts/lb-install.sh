@@ -7,12 +7,15 @@ cat <<EOF> /root/lb-config.cfg
 LB1_HOSTNAME=lb1
 LB2_HOSTNAME=lb2
 
-
 ##IP Address
-### IP cho bond0 cho cac may LoadBalancer
+### IP VIP
+IP_VIP_ADMIN=192.168.20.30
+IP_VIP_DB=10.10.10.30
+IP_VIP_API=10.10.20.30
+
+###IP cho bond0 cho cac may LoadBalancer
 LB1_IP_NIC1=10.10.20.31
 LB2_IP_NIC1=10.10.20.31
-
 
 ###IP cho bond1 cho cac may LoadBalancer
 LB1_IP_NIC2=10.10.10.31
@@ -27,7 +30,7 @@ LB1_IP_NIC4=192.168.40.31
 LB2_IP_NIC4=192.168.40.32
 
 ###MAT KHAU
-PASS_CLUSTER=Ec0net@!2017
+PASS_CLUSTER='Ec0net#!2017'
 
 EOF
 
@@ -75,23 +78,30 @@ function khai_bao_host() {
 }
 
 function install_nginx {
-        yum install -y wget 
-        yum install -y epel-release
-        yum --enablerepo=epel -y install nginx
+        yum -y install wget vim
+cat << EOF > /etc/yum.repos.d/nginx.repo
+[nginx]
+name=nginx repo
+baseurl=http://nginx.org/packages/centos/\$releasever/\$basearch/
+gpgcheck=0
+enabled=1
+EOF
+        yum -y install nginx
         systemctl start nginx 
         systemctl enable nginx
-        IP
 cat << EOF > /usr/share/nginx/html/index.html
 <html>
 <body>
 <div style="width: 100%; font-size: 40px; font-weight: bold; text-align: center;">
-\$IP_ADD-`hostname`
-`ip -o -4 addr show dev eth0 | sed 's/.* inet \([^/]*\).*/\1/'`
+`ip -o -4 addr show dev bond2 | sed 's/.* inet \([^/]*\).*/\1/'`
+<br>
+`hostname`
 </div>
 </body>
 </html>
 EOF
-        systemctl restart nginx 
+        systemctl restart nginx
+        cp /etc/nginx/nginx.conf /etc/nginx/nginx.conf.orig
 }
 
 function install_pacemaker_corosync {
@@ -143,16 +153,21 @@ do
       sleep 3
       ssh root@$IP_ADD "$(typeset -f); khai_bao_host"
     fi
-      echocolor "Cai dat install_nginx tren $IP_ADD"
-      sleep 3
-      ssh root@$IP_ADD "$(typeset -f); install_nginx"
 done 
 
 for IP_ADD in $LB1_IP_NIC3 $LB2_IP_NIC3
 do 
-echocolor "Cai dat install_pacemaker_corosync tren $IP_ADD"
-sleep 3
-ssh root@$IP_ADD "$(typeset -f); install_pacemaker_corosync"    
+  echocolor "Cai dat install_nginx tren $IP_ADD"
+  sleep 3
+  ssh root@$IP_ADD "$(typeset -f); install_nginx"   
+done 
+
+
+for IP_ADD in $LB1_IP_NIC3 $LB2_IP_NIC3
+do 
+  echocolor "Cai dat install_pacemaker_corosync tren $IP_ADD"
+  sleep 3
+  ssh root@$IP_ADD "$(typeset -f); install_pacemaker_corosync"    
 done 
 
 echocolor "Cai dat install_pacemaker_corosync tren $IP_ADD"

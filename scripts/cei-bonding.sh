@@ -1,17 +1,17 @@
 #!/bin/bash -ex 
 ##############################################################################
 ### Script cai dat bonding
-
 ### Khai bao bien de thuc hien
 ### Kiem tra cu phap khi thuc hien shell 
 if [ $# -ne 5 ]
     then
         echo -e "Nhap du 5 thong so: \e[38;5;82m HOSTNAME IP_NIC1 IP_NIC2 IP_NIC3 IP_NIC4 \e[0m"
         echo ""
-        echo -e "Thuc hien tren may chu LB1: \e[31m bash $0 LB1_HOSTNAME LB1_IP_NIC1 LB1_IP_NIC2 LB1_IP_NIC3 LB1_IP_NIC4 \e[0m"
-        echo -e "Thuc hien tren may chu LB1: \e[31m bash $0 LB2_HOSTNAME LB2_IP_NIC1 LB2_IP_NIC2 LB2_IP_NIC3 LB2_IP_NIC4 \e[0m"
+        echo -e "Thuc hien tren may chu CEI1: \e[31m bash $0 CEI1_HOSTNAME CEI1_IP_NIC1 CEI1_IP_NIC2 CEI1_IP_NIC3 CEI1_IP_NIC4 \e[0m"
+        echo -e "Thuc hien tren may chu CEI2: \e[31m bash $0 CEI2_HOSTNAME CEI2_IP_NIC1 CEI2_IP_NIC2 CEI2_IP_NIC3 CEI2_IP_NIC4 \e[0m"
+        echo -e "Thuc hien tren may chu CEI3: \e[31m bash $0 CEI3_HOSTNAME CEI3_IP_NIC1 CEI3_IP_NIC2 CEI3_IP_NIC3 CEI3_IP_NIC4 \e[0m"
         echo ""
-        echo -e "Vi du:\e[101mbash $0 lb1 10.10.20.31 10.10.10.31 192.168.20.31 192.168.40.31 \e[0m"
+        echo -e "Vi du:\e[101mbash $0 CEI1 10.10.20.81 10.10.10.81 192.168.20.81 10.10.0.81 \e[0m"
         exit 1;
 fi
 

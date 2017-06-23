@@ -8,10 +8,11 @@ if [ $# -ne 5 ]
     then
         echo -e "Nhap du 5 thong so: \e[38;5;82m HOSTNAME IP_NIC1 IP_NIC2 IP_NIC3 IP_NIC4 \e[0m"
         echo ""
-        echo -e "Thuc hien tren may chu LB1: \e[31m bash $0 LB1_HOSTNAME LB1_IP_NIC1 LB1_IP_NIC2 LB1_IP_NIC3 LB1_IP_NIC4 \e[0m"
-        echo -e "Thuc hien tren may chu LB1: \e[31m bash $0 LB2_HOSTNAME LB2_IP_NIC1 LB2_IP_NIC2 LB2_IP_NIC3 LB2_IP_NIC4 \e[0m"
+        echo -e "Thuc hien tren may chu CTL1: \e[31m bash $0 CTL1_HOSTNAME CTL1_IP_NIC1 CTL1_IP_NIC2 CTL1_IP_NIC3 CTL1_IP_NIC4 \e[0m"
+        echo -e "Thuc hien tren may chu CTL2: \e[31m bash $0 CTL2_HOSTNAME CTL2_IP_NIC1 CTL2_IP_NIC2 CTL2_IP_NIC3 CTL2_IP_NIC4 \e[0m"
+        echo -e "Thuc hien tren may chu CTL3: \e[31m bash $0 CTL3_HOSTNAME CTL3_IP_NIC1 CTL3_IP_NIC2 CTL3_IP_NIC3 CTL3_IP_NIC4 \e[0m"
         echo ""
-        echo -e "Vi du:\e[101mbash $0 lb1 10.10.20.31 10.10.10.31 192.168.20.31 192.168.40.31 \e[0m"
+        echo -e "Vi du:\e[101mbash $0 ctl1 10.10.20.61 10.10.10.61 192.168.20.61 10.10.0.61 \e[0m"
         exit 1;
 fi
 

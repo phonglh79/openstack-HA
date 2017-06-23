@@ -1,0 +1,90 @@
+#####################################################################
+###DB1
+hostnamectl set-hostname db1
+echo "Setup IP  eno16777728"
+nmcli c modify eno16777728 ipv4.addresses 10.10.10.21/24
+nmcli c modify eno16777728 ipv4.method manual
+nmcli con mod eno16777728 connection.autoconnect yes
+
+echo "Setup IP  eno33554952"
+nmcli c modify eno33554952 ipv4.addresses 172.16.69.21/24
+nmcli c modify eno33554952 ipv4.gateway 172.16.69.1
+nmcli c modify eno33554952 ipv4.dns 8.8.8.8
+nmcli c modify eno33554952 ipv4.method manual
+nmcli con mod eno33554952 connection.autoconnect yes
+
+sudo systemctl disable firewalld
+sudo systemctl stop firewalld
+sudo systemctl disable NetworkManager
+sudo systemctl stop NetworkManager
+sudo systemctl enable network
+sudo systemctl start network
+
+sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux
+sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
+
+init 6
+
+#####
+###DB2
+#####
+hostnamectl set-hostname db2
+
+echo "Setup IP  eno16777728"
+nmcli c modify eno16777728 ipv4.addresses 10.10.10.22/24
+nmcli c modify eno16777728 ipv4.method manual
+nmcli con mod eno16777728 connection.autoconnect yes
+
+echo "Setup IP  eno33554952"
+nmcli c modify eno33554952 ipv4.addresses 172.16.69.22/24
+nmcli c modify eno33554952 ipv4.gateway 172.16.69.1
+nmcli c modify eno33554952 ipv4.dns 8.8.8.8
+nmcli c modify eno33554952 ipv4.method manual
+nmcli con mod eno33554952 connection.autoconnect yes
+
+sudo systemctl disable firewalld
+sudo systemctl stop firewalld
+sudo systemctl disable NetworkManager
+sudo systemctl stop NetworkManager
+sudo systemctl enable network
+sudo systemctl start network
+
+sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux
+sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
+
+init 6
+
+
+###########
+###DB3
+###########
+hostnamectl set-hostname db3
+
+echo "Setup IP  eno16777728"
+nmcli c modify eno16777728 ipv4.addresses 10.10.10.23/24
+nmcli c modify eno16777728 ipv4.method manual
+nmcli con mod eno16777728 connection.autoconnect yes
+
+echo "Setup IP  eno33554952"
+nmcli c modify eno33554952 ipv4.addresses 172.16.69.23/24
+nmcli c modify eno33554952 ipv4.gateway 172.16.69.1
+nmcli c modify eno33554952 ipv4.dns 8.8.8.8
+nmcli c modify eno33554952 ipv4.method manual
+nmcli con mod eno33554952 connection.autoconnect yes
+
+sudo systemctl disable firewalld
+sudo systemctl stop firewalld
+sudo systemctl disable NetworkManager
+sudo systemctl stop NetworkManager
+sudo systemctl enable network
+sudo systemctl start network
+
+sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux
+sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
+
+init 6
+
+
+echo "172.16.69.21 db1" >> /etc/hosts
+echo "172.16.69.22 db2" >> /etc/hosts
+echo "172.16.69.33 db3" >> /etc/hosts

@@ -6,13 +6,13 @@
 ### Kiem tra cu phap khi thuc hien shell 
 if [ $# -ne 3 ]
     then
-        echo -e "Nhap du 3 thong so: \e[38;5;82m MQ1_HOSTNAME, \e[38;5;31m MQ1_IP_NIC1,\e[38;5;11m MQ1_IP_NIC2 \e[0m"
+        echo -e "Nhap du 3 thong so: \e[38;5;82m DB1_HOSTNAME, \e[38;5;31m DB1_IP_NIC1,\e[38;5;11m DB1_IP_NIC2 \e[0m"
         echo ""
-        echo -e "Thuc hien tren may chu MQ1: \e[31m bash $0 MQ1_HOSTNAME MQ1_IP_NIC1 MQ1_IP_NIC2 \e[0m"
-        echo -e "Thuc hien tren may chu MQ2: \e[31m bash $0 MQ2_HOSTNAME MQ2_IP_NIC1 MQ2_IP_NIC2 \e[0m"
-        echo -e "Thuc hien tren may chu MQ3: \e[31m bash $0 MQ3_HOSTNAME MQ3_IP_NIC1 MQ3_IP_NIC2 \e[0m"
+        echo -e "Thuc hien tren may chu DB1: \e[31m bash $0 DB1_HOSTNAME DB1_IP_NIC1 DB1_IP_NIC2 \e[0m"
+        echo -e "Thuc hien tren may chu DB2: \e[31m bash $0 DB2_HOSTNAME DB2_IP_NIC1 DB2_IP_NIC2 \e[0m"
+        echo -e "Thuc hien tren may chu DB3: \e[31m bash $0 DB3_HOSTNAME DB3_IP_NIC1 DB3_IP_NIC2 \e[0m"
         echo ""
-        echo -e "Vi du:\e[101mbash $0 mq1 10.10.10.21 192.168.20.21 \e[0m"
+        echo -e "Vi du:\e[101mbash $0 DB1 10.10.10.51 192.168.20.51 \e[0m"
         exit 1;
 fi
 
