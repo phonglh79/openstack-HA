@@ -54,7 +54,6 @@ sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
 
 init 6
 
-
 ###########
 ###DB3
 ###########
