@@ -1,7 +1,5 @@
 ## Tao DB cho Gnocchi va Aodh 
 
-
-
 mysql -u'root' -p'Ec0net#!2017' 
 
 ### Tao DB cho Gnocchi
@@ -393,9 +391,6 @@ systemctl start httpd
 
 systemctl start openstack-gnocchi-metricd
 systemctl enable openstack-gnocchi-metricd
-
-systemctl stop openstack-gnocchi-metricd
-systemctl disable openstack-gnocchi-metricd
 
 cat /etc/ceilometer/ceilometer.conf |grep -v _dispatchers > /etc/ceilometer/ceilometer.conf.TEMP
 cat /etc/ceilometer/ceilometer.conf.TEMP > /etc/ceilometer/ceilometer.conf
