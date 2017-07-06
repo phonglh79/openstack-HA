@@ -60,6 +60,55 @@ function install_proxy {
         done
 
 }
+
+function install_repo_cassandra {
+        for IP_ADD in $CTL1_IP_NIC1 $COM1_IP_NIC1 $COM2_IP_NIC1
+        do
+            echocolor "Cai dat install_repo_galera tren $IP_ADD"
+            sleep 3
+ssh root@$IP_ADD << EOF
+echo '# DataStax (Apache Cassandra)
+[datastax]
+name = DataStax Repo for Apache Cassandra
+baseurl = http://rpm.datastax.com/community
+enabled = 1
+gpgcheck = 1
+gpgkey = https://rpm.datastax.com/rpm/repo_key' >> /etc/yum.repos.d/datastax.repo
+EOF
+        done
+}
+
+
+function install_repo_midonet {
+        for IP_ADD in $CTL1_IP_NIC1 $COM1_IP_NIC1 $COM2_IP_NIC1
+        do
+            echocolor "Cai dat install_repo_galera tren $IP_ADD"
+            sleep 3
+ssh root@$IP_ADD << EOF
+echo '[midonet]
+name=MidoNet
+baseurl=http://builds.midonet.org/midonet-5.4/stable/el7/
+enabled=1
+gpgcheck=1
+gpgkey=https://builds.midonet.org/midorepo.key
+
+[midonet-openstack-integration]
+name=MidoNet OpenStack Integration
+baseurl=http://builds.midonet.org/openstack-newton/stable/el7/
+enabled=1
+gpgcheck=1
+gpgkey=https://builds.midonet.org/midorepo.key
+
+[midonet-misc]
+name=MidoNet 3rd Party Tools and Libraries
+baseurl=http://builds.midonet.org/misc/stable/el7/
+enabled=1
+gpgcheck=1
+gpgkey=https://builds.midonet.org/midorepo.key' >> /etc/yum.repos.d/midonet.repo
+EOF
+        done
+}
+
 function install_repo_galera {
         for IP_ADD in $CTL1_IP_NIC1 $COM1_IP_NIC1 $COM2_IP_NIC1
         do
@@ -74,8 +123,6 @@ gpgcheck=1' >> /etc/yum.repos.d/MariaDB.repo
 yum -y update
 EOF
         done
-
-
 }
 
 function install_repo {
@@ -164,6 +211,8 @@ install_proxy
 
 echocolor "Cai dat repo tren cac node"
 sleep 3
+install_repo_cassandra
+install_repo_midonet
 install_repo_galera
 install_repo
 
