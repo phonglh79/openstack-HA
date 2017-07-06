@@ -34,7 +34,7 @@ sudo rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-7
 sudo rm /etc/yum.repos.d/dl.fedoraproject.org*
 
 ### Tao file repos
-cat << EOF > /etc/yum.repos.d/ceph.repo
+cat << EOF > /etc/yum.repos.d/ceph-deploy.repo
 [Ceph-noarch]
 name=Ceph noarch packages
 baseurl=http://download.ceph.com/rpm-jewel/el7/noarch
@@ -201,14 +201,31 @@ sudo scp /home/cephuser/ceph.client.glance.keyring root@192.168.20.63:/etc/ceph
 sudo ssh 192.168.20.63 sudo chown glance:glance /etc/ceph/ceph.client.glance.keyring
 
 
-### Chuyen sang CTL1,CTL2 va CTL3 thuc hien restart dich vu glance
+### Chuyen sang CTL1,CTL2 va CTL3 thuc hien cau hinh tren glance 
+
+- Khai bao cac dong cau hinh sau trong file /etc/glance/glance-api.conf . Luu y: sua cac dong trung va them cac dong moi
+
+[glance_store]
+default_store = rbd
+stores = rbd
+rbd_store_pool = images
+rbd_store_user = glance
+rbd_store_ceph_conf = /etc/ceph/ceph.conf
+rbd_store_chunk_size = 8
+
+- Khoi dong lai cac service trong glance 
+
+systemctl restart openstack-glance-api.service
+systemctl restart ─openstack-glance-registry.service
+
+
 
 ### Dung tren CTL1 thuc hien update de thu xem da tich hop thanh cong hay chua
 
 wget http://download.cirros-cloud.net/0.3.5/cirros-0.3.5-x86_64-disk.img
 
 
-openstack image create "cirros1" --file cirros-0.3.5-x86_64-disk.img \
+openstack image create "cirros-ceph4" --file cirros-0.3.5-x86_64-disk.img \
       --disk-format qcow2 --container-format bare \
       --public
 
