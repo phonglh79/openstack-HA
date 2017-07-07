@@ -88,6 +88,7 @@ function rabbitmq_install {
 
 ### Thuc hien ham
 install_mariadb_galera
+restart_db
 set_pass_db
 restart_db
 

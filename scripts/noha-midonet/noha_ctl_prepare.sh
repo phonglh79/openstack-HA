@@ -66,7 +66,7 @@ function install_repo_cassandra {
         do
             echocolor "Cai dat install_repo_galera tren $IP_ADD"
             sleep 3
-ssh root@$IP_ADD << EOF
+ssh -tt root@$IP_ADD << EOF
 echo '# DataStax (Apache Cassandra)
 [datastax]
 name = DataStax Repo for Apache Cassandra
@@ -84,7 +84,7 @@ function install_repo_midonet {
         do
             echocolor "Cai dat install_repo_galera tren $IP_ADD"
             sleep 3
-ssh root@$IP_ADD << EOF
+ssh -tt root@$IP_ADD << EOF
 echo '[midonet]
 name=MidoNet
 baseurl=http://builds.midonet.org/midonet-5.4/stable/el7/
@@ -114,7 +114,7 @@ function install_repo_galera {
         do
             echocolor "Cai dat install_repo_galera tren $IP_ADD"
             sleep 3
-ssh root@$IP_ADD << EOF
+ssh -tt root@$IP_ADD << EOF
 echo '[mariadb]
 name = MariaDB
 baseurl = http://yum.mariadb.org/10.1/centos7-amd64
@@ -130,7 +130,7 @@ function install_repo {
         do
             echocolor "Cai dat install_repo tren $IP_ADD"
             sleep 3
-        ssh root@$IP_ADD << EOF 
+        ssh -tt root@$IP_ADD << EOF 
 yum -y install centos-release-openstack-newton
 yum -y upgrade
 yum -y install crudini wget vim
