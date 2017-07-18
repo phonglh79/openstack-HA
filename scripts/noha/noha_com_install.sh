@@ -1,4 +1,4 @@
-#!/bin/bash -ex 
+#!/bin/bash -ex
 ##############################################################################
 ### Script cai dat cac goi bo tro cho CTL
 
@@ -17,10 +17,10 @@ function ops_edit {
 
 # Cach dung
 ## Cu phap:
-##			ops_edit_file $bien_duong_dan_file [SECTION] [PARAMETER] [VALUAE]
+##                      ops_edit_file $bien_duong_dan_file [SECTION] [PARAMETER] [VALUAE]
 ## Vi du:
-###			filekeystone=/etc/keystone/keystone.conf
-###			ops_edit_file $filekeystone DEFAULT rpc_backend rabbit
+###                     filekeystone=/etc/keystone/keystone.conf
+###                     ops_edit_file $filekeystone DEFAULT rpc_backend rabbit
 
 
 # Ham de del mot dong trong file cau hinh
@@ -43,7 +43,7 @@ function com_nova_config {
         ops_edit $com_nova_conf DEFAULT my_ip $(ip addr show dev ens160 scope global | grep "inet " | sed -e 's#.*inet ##g' -e 's#/.*##g')
         ops_edit $com_nova_conf DEFAULT use_neutron true
         ops_edit $com_nova_conf DEFAULT firewall_driver nova.virt.firewall.NoopFirewallDriver
-        
+
         ops_edit $com_nova_conf DEFAULT instance_usage_audit True
         ops_edit $com_nova_conf DEFAULT instance_usage_audit_period hour
         ops_edit $com_nova_conf DEFAULT notify_on_state_change vm_and_task_state
@@ -67,11 +67,11 @@ function com_nova_config {
         ops_edit $com_nova_conf vnc vncserver_listen 0.0.0.0
         ops_edit $com_nova_conf vnc vncserver_proxyclient_address \$my_ip
         ops_edit $com_nova_conf vnc novncproxy_base_url http://$CTL1_IP_NIC1:6080/vnc_auto.html
-        
+
         ops_edit $com_nova_conf glance api_servers http://$CTL1_IP_NIC1:9292
-        
+
         ops_edit $com_nova_conf oslo_concurrency lock_path /var/lib/nova/tmp
-        
+
         ops_edit $com_nova_conf neutron url http://$CTL1_IP_NIC1:9696
         ops_edit $com_nova_conf neutron auth_url http://$CTL1_IP_NIC1:35357
         ops_edit $com_nova_conf neutron auth_type password
@@ -80,10 +80,10 @@ function com_nova_config {
         ops_edit $com_nova_conf neutron project_name service
         ops_edit $com_nova_conf neutron username neutron
         ops_edit $com_nova_conf neutron password $NEUTRON_PASS
-        
+
         ops_edit $com_nova_conf libvirt virt_type  $(count=$(egrep -c '(vmx|svm)' /proc/cpuinfo); if [ $count -eq 0 ];then   echo "qemu"; else   echo "kvm"; fi)
         ops_edit $com_nova_conf oslo_messaging_notifications driver messagingv2
- 
+
 }
 
 function com_nova_restart {
@@ -102,25 +102,25 @@ function com_neutron_config {
         com_linuxbridge_agent=/etc/neutron/plugins/ml2/linuxbridge_agent.ini
         com_dhcp_agent=/etc/neutron/dhcp_agent.ini
         com_metadata_agent=/etc/neutron/metadata_agent.ini
-        
-        
+
+
         cp $com_neutron_conf $com_neutron_conf.orig
         cp $com_ml2_conf $com_ml2_conf.orig
         cp $com_linuxbridge_agent $com_linuxbridge_agent.orig
         cp $com_dhcp_agent $com_dhcp_agent.orig
         cp $com_metadata_agent $com_metadata_agent.orig
-        
+
         ops_edit $com_neutron_conf DEFAULT auth_strategy keystone
         ops_edit $com_neutron_conf DEFAULT core_plugin ml2
         ops_edit $com_neutron_conf DEFAULT rpc_backend rabbit
         ops_edit $com_neutron_conf DEFAULT notify_nova_on_port_status_changes true
         ops_edit $com_neutron_conf DEFAULT notify_nova_on_port_data_changes true
-        
+
         ops_edit $com_neutron_conf oslo_messaging_rabbit rabbit_host $CTL1_IP_NIC1
         ops_edit $com_neutron_conf oslo_messaging_rabbit rabbit_port 5672
         ops_edit $com_neutron_conf oslo_messaging_rabbit rabbit_userid openstack
         ops_edit $com_neutron_conf oslo_messaging_rabbit rabbit_password $RABBIT_PASS
-        
+
         ops_edit $com_neutron_conf keystone_authtoken auth_uri http://$CTL1_IP_NIC1:5000
         ops_edit $com_neutron_conf keystone_authtoken auth_url http://$CTL1_IP_NIC1:35357
         ops_edit $com_neutron_conf keystone_authtoken memcached_servers $CTL1_IP_NIC1:11211
@@ -130,16 +130,19 @@ function com_neutron_config {
         ops_edit $com_neutron_conf keystone_authtoken project_name service
         ops_edit $com_neutron_conf keystone_authtoken username neutron
         ops_edit $com_neutron_conf keystone_authtoken password $NEUTRON_PASS
-                
+
         ops_edit $com_neutron_conf oslo_concurrency lock_path /var/lib/neutron/tmp
-        
+
         ops_edit $com_neutron_conf oslo_messaging_notifications driver messagingv2
-        
+
         ops_edit $com_linuxbridge_agent linux_bridge physical_interface_mappings provider:ens256
         ops_edit $com_linuxbridge_agent vxlan enable_vxlan False
         ops_edit $com_linuxbridge_agent securitygroup enable_security_group True
         ops_edit $com_linuxbridge_agent securitygroup firewall_driver neutron.agent.linux.iptables_firewall.IptablesFirewallDriver
-				
+
+        ops_edit $com_metadata_agent DEFAULT nova_metadata_ip $CTL1_IP_NIC1
+        ops_edit $com_metadata_agent DEFAULT metadata_proxy_shared_secret $METADATA_SECRET
+
         ops_edit $com_dhcp_agent DEFAULT interface_driver neutron.agent.linux.interface.BridgeInterfaceDriver
         ops_edit $com_dhcp_agent DEFAULT enable_isolated_metadata True
         ops_edit $com_dhcp_agent DEFAULT dhcp_driver neutron.agent.linux.dhcp.Dnsmasq
@@ -148,9 +151,11 @@ function com_neutron_config {
 
 function com_neutron_restart {
         systemctl enable neutron-linuxbridge-agent.service
+        systemctl enable neutron-metadata-agent.service
         systemctl enable neutron-dhcp-agent.service
-        
+
         systemctl start neutron-linuxbridge-agent.service
+        systemctl start neutron-metadata-agent.service
         systemctl start neutron-dhcp-agent.service
 
 }
@@ -159,7 +164,7 @@ function com_neutron_restart {
 # Thuc thi cac functions
 ## Goi cac functions
 ##############################################################################
-yum -y update 
+yum -y update
 
 echocolor "Install dich vu NOVA"
 sleep 3
