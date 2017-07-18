@@ -186,12 +186,53 @@ openstack token issue
 - Tải script cài đặt nova và neutron cho Compute1
 
 	```sh
-	https://raw.githubusercontent.com/congto/openstack-HA/master/scripts/noha/noha_com_install.sh
+	curl -O https://raw.githubusercontent.com/congto/openstack-HA/master/scripts/noha/noha_com_install.sh
+	
 	bash noha_com_install.sh
 	```
 
 - Lưu ý: bước này thực hiện trên cả 02 Compute1 và Compute2
 
+### Kiểm tra lại xem Nova và Neutron 
 
+- Để kiểm tra Nova và Neutron đã được cài thành công trên 2 node Compute1 và Compute2 hay chưa bằng các lệnh dưới.
 
-	
+- Đứng trên Controller thực hiện lệnh kiểm tra các agent của neutron. 
+	```sh
+	[root@ctl1 ~]# openstack network agent list
+	```
+
+	- Kết quả nhu dưới
+		```sh
+
+		+--------------------------------------+--------------------+------+-------------------+-------+-------+---------------------------+
+		| ID                                   | Agent Type         | Host | Availability Zone | Alive | State | Binary                    |
+		+--------------------------------------+--------------------+------+-------------------+-------+-------+---------------------------+
+		| 1dbe7df1-feee-4f28-91ac-a19ed2ca0491 | Metadata agent     | com2 | None              | True  | UP    | neutron-metadata-agent    |
+		| 560459e5-15ed-4cbf-a360-022a764fc642 | Metadata agent     | com1 | None              | True  | UP    | neutron-metadata-agent    |
+		| 9d7f31c9-b5a8-4d36-bafb-940b8cacf2fa | Linux bridge agent | com2 | None              | True  | UP    | neutron-linuxbridge-agent |
+		| a3402985-7b73-4090-b039-54186aa6642e | DHCP agent         | com1 | nova              | True  | UP    | neutron-dhcp-agent        |
+		| d4f3b500-7865-40d7-ad6f-cf7c05284604 | DHCP agent         | com2 | nova              | True  | UP    | neutron-dhcp-agent        |
+		| e26be4a6-ffa1-448f-9c1d-7b13de6ebea3 | Linux bridge agent | com1 | None              | True  | UP    | neutron-linuxbridge-agent |
+		+--------------------------------------+--------------------+------+-------------------+-------+-------+---------------------------+
+		```
+
+- Đứng trên Controller thực hiện lệnh kiểm tra service của nova 
+	```sh
+	openstack compute service list
+	```
+
+	- Kết quả là: 
+		```
+		+----+------------------+------+----------+---------+-------+----------------------------+
+		| ID | Binary           | Host | Zone     | Status  | State | Updated At                 |
+		+----+------------------+------+----------+---------+-------+----------------------------+
+		|  3 | nova-consoleauth | ctl1 | internal | enabled | up    | 2017-07-18T16:31:09.000000 |
+		|  4 | nova-scheduler   | ctl1 | internal | enabled | up    | 2017-07-18T16:31:09.000000 |
+		|  5 | nova-conductor   | ctl1 | internal | enabled | up    | 2017-07-18T16:31:08.000000 |
+		|  6 | nova-compute     | com1 | nova     | enabled | up    | 2017-07-18T16:31:04.000000 |
+		|  7 | nova-compute     | com2 | nova     | enabled | up    | 2017-07-18T16:31:14.000000 |
+		+----+------------------+------+----------+---------+-------+----------------------------+
+		```
+
+### Tạo network  và các máy ảo để kiểm chứng. 
