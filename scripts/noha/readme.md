@@ -64,29 +64,38 @@
 
 -  Nếu cần thiết thì cài ứng dụng `byobu` để khi các phiên ssh bị mất kết nối thì có thể sử dụng lại (để sử đụng lại thì cần ssh vào và gõ lại lệnh `byobu`)
 
-```sh
-sudo yum install epel-release -y
-sudo yum install byobu -y --enablerepo=epel-testing
-```
+	```sh
+	sudo yum install epel-release -y
+	sudo yum install byobu -y --enablerepo=epel-testing
+	```
 
 - Gõ lệnh byobu
-```sh
-byobu
-```
+
+	```sh
+	byobu
+	```
 
 #### Thực thi script `noha_ctl_prepare.sh`
 
-- Lưu ý, lúc này cửa sổ nhắc lệnh đang ở thư mục `/root/noha/`
+- Lưu ý, lúc này cửa sổ nhắc lệnh đang ở thư mục `/root/noha/` của node CTL1
 
 - Thực thi script  `noha_ctl_prepare.sh`
 
-```sh
-bash noha_ctl_prepare.sh
-```
+	```sh
+	bash noha_ctl_prepare.sh
+	```
 
 - Trong quá trình chạy script, cần nhập password cho tài khoản root của máy COM1 và COM2
 
 
+#### Thực thi script `noha_ctl_install_db_rabbitmq.sh` để cài đặt DB và các gói bổ trợ.
+- Sau khi node CTL khởi động lại, đăng nhập bằng quyền root và thực thi các lệnh dưới.
+
+	```sh
+	cd /root/noha/
+
+	bash noha_ctl_install_db_rabbitmq.sh
+	```
 
 
 
