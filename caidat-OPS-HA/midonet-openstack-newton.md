@@ -210,6 +210,11 @@ echo "192.168.20.57 nsdb1" >> /etc/hosts
 echo "192.168.20.58 nsdb2" >> /etc/hosts
 echo "192.168.20.59 nsdb3" >> /etc/hosts
 
+echo "192.168.20.71 ctl1" >> /etc/hosts
+echo "192.168.20.72 com1" >> /etc/hosts
+echo "192.168.20.73 com2" >> /etc/hosts
+
+
 echo "proxy=http://123.30.178.220:3142" >> /etc/yum.conf 
 yum -y update
 
@@ -392,8 +397,77 @@ http://prntscr.com/fs7mvu
 
 
 
+### Cai dat midonet tren Controller node 
+
+- Tao user cho midonet 
+
+openstack user create midonet --password Econet123
+openstack role add --project service --user midonet admin
+openstack service create --name midonet --description "MidoNet API Service" midonet
+
+- Cai dat cac goi midonet tren controller 
+
+yum install -y openstack-neutron python-networking-midonet python-neutronclient
+yum remove openstack-neutron-ml2
+
+
+- Sửa file /etc/neutron/neutron.conf
+
+(Nội dung file như link này: http://paste.openstack.org/raw/614676/) 
+
+
+- Tạo thư mục midonet plugin 
+
+mkdir /etc/neutron/plugins/midonet
+
+- Tạo file /etc/neutron/plugins/midonet/midonet.ini với nội dung dưới (copy lệnh dưới để tạo file) 
+
+echo '[MIDONET]
+# MidoNet API URL
+midonet_uri = http://192.168.20.71:8181/midonet-api
+username = midonet
+password = Econet123
+project_id = service
+client = midonet_ext.neutron.client.api.MidonetApiClient' > /etc/neutron/plugins/midonet/midonet.ini
+
+
+- Tạo symbolic link 
+
+ln -s /etc/neutron/plugins/midonet/midonet.ini /etc/neutron/plugin.ini
+
+
+- Đồng bộ db cho neutron 
+
+su -s /bin/sh -c "neutron-db-manage --config-file /etc/neutron/neutron.conf --config-file /etc/neutron/plugins/midonet/midonet.ini upgrade head" neutron
+su -s /bin/sh -c "neutron-db-manage --subproject networking-midonet upgrade head" neutron
 
 
 
+
+
+- Thuc hien dong nay tren CTL
+
+cat << EOF | mn-conf set -t default
+cluster.auth {
+   admin_role = "admin"
+   provider_class = "org.midonet.cluster.auth.keystone.KeystoneService"
+   keystone {
+      admin_token = "Econet123"
+      protocol = "http"
+      host = "192.168.20.71"
+      port = 35357
+      domain_name = "Default"
+      domain_id = "default"
+      tenant_name = "midonet"
+      user_name = "midonet"
+      user_password = "Econet123"
+      version = 3
+   }
+}
+EOF
+
+
+mn-conf template-set -h local -t agent-gateway-large 
+cp /etc/midolman/midolman-env.sh.gateway.large /etc/midolman/midolman-env.sh
 
 

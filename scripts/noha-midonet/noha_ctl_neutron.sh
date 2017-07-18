@@ -49,7 +49,8 @@ function neutron_user_endpoint {
 }
 
 function neutron_install {
-        yum -y update && yum -y install openstack-neutron openstack-neutron-ml2 openstack-neutron-linuxbridge ebtables
+        yum -y update && yum -y install openstack-neutron python-networking-midonet-ext python-neutronclient
+		yum -y erase openstack-neutron-ml2
 
 
 }
@@ -62,14 +63,17 @@ function neutron_config {
         cp $ctl_ml2_conf $ctl_ml2_conf.orig
         cp $ctl_linuxbridge_agent $ctl_linuxbridge_agent.orig
 
-        ops_edit $ctl_neutron_conf DEFAULT core_plugin ml2
-        ops_edit $ctl_neutron_conf DEFAULT service_plugins
+        ops_edit $ctl_neutron_conf DEFAULT core_plugin midonet_v2_ext
+        ops_edit $ctl_neutron_conf DEFAULT service_plugins  midonet_l3_ext
+        ops_edit $ctl_neutron_conf DEFAULT dhcp_agent_notification False
         ops_edit $ctl_neutron_conf DEFAULT auth_strategy keystone    
         ops_edit $ctl_neutron_conf DEFAULT notify_nova_on_port_status_changes True
         ops_edit $ctl_neutron_conf DEFAULT notify_nova_on_port_data_changes True  
+        ops_edit $ctl_neutron_conf DEFAULT nova_urlhttp://$CTL1_IP_NIC1:8774/v2.1
         ops_edit $ctl_neutron_conf DEFAULT allow_overlapping_ips True 
         ops_edit $ctl_neutron_conf DEFAULT rpc_backend rabbit
         ops_edit $ctl_neutron_conf DEFAULT dhcp_agents_per_network 2
+        ops_edit $ctl_neutron_conf DEFAULT api_extensions_path /usr/lib/python2.7/dist-packages/midonet-ext/neutron/extensions
                 
         ops_edit $ctl_neutron_conf database connection  mysql+pymysql://neutron:$PASS_DATABASE_NEUTRON@$CTL1_IP_NIC1/neutron
         
