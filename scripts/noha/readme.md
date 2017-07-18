@@ -4,9 +4,17 @@
 
 ### MÔ HÌNH
 
-![noha_openstack_topology.png](../images/noha_openstack_topology.png)
-
+![noha_openstack_topology.png](./images/noha_openstack_topology.png)
 
 ### IP PLANNING
 
-![noha_ip_planning](../images/noha_ip_planning.png
+![noha_openstack_topology.png](../images/noha_openstack_topology.png)
+
+
+
+## Các bước thực hiện
+
+- Đặt IP theo IP Planning cho từng node.
+- Trên Controller thực hiện
+- Trên Compute1 thực hiện
+- Trên Compute2 thực hiện
