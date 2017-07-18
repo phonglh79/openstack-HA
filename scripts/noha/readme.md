@@ -36,5 +36,21 @@
 	
 ### Thực hiện script cài đặt OpenStack
 
-- Đứng trên node CTL1 và thực hiện script dưới. 
+- Đứng trên node CTL1 và thực hiện các bước dưới.
+- Đăng nhập với quyền root , cài đặt git và script cài đặt.
+
+```sh
+yum -y install git
+git clone https://github.com/congto/openstack-HA.git
+
+```
+
+
+
+
+
+
+
+
+
 	
