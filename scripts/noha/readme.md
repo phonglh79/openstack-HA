@@ -4,7 +4,7 @@
 
 ### MÔ HÌNH
 
-![noha_openstack_topology.png](./images/noha_openstack_topology.png)
+![noha_openstack_topology.png](/images/noha_openstack_topology.png)
 
 ### IP PLANNING
 
