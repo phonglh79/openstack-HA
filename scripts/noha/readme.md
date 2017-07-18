@@ -37,13 +37,24 @@
 ### Thực hiện script cài đặt OpenStack
 
 - Đứng trên node CTL1 và thực hiện các bước dưới.
-- Đăng nhập với quyền root , cài đặt git và script cài đặt.
+- Chuyển sang quyền root
+	```sh
+	yum -y install git
+	```
+	
+- Cài đặt git và script cài đặt.
+	```sh
+	yum -y install git
+	git clone https://github.com/congto/openstack-HA.git
 
-```sh
-yum -y install git
-git clone https://github.com/congto/openstack-HA.git
+	mv openstack-HA/scripts/noha /root/
 
-```
+	cd noha
+	chmod +x *.sh
+	```
+
+- Nếu muốn sửa các IP thì sử dụng VI hoặc VIM để sửa, cần lưu ý tên NICs và địa chỉ IP cần phải tương ứng (trong này này tên NICs là ens160, ens192, ens224, ens256)
+
 
 
 
