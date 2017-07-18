@@ -139,10 +139,7 @@ function com_neutron_config {
         ops_edit $com_linuxbridge_agent vxlan enable_vxlan False
         ops_edit $com_linuxbridge_agent securitygroup enable_security_group True
         ops_edit $com_linuxbridge_agent securitygroup firewall_driver neutron.agent.linux.iptables_firewall.IptablesFirewallDriver
-        
-        ops_edit $com_metadata_agent DEFAULT nova_metadata_ip $CTL1_IP_NIC1
-        ops_edit $com_metadata_agent DEFAULT metadata_proxy_shared_secret $METADATA_SECRET
-        
+				
         ops_edit $com_dhcp_agent DEFAULT interface_driver neutron.agent.linux.interface.BridgeInterfaceDriver
         ops_edit $com_dhcp_agent DEFAULT enable_isolated_metadata True
         ops_edit $com_dhcp_agent DEFAULT dhcp_driver neutron.agent.linux.dhcp.Dnsmasq
@@ -151,11 +148,9 @@ function com_neutron_config {
 
 function com_neutron_restart {
         systemctl enable neutron-linuxbridge-agent.service
-        systemctl enable neutron-metadata-agent.service
         systemctl enable neutron-dhcp-agent.service
         
         systemctl start neutron-linuxbridge-agent.service
-        systemctl start neutron-metadata-agent.service
         systemctl start neutron-dhcp-agent.service
 
 }

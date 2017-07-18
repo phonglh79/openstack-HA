@@ -129,6 +129,69 @@ openstack token issue
 		[root@ctl1 noha]#
 		```
 
+#### Thực thi script `noha_ctl_glance.sh` để cài đặt `Glance`.
+
+- Thực thi script dưới để cài đặt Glance.
+
+	```sh
+	bash noha_ctl_glance.sh
+	```
+	
+#### Thực thi script `noha_ctl_nova.sh.sh` để cài đặt `Nova`.
+
+- Thực thi script dưới để cài đặt Nova.
+
+	```sh
+	bash noha_ctl_nova.sh
+	```
+	
+- Sau khi script thực thi xong, kiểm tra xem nova đã cài đặt thành công trên Controller bằng lệnh dưới.
+	```sh
+	openstack compute service list
+	```
+
+  - Kết quả như sau là đã hoàn tất việc cài nova trên controller
+		```sh
+		+----+------------------+------+----------+---------+-------+----------------------------+
+		| ID | Binary           | Host | Zone     | Status  | State | Updated At                 |
+		+----+------------------+------+----------+---------+-------+----------------------------+
+		|  3 | nova-consoleauth | ctl1 | internal | enabled | up    | 2017-07-18T15:46:34.000000 |
+		|  4 | nova-scheduler   | ctl1 | internal | enabled | up    | 2017-07-18T15:46:37.000000 |
+		|  5 | nova-conductor   | ctl1 | internal | enabled | up    | 2017-07-18T15:46:31.000000 |
+		+----+------------------+------+----------+---------+-------+----------------------------+
+		```
+
+#### Thực thi script `noha_ctl_neutron.sh` để cài đặt `Neutron`.
+
+- Thực thi script dưới để cài đặt Neutron.
+
+	```sh
+	bash noha_ctl_neutron.sh
+	```
+	
+#### Thực thi script `noha_ctl_cinder.sh` để cài đặt `Cinder`.
+
+- Thực thi script dưới để cài đặt Cinder. 
+- Lưu ý: Máy CTL có 02 ổ cứng, ổ thứ nhất để cài OS, ổ thứ 2 (sdb hoặc vdb) dùng để tạo các LVM để Cinder sử dụng sau này.
+
+	```sh
+	bash noha_ctl_cinder.sh
+	```
+	
+### Thực hiện cài đặt trên Compute1 và Compute2 (cài Nova và Neutron)
+
+#### Cài đặt Nova và neutron trên Compute1 và Compute2
+
+- Login vào máy Compute1, kiểm tra xem đã có file `config.cfg` trong thư mục root hay chưa. File này được copy khi thực hiện script đầu tiên ở trên node Controller. Nếu chưa có thì copy từ Controller sang. Nếu có rồi thì thực hiện bước dưới.
+- Tải script cài đặt nova và neutron cho Compute1
+
+	```sh
+	https://raw.githubusercontent.com/congto/openstack-HA/master/scripts/noha/noha_com_install.sh
+	bash noha_com_install.sh
+	```
+
+- Lưu ý: bước này thực hiện trên cả 02 Compute1 và Compute2
+
 
 
 	

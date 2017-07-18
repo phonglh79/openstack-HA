@@ -54,13 +54,19 @@ function neutron_install {
 
 }
 
-function neutron_config {
-        ctl_neutron_conf=/etc/neutron/neutron.conf
+function neutron_config {		
+				ctl_neutron_conf=/etc/neutron/neutron.conf
         ctl_ml2_conf=/etc/neutron/plugins/ml2/ml2_conf.ini
         ctl_linuxbridge_agent=/etc/neutron/plugins/ml2/linuxbridge_agent.ini
-        cp $ctl_neutron_conf $ctl_neutron_conf.orig
-        cp $ctl_ml2_conf $ctl_ml2_conf.orig
-        cp $ctl_linuxbridge_agent $ctl_linuxbridge_agent.orig
+        ctl_dhcp_agent=/etc/neutron/dhcp_agent.ini
+        ctl_metadata_agent=/etc/neutron/metadata_agent.ini
+        
+        
+        cp $ctl_neutron_conf $com_neutron_conf.orig
+        cp $ctl_ml2_conf $com_ml2_conf.orig
+        cp $ctl_linuxbridge_agent $com_linuxbridge_agent.orig
+        cp $ctl_dhcp_agent $com_dhcp_agent.orig
+        cp $ctl_metadata_agent $com_metadata_agent.orig
 
         ops_edit $ctl_neutron_conf DEFAULT core_plugin ml2
         ops_edit $ctl_neutron_conf DEFAULT service_plugins
@@ -87,10 +93,24 @@ function neutron_config {
         ops_edit $ctl_neutron_conf keystone_authtoken project_name service
         ops_edit $ctl_neutron_conf keystone_authtoken username neutron
         ops_edit $ctl_neutron_conf keystone_authtoken password $NEUTRON_PASS
+        			                
+        ops_edit $com_neutron_conf oslo_concurrency lock_path /var/lib/neutron/tmp
         
-        ops_edit $ctl_neutron_conf oslo_messaging_notifications driver messagingv2
+        ops_edit $com_neutron_conf oslo_messaging_notifications driver messagingv2
         
+        ops_edit $ctl_neutron_conf linux_bridge physical_interface_mappings provider:ens256
+        ops_edit $ctl_neutron_conf vxlan enable_vxlan False
+        ops_edit $ctl_neutron_conf securitygroup enable_security_group True
+        ops_edit $ctl_neutron_conf securitygroup firewall_driver neutron.agent.linux.iptables_firewall.IptablesFirewallDriver
+				
+				ops_edit $ctl_linuxbridge_agent linux_bridge physical_interface_mappings provider:ens256
+        ops_edit $ctl_linuxbridge_agent vxlan enable_vxlan False
+        ops_edit $ctl_linuxbridge_agent securitygroup enable_security_group True
+        ops_edit $ctl_linuxbridge_agent securitygroup firewall_driver neutron.agent.linux.iptables_firewall.IptablesFirewallDriver
         
+        ops_edit $ctl_neutron_conf DEFAULT nova_metadata_ip $CTL1_IP_NIC1
+        ops_edit $ctl_neutron_conf DEFAULT metadata_proxy_shared_secret $METADATA_SECRET
+                
         ops_edit $ctl_neutron_conf nova auth_url http://$CTL1_IP_NIC1:35357
         ops_edit $ctl_neutron_conf nova auth_type password
         ops_edit $ctl_neutron_conf nova project_domain_name Default
@@ -126,6 +146,10 @@ function neutron_enable_restart {
             sleep 3
             systemctl enable neutron-server.service
             systemctl start neutron-server.service
+						systemctl enable neutron-linuxbridge-agent.service
+						systemctl start neutron-linuxbridge-agent.service
+						systemctl enable neutron-metadata-agent.service
+						systemctl start neutron-metadata-agent.service
 }
 
 ############################
