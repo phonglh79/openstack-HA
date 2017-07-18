@@ -42,7 +42,7 @@ function copykey {
 function setup_config {
         for IP_ADD in $CTL1_IP_NIC1 $COM1_IP_NIC1 $COM2_IP_NIC1
         do
-                scp /root/config.cfg root@$IP_ADD:/root/
+                scp /root/noha/config.cfg root@$IP_ADD:/root/
                 chmod +x config.cfg
 
         done
@@ -54,7 +54,7 @@ function install_proxy {
         do
             echocolor "Cai dat install_proxy tren $IP_ADD"
             sleep 3
-            ssh root@$IP_ADD 'echo "proxy=http://123.30.178.220:3142" >> /etc/yum.conf' 
+            ssh root@$IP_ADD 'echo "proxy=http://192.168.20.12:3142" >> /etc/yum.conf' 
             yum -y update
 
         done
