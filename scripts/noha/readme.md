@@ -97,8 +97,37 @@
 	bash noha_ctl_install_db_rabbitmq.sh
 	```
 
+#### Thực thi script `noha_ctl_keystone.sh` để cài đặt `Keystone`.
 
+- Thực thi script bằng lệnh dưới.
+	```sh
+	bash noha_ctl_keystone.sh
+	```
 
+- Sau khi cài đặt xong keystone, script sẽ tạo ra 2 file source `admin-openrc` và `demo-openrc` nằm ở thư mục root. Các file này chứa biến môi trường để làm việc với OpenStack. Thực hiện lệnh dưới để có thể tương tác với OpenStack bằng CLI.
+
+	```sh
+	source /root/admin-openrc
+	```
+
+- Kiểm tra lại xem đã thao tác được với OpenStack bằng CLI hay chưa bằng lệnh
+
+```sh
+openstack token issue
+```
+
+	- Kết quả là:
+		```sh
+		+------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+		| Field      | Value                                                                                                                                                                                   |
+		+------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+		| expires    | 2017-07-18 16:35:00+00:00                                                                                                                                                               |
+		| id         | gAAAAABZbiqkN6mxVSttOCHdbPgCFAHmdlvdfHUpf2MrV_1nwq_ZrXGNJEdT-e7HInzxF8puHMG0-dnwe-NqRMvMDn_-lpYTX7m5G-oIpw4nWX0B9orECIYN4DXfUa07tg6pyo8-Zi7yte9uxqH54S1LYgdlk-GyX9130JESn3I_cw63b_9Rz-s |
+		| project_id | 023aabfb532f4974a07923f1b48f1e2a                                                                                                                                                        |
+		| user_id    | 3b79c537783f409e9cc28d6cef6ad393                                                                                                                                                        |
+		+------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+		[root@ctl1 noha]#
+		```
 
 
 

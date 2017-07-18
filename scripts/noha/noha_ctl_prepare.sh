@@ -106,7 +106,7 @@ function install_ntp_server {
         yum -y install chrony
         for IP_ADD in $CTL1_IP_NIC1 $COM1_IP_NIC1 $COM2_IP_NIC1
         do 
-          echocolor "Cau hinh NTP cho IP_ADD"
+          echocolor "Cau hinh NTP cho $IP_ADD"
           sleep 3
           cp /etc/chrony.conf /etc/chrony.conf.orig
           if [ "$IP_ADD" == "$CTL1_IP_NIC1" ]; then
