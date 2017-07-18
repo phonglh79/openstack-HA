@@ -8,7 +8,7 @@
 
 ### IP PLANNING
 
-![noha_openstack_topology.png](../images/noha_openstack_topology.png)
+![noha_ip_planning.png](/images/noha_ip_planning)
 
 
 
