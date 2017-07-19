@@ -236,3 +236,5 @@ openstack token issue
 		```
 
 ### Tạo network  và các máy ảo để kiểm chứng. 
+
+#### Tạo provider network
