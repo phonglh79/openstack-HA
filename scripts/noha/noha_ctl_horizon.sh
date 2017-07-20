@@ -54,48 +54,27 @@ EOF
 
 echocolor "Config dashboard"
 sleep 3
-cp /etc/openstack-dashboard/local_settings \
-    /etc/openstack-dashboard/local_settings.orig
+cp /etc/openstack-dashboard/local_settings /etc/openstack-dashboard/local_settings.orig
     
 filehorizon=/etc/openstack-dashboard/local_settings
 
-# Allowing insert password in dashboard ( only apply in image )
-sed -i "s/'can_set_password': False/'can_set_password': True/g" \
-    $filehorizon
-
-sed -i "s/_member_/user/g" $filehorizon
-sed -i "s/127.0.0.1/$CTL1_IP_NIC1/g" $filehorizon
-sed -i "s/http:\/\/\%s:5000\/v2.0/http:\/\/\%s:5000\/v3/g" \
-    $filehorizon
-    
-sed -e "s/django.core.cache.backends.locmem.LocMemCache/django.core.cache.backends.memcached.MemcachedCache',\
-         'LOCATION': '$CTL1_IP_NIC1:11211',/g" $filehorizon  
-
-
-				 
-cat << EOF > $filehorizon
-OPENSTACK_API_VERSIONS = {
-#    "data-processing": 1.1,
-    "identity": 3,
-    "volume": 2,
-    "compute": 2,
-}
-
-SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
-EOF
-
-
-sed -i "s/#OPENSTACK_KEYSTONE_DEFAULT_DOMAIN = 'default'/\
-OPENSTACK_KEYSTONE_DEFAULT_DOMAIN = 'default'/g" \
-    $filehorizon
+sed -i -e "s/'can_set_password': False/'can_set_password': True/g" $filehorizon
+sed -i -e "s/_member_/user/g" $filehorizon
+sed -i -e "s/127.0.0.1/$CTL1_IP_NIC1/g" $filehorizon
+sed -i -e "s/http:\/\/\%s:5000\/v2.0/http:\/\/\%s:5000\/v3/g" $filehorizon
+sed -i -e "s#^CACHES#SESSION_ENGINE = 'django.contrib.sessions.backends.cache'\nCACHES#g#" $filehorizon
+sed -i -e "s#locmem.LocMemCache'#memcached.MemcachedCache',\n        'LOCATION' : [ '192.168.20.33:11211', ]#g" $filehorizon
+sed -i -e 's/^#OPENSTACK_API_VERSIONS.*/OPENSTACK_API_VERSIONS = {\n    "identity": 3,\n    "image": 2,\n    "volume": 2,\n}\n#OPENSTACK_API_VERSIONS = {/g'  $filehorizon
+sed -i -e "s/^#OPENSTACK_KEYSTONE_DEFAULT_DOMAIN.*/OPENSTACK_KEYSTONE_DEFAULT_DOMAIN = 'default'/g"   $filehorizon
 
 ## /* Restarting apache2 and memcached
  systemctl restart httpd.service memcached.service
 echocolor "Finish setting up Horizon"
 
-chown root:apache local_settings
-
-echocolor "LOGIN INFORMATION IN HORIZON"
-echocolor "URL: http://$CTL1_IP_NIC1/dashboard"
-echocolor "User: admin or demo"
-echocolor "Password: $ADMIN_PASS"
+echocolor "INFORMATION "
+##################################################################
+echo "LOGIN INFORMATION IN HORIZON"
+echo "URL: http://$CTL1_IP_NIC1/dashboard"
+echo "User: admin or demo"
+echo "Password: $ADMIN_PASS"
+##################################################################
