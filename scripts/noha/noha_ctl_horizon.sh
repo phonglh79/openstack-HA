@@ -37,13 +37,11 @@ yum -y install openstack-dashboard
 echocolor "Creating redirect page"
 
 filehtml=/var/www/html/index.html
-test -f $filehtml.orig || cp $filehtml $filehtml.orig
-rm $filehtml
 touch $filehtml
 cat << EOF >> $filehtml
 <html>
 <head>
-<META HTTP-EQUIV="Refresh" Content="0.5; URL=http://$CTL_EXT_IP/dashboard">
+<META HTTP-EQUIV="Refresh" Content="0.5; URL=http://$CTL1_IP_NIC1/dashboard">
 </head>
 <body>
 <center> <h1>Redirecting to OpenStack Dashboard</h1> </center>
