@@ -60,6 +60,7 @@ function neutron_config {
         ctl_linuxbridge_agent=/etc/neutron/plugins/ml2/linuxbridge_agent.ini
         ctl_dhcp_agent=/etc/neutron/dhcp_agent.ini
         ctl_metadata_agent=/etc/neutron/metadata_agent.ini
+				ctl_l3_agent_conf=/etc/neutron/l3_agent.ini
         
         
         cp $ctl_neutron_conf $com_neutron_conf.orig
@@ -69,7 +70,7 @@ function neutron_config {
         cp $ctl_metadata_agent $com_metadata_agent.orig
 
         ops_edit $ctl_neutron_conf DEFAULT core_plugin ml2
-        ops_edit $ctl_neutron_conf DEFAULT service_plugins
+        ops_edit $ctl_neutron_conf DEFAULT service_plugins router
         ops_edit $ctl_neutron_conf DEFAULT auth_strategy keystone    
         ops_edit $ctl_neutron_conf DEFAULT notify_nova_on_port_status_changes True
         ops_edit $ctl_neutron_conf DEFAULT notify_nova_on_port_data_changes True  
@@ -129,6 +130,8 @@ function neutron_config {
         ops_edit $ctl_ml2_conf ml2_type_flat flat_networks provider
         
         ops_edit $ctl_ml2_conf securitygroup enable_ipset True
+				
+        ops_edit $ctl_l3_agent_conf interface_driver linuxbridge
        
         ln -s /etc/neutron/plugins/ml2/ml2_conf.ini /etc/neutron/plugin.ini
 }
@@ -150,6 +153,8 @@ function neutron_enable_restart {
 						systemctl start neutron-linuxbridge-agent.service
 						systemctl enable neutron-metadata-agent.service
 						systemctl start neutron-metadata-agent.service
+						systemctl enable neutron-l3-agent.service
+						systemctl start neutron-l3-agent.service
 }
 
 ############################
