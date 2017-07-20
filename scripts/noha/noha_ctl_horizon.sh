@@ -57,6 +57,7 @@ cp /etc/openstack-dashboard/local_settings /etc/openstack-dashboard/local_settin
 filehorizon=/etc/openstack-dashboard/local_settings
 
 sed -i -e "s/'can_set_password': False/'can_set_password': True/g" $filehorizon
+sed -i -e "s#ALLOWED_HOSTS.*#ALLOWED_HOSTS = ['*',]#g"  $filehorizon
 sed -i -e "s/_member_/user/g" $filehorizon
 sed -i -e "s/127.0.0.1/$CTL1_IP_NIC1/g" $filehorizon
 sed -i -e "s/http:\/\/\%s:5000\/v2.0/http:\/\/\%s:5000\/v3/g" $filehorizon
@@ -76,3 +77,4 @@ echo "URL: http://$CTL1_IP_NIC1/dashboard"
 echo "User: admin or demo"
 echo "Password: $ADMIN_PASS"
 ##################################################################
+echocolor "I-M-OK- :)"
