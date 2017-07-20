@@ -68,11 +68,12 @@ sed -i "s/127.0.0.1/$CTL1_IP_NIC1/g" $filehorizon
 sed -i "s/http:\/\/\%s:5000\/v2.0/http:\/\/\%s:5000\/v3/g" \
     $filehorizon
     
-sed -e 's/django.core.cache.backends.locmem.LocMemCache/django.core.cache.backends.memcached.MemcachedCache',\
-         'LOCATION': '$CTL1_IP_NIC1:11211',/g' $filehorizon  
+sed -e "s/django.core.cache.backends.locmem.LocMemCache/django.core.cache.backends.memcached.MemcachedCache',\
+         'LOCATION': '$CTL1_IP_NIC1:11211',/g" $filehorizon  
 
 
-cat << EOF >> $filehorizon
+				 
+cat << EOF > $filehorizon
 OPENSTACK_API_VERSIONS = {
 #    "data-processing": 1.1,
     "identity": 3,
@@ -95,6 +96,6 @@ echocolor "Finish setting up Horizon"
 chown root:apache local_settings
 
 echocolor "LOGIN INFORMATION IN HORIZON"
-echocolor "URL: http://$CTL_EXT_IP/dashboard"
+echocolor "URL: http://$CTL1_IP_NIC1/dashboard"
 echocolor "User: admin or demo"
 echocolor "Password: $ADMIN_PASS"
