@@ -42,7 +42,7 @@ function cinder_user_endpoint {
         openstack user create  cinder --domain default --password $CINDER_PASS
         openstack role add --project service --user cinder admin
         openstack service create --name cinder --description "OpenStack Block Storage" volume
-         openstack service create --name cinderv2 --description "OpenStack Block Storage" volumev2
+        openstack service create --name cinderv2 --description "OpenStack Block Storage" volumev2
          
         openstack endpoint create --region RegionOne volume public http://$CTL1_IP_NIC1:8776/v1/%\(tenant_id\)s
         openstack endpoint create --region RegionOne volume internal http://$CTL1_IP_NIC1:8776/v1/%\(tenant_id\)s
@@ -55,7 +55,7 @@ function cinder_user_endpoint {
 }
 
 function cinder_install_config {
-        echocolor "Cai dat cinder"
+				echocolor "Cai dat cinder"
         sleep 3
         yum -y install openstack-cinder targetcli
         ctl_cinder_conf=/etc/cinder/cinder.conf

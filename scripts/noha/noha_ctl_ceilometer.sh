@@ -55,7 +55,7 @@ function aodh_install_config {
 		openstack-aodh-evaluator openstack-aodh-notifier \
 		openstack-aodh-listener openstack-aodh-expirer \
 		python-aodhclient
-		
+
 		yum -y install mod_wsgi memcached python-memcached httpd install python-pip
 		
 		pip install requests-aws
@@ -170,30 +170,30 @@ function gnocchi_ceilometer_user_endpoint {
 }
 
 function gnocchi_ceilometer_install_config {
-		yum install -y openstack-ceilometer-central \
+
+		yum -y install openstack-ceilometer-central \
 		openstack-ceilometer-collector \
 		openstack-ceilometer-common \
-		openstack-ceilometer-compute \
-		openstack-ceilometer-notification \
+		openstack-ceilometer-compute \openstack-ceilometer-notification \
 		python-ceilometerclient \
 		python-ceilometer \
 		python-ceilometerclient-doc \
 		openstack-utils \
 		openstack-selinux
 		
-		yum install -y openstack-gnocchi-api \
+		yum -y install openstack-gnocchi-api \
 		openstack-gnocchi-common \
 		openstack-gnocchi-indexer-sqlalchemy \
 		openstack-gnocchi-metricd \
 		openstack-gnocchi-statsd \
 		python2-gnocchiclient
-		
+				
 		ctl_ceilometer_conf = /etc/ceilometer/ceilometer.conf
 		cp $ctl_ceilometer_conf $ctl_ceilometer_conf.orig
 		
 		ops_edit  $ctl_ceilometer_conf keystone_authtoken admin_tenant_name service
 		ops_edit  $ctl_ceilometer_conf keystone_authtoken admin_user ceilometer
-		ops_edit  $ctl_ceilometer_conf keystone_authtoken admin_password '$CEILOMETER_PASS'
+		ops_edit  $ctl_ceilometer_conf keystone_authtoken admin_password $CEILOMETER_PASS
 		ops_edit  $ctl_ceilometer_conf keystone_authtoken auth_type password
 		ops_edit  $ctl_ceilometer_conf keystone_authtoken username ceilometer
 		ops_edit  $ctl_ceilometer_conf keystone_authtoken password $CEILOMETER_PASS
@@ -389,31 +389,31 @@ function gnocchi_wsgi_config {
 		systemctl enable httpd
 		systemctl stop httpd
 		sleep 5
-		systemctl start httpd
+		systemctl restart httpd
 }
 
 function gnocchi_ceilometer_enable_restart {
-		gnocchi-upgrade --create-legacy-resource-types
+				gnocchi-upgrade --create-legacy-resource-types
 
-		systemctl start openstack-ceilometer-compute
-		systemctl enable openstack-ceilometer-compute
+				systemctl start openstack-ceilometer-compute
+				systemctl enable openstack-ceilometer-compute
 
-		systemctl start openstack-gnocchi-metricd
-		systemctl enable openstack-gnocchi-metricd
+				systemctl start openstack-gnocchi-metricd
+				systemctl enable openstack-gnocchi-metricd
 
-		systemctl start openstack-ceilometer-central
-		systemctl enable openstack-ceilometer-central
+				systemctl start openstack-ceilometer-central
+				systemctl enable openstack-ceilometer-central
 
-		systemctl disable openstack-ceilometer-api
-		systemctl stop openstack-ceilometer-api
+				systemctl disable openstack-ceilometer-api
+				systemctl stop openstack-ceilometer-api
 
-		systemctl start openstack-ceilometer-collector
-		systemctl enable openstack-ceilometer-collector
+				systemctl start openstack-ceilometer-collector
+				systemctl enable openstack-ceilometer-collector
 
-		systemctl start openstack-ceilometer-notification
-		systemctl enable openstack-ceilometer-notification
+				systemctl start openstack-ceilometer-notification
+				systemctl enable openstack-ceilometer-notification
 
-		systemctl disable openstack-ceilometer-polling > /dev/null 2>&1
+				systemctl disable openstack-ceilometer-polling > /dev/null 2>&1
 }
 
 ############################
