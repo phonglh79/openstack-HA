@@ -144,9 +144,9 @@ function aodh_enable_restart {
 
 function gnocchi_create_db {
 		mysql -uroot -p$PASS_DATABASE_ROOT  -e "CREATE DATABASE gnocchi;
-		GRANT ALL PRIVILEGES ON gnocchi.* TO 'gnocchi'@'localhost' IDENTIFIED BY '$PASS_DATABASE_AODH' WITH GRANT OPTION ;FLUSH PRIVILEGES;
-		GRANT ALL PRIVILEGES ON gnocchi.* TO 'gnocchi'@'%' IDENTIFIED BY '$PASS_DATABASE_AODH' WITH GRANT OPTION ;FLUSH PRIVILEGES;
-		GRANT ALL PRIVILEGES ON gnocchi.* TO 'gnocchi'@'$CTL1_IP_NIC1' IDENTIFIED BY '$PASS_DATABASE_AODH' WITH GRANT OPTION ;FLUSH PRIVILEGES;
+		GRANT ALL PRIVILEGES ON gnocchi.* TO 'gnocchi'@'localhost' IDENTIFIED BY '$PASS_DATABASE_GNOCCHI' WITH GRANT OPTION ;FLUSH PRIVILEGES;
+		GRANT ALL PRIVILEGES ON gnocchi.* TO 'gnocchi'@'%' IDENTIFIED BY '$PASS_DATABASE_GNOCCHI' WITH GRANT OPTION ;FLUSH PRIVILEGES;
+		GRANT ALL PRIVILEGES ON gnocchi.* TO 'gnocchi'@'$CTL1_IP_NIC1' IDENTIFIED BY '$PASS_DATABASE_GNOCCHI' WITH GRANT OPTION ;FLUSH PRIVILEGES;
 
 		FLUSH PRIVILEGES;"
 }
@@ -188,7 +188,7 @@ function gnocchi_ceilometer_install_config {
 		openstack-gnocchi-statsd \
 		python2-gnocchiclient
 				
-		ctl_ceilometer_conf = /etc/ceilometer/ceilometer.conf
+		ctl_ceilometer_conf=/etc/ceilometer/ceilometer.conf
 		cp $ctl_ceilometer_conf $ctl_ceilometer_conf.orig
 		
 		ops_edit  $ctl_ceilometer_conf keystone_authtoken admin_tenant_name service
@@ -244,7 +244,7 @@ function gnocchi_ceilometer_install_config {
 
 
 		kvm_possible=`grep -E 'svm|vmx' /proc/cpuinfo|uniq|wc -l`
-
+		forceqemu="no"
 		if [ $forceqemu == "yes" ]
 		then
 						kvm_possible="0"
@@ -321,10 +321,10 @@ function gnocchi_ceilometer_install_config {
 		chmod 700 /var/lib/ceilometer/tmp-signing
 
 		############### Cau hinh cho Gnocchi 
-		ctl_gnocchi_api_paste = /etc/gnocchi/api-paste.ini
-		ctl_gnocchi_json = /etc/gnocchi/policy.json
-		ctl_gnocchi_conf = /etc/gnocchi/gnocchi.conf
-		ctl_gnocchi_resources = /etc/ceilometer/gnocchi_resources.yaml
+		ctl_gnocchi_api_paste=/etc/gnocchi/api-paste.ini
+		ctl_gnocchi_json=/etc/gnocchi/policy.json
+		ctl_gnocchi_conf=/etc/gnocchi/gnocchi.conf
+		ctl_gnocchi_resources=/etc/ceilometer/gnocchi_resources.yaml
 		cp $ctl_gnocchi_api_paste $ctl_gnocchi_api_paste.orig 
 		cp $ctl_gnocchi_json $ctl_gnocchi_json.orig
 		cp $ctl_gnocchi_conf $ctl_gnocchi_conf.orig 
@@ -338,8 +338,8 @@ function gnocchi_ceilometer_install_config {
 		ops_edit $ctl_gnocchi_conf api paste_config /etc/gnocchi/api-paste.ini
 		ops_edit $ctl_gnocchi_conf api auth_mode keystone
 
-		ops_edit $ctl_gnocchi_conf database connection 'mysql+pymysql://gnocchi:$PASS_DATABASE_GNOCCHI@$CTL1_IP_NIC1/gnocchi'
-		ops_edit $ctl_gnocchi_conf indexer url 'mysql+pymysql://gnocchi:$PASS_DATABASE_GNOCCHI@$CTL1_IP_NIC1/gnocchi'
+		ops_edit $ctl_gnocchi_conf database connection mysql+pymysql://gnocchi:$PASS_DATABASE_GNOCCHI@$CTL1_IP_NIC1/gnocchi
+		ops_edit $ctl_gnocchi_conf indexer url mysql+pymysql://gnocchi:$PASS_DATABASE_GNOCCHI@$CTL1_IP_NIC1/gnocchi
 
 		ops_edit $ctl_gnocchi_conf keystone_authtoken auth_uri http://$CTL1_IP_NIC1:5000/v3
 		ops_edit $ctl_gnocchi_conf keystone_authtoken auth_url http://$CTL1_IP_NIC1:35357/v3
@@ -371,8 +371,9 @@ function gnocchi_ceilometer_install_config {
 
 		ops_edit $ctl_gnocchi_conf indexer driver sqlalchemy
 		ops_edit $ctl_gnocchi_conf archive_policy default_aggregation_methods 'mean,min,max,sum,std,median,count,last,95pct'
-
-		su gnocchi -s /bin/sh -c 'gnocchi-upgrade --config-file $ctl_gnocchi_conf --create-legacy-resource-types'
+		
+		chown -R gnocchi.gnocchi /var/log/gnocchi/
+		su gnocchi -s /bin/sh -c 'gnocchi-upgrade --config-file /etc/gnocchi/gnocchi.conf --create-legacy-resource-types'
 
 		systemctl stop openstack-gnocchi-api
 		systemctl disable openstack-gnocchi-api
