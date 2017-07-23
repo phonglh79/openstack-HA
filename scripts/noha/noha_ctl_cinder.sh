@@ -133,6 +133,7 @@ function create_lvm {
 # Thuc thi cac functions
 ## Goi cac functions
 ############################
+source /root/admin-openrc
 echocolor "Bat dau cai dat CINDER"
 create_lvm
 

@@ -95,9 +95,9 @@ function neutron_config {
         ops_edit $ctl_neutron_conf keystone_authtoken username neutron
         ops_edit $ctl_neutron_conf keystone_authtoken password $NEUTRON_PASS
         			                
-        ops_edit $com_neutron_conf oslo_concurrency lock_path /var/lib/neutron/tmp
+        ops_edit $ctl_neutron_conf oslo_concurrency lock_path /var/lib/neutron/tmp
         
-        ops_edit $com_neutron_conf oslo_messaging_notifications driver messagingv2
+        ops_edit $ctl_neutron_conf oslo_messaging_notifications driver messagingv2
         
         ops_edit $ctl_neutron_conf linux_bridge physical_interface_mappings provider:ens256
         ops_edit $ctl_neutron_conf vxlan enable_vxlan False
