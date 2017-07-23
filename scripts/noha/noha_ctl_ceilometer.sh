@@ -39,352 +39,351 @@ function aodh_create_db {
 }
 
 function aodh_user_endpoint {
-        openstack user create aodh --domain default --password $AODH_PASS
-        openstack role add --project service --user aodh admin
-				
-				openstack service create --name aodh --description "Telemetry" alarming
-				openstack endpoint create --region RegionOne alarming public http://$CTL1_IP_NIC1:8042
-				openstack endpoint create --region RegionOne alarming internal http://$CTL1_IP_NIC1:8042
-				openstack endpoint create --region RegionOne alarming admin http://$CTL1_IP_NIC1:8042
-				       
+			openstack user create aodh --domain default --password $AODH_PASS
+			openstack role add --project service --user aodh admin
+			
+			openstack service create --name aodh --description "Telemetry" alarming
+			openstack endpoint create --region RegionOne alarming public http://$CTL1_IP_NIC1:8042
+			openstack endpoint create --region RegionOne alarming internal http://$CTL1_IP_NIC1:8042
+			openstack endpoint create --region RegionOne alarming admin http://$CTL1_IP_NIC1:8042
 }
 
 function aodh_install_config {
-        echocolor "Cai dat AODH"
-        sleep 3
-        yum -y install openstack-aodh-api \
-				openstack-aodh-evaluator openstack-aodh-notifier \
-				openstack-aodh-listener openstack-aodh-expirer \
-				python-aodhclient
-				
-				yum -y install mod_wsgi memcached python-memcached httpd install python-pip
-				
-				pip install requests-aws
-				
-        ctl_aodh_conf=/etc/aodh/aodh.conf
-        cp $ctl_aodh_conf $ctl_aodh_conf.orig
+			echocolor "Cai dat AODH"
+			sleep 3
+			yum -y install openstack-aodh-api \
+			openstack-aodh-evaluator openstack-aodh-notifier \
+			openstack-aodh-listener openstack-aodh-expirer \
+			python-aodhclient
+			
+			yum -y install mod_wsgi memcached python-memcached httpd install python-pip
+			
+			pip install requests-aws
+			
+			ctl_aodh_conf=/etc/aodh/aodh.conf
+			cp $ctl_aodh_conf $ctl_aodh_conf.orig
 
-        ops_edit $ctl_aodh_conf DEFAULT rpc_backend rabbit
-        ops_edit $ctl_aodh_conf DEFAULT auth_strategy keystone
-        ops_edit $ctl_aodh_conf DEFAULT my_ip $CTL1_IP_NIC1
-        ops_edit $ctl_aodh_conf DEFAULT host `hostname`
-				
-        
-        ops_edit $ctl_aodh_conf database connection  mysql+pymysql://aodh:$PASS_DATABASE_AODH@$CTL1_IP_NIC1/aodh
+			ops_edit $ctl_aodh_conf DEFAULT rpc_backend rabbit
+			ops_edit $ctl_aodh_conf DEFAULT auth_strategy keystone
+			ops_edit $ctl_aodh_conf DEFAULT my_ip $CTL1_IP_NIC1
+			ops_edit $ctl_aodh_conf DEFAULT host `hostname`
+			
+			
+			ops_edit $ctl_aodh_conf database connection  mysql+pymysql://aodh:$PASS_DATABASE_AODH@$CTL1_IP_NIC1/aodh
 
-        ops_edit $ctl_aodh_conf keystone_authtoken auth_uri http://$CTL1_IP_NIC1:5000
-        ops_edit $ctl_aodh_conf keystone_authtoken auth_url http://$CTL1_IP_NIC1:35357
-        ops_edit $ctl_aodh_conf keystone_authtoken memcached_servers $CTL1_IP_NIC1:11211
-        ops_edit $ctl_aodh_conf keystone_authtoken auth_type password
-        ops_edit $ctl_aodh_conf keystone_authtoken project_domain_name Default
-        ops_edit $ctl_aodh_conf keystone_authtoken user_domain_name Default
-        ops_edit $ctl_aodh_conf keystone_authtoken project_name service
-        ops_edit $ctl_aodh_conf keystone_authtoken username aodh
-        ops_edit $ctl_aodh_conf keystone_authtoken password $AODH_PASS
-        
-        ops_edit $ctl_aodh_conf oslo_messaging_rabbit rabbit_host $CTL1_IP_NIC1
-        ops_edit $ctl_aodh_conf oslo_messaging_rabbit rabbit_port 5672
-        ops_edit $ctl_aodh_conf oslo_messaging_rabbit rabbit_userid openstack
-        ops_edit $ctl_aodh_conf oslo_messaging_rabbit rabbit_password $RABBIT_PASS
-				
-        ops_edit $ctl_aodh_conf service_credentials auth_type password
-        ops_edit $ctl_aodh_conf service_credentials auth_url http://$CTL1_IP_NIC1:5000/v3
-        ops_edit $ctl_aodh_conf service_credentials project_domain_name default
-        ops_edit $ctl_aodh_conf service_credentials user_domain_name default
-        ops_edit $ctl_aodh_conf service_credentials project_name service
-        ops_edit $ctl_aodh_conf service_credentials username aodh
-        ops_edit $ctl_aodh_conf service_credentials password $AODH_PASS
-        ops_edit $ctl_aodh_conf service_credentials interface internalURL
-        ops_edit $ctl_aodh_conf service_credentials region_name RegionOne
-				
-				ops_edit $ctl_aodh_conf api port 8042
-				ops_edit $ctl_aodh_conf api host 0.0.0.0
-				ops_edit $ctl_aodh_conf api paste_config api_paste.ini
-				
-				ops_edit $ctl_aodh_conf oslo_messaging_notifications driver messagingv2
-				ops_edit $ctl_aodh_conf oslo_messaging_notifications topics notifications
+			ops_edit $ctl_aodh_conf keystone_authtoken auth_uri http://$CTL1_IP_NIC1:5000
+			ops_edit $ctl_aodh_conf keystone_authtoken auth_url http://$CTL1_IP_NIC1:35357
+			ops_edit $ctl_aodh_conf keystone_authtoken memcached_servers $CTL1_IP_NIC1:11211
+			ops_edit $ctl_aodh_conf keystone_authtoken auth_type password
+			ops_edit $ctl_aodh_conf keystone_authtoken project_domain_name Default
+			ops_edit $ctl_aodh_conf keystone_authtoken user_domain_name Default
+			ops_edit $ctl_aodh_conf keystone_authtoken project_name service
+			ops_edit $ctl_aodh_conf keystone_authtoken username aodh
+			ops_edit $ctl_aodh_conf keystone_authtoken password $AODH_PASS
+			
+			ops_edit $ctl_aodh_conf oslo_messaging_rabbit rabbit_host $CTL1_IP_NIC1
+			ops_edit $ctl_aodh_conf oslo_messaging_rabbit rabbit_port 5672
+			ops_edit $ctl_aodh_conf oslo_messaging_rabbit rabbit_userid openstack
+			ops_edit $ctl_aodh_conf oslo_messaging_rabbit rabbit_password $RABBIT_PASS
+			
+			ops_edit $ctl_aodh_conf service_credentials auth_type password
+			ops_edit $ctl_aodh_conf service_credentials auth_url http://$CTL1_IP_NIC1:5000/v3
+			ops_edit $ctl_aodh_conf service_credentials project_domain_name default
+			ops_edit $ctl_aodh_conf service_credentials user_domain_name default
+			ops_edit $ctl_aodh_conf service_credentials project_name service
+			ops_edit $ctl_aodh_conf service_credentials username aodh
+			ops_edit $ctl_aodh_conf service_credentials password $AODH_PASS
+			ops_edit $ctl_aodh_conf service_credentials interface internalURL
+			ops_edit $ctl_aodh_conf service_credentials region_name RegionOne
+			
+			ops_edit $ctl_aodh_conf api port 8042
+			ops_edit $ctl_aodh_conf api host 0.0.0.0
+			ops_edit $ctl_aodh_conf api paste_config api_paste.ini
+			
+			ops_edit $ctl_aodh_conf oslo_messaging_notifications driver messagingv2
+			ops_edit $ctl_aodh_conf oslo_messaging_notifications topics notifications
 
 }
 
 function aodh_syncdb {
-       aodh-dbsync --config-dir /etc/aodh/
+		 aodh-dbsync --config-dir /etc/aodh/
 
 }
 
 function aodh_wsgi_config {
-				wget -O /etc/httpd/conf.d/wsgi-aodh.conf https://raw.githubusercontent.com/tigerlinux/openstack-newton-installer-centos7/master/libs/aodh/wsgi-aodh.conf
-				mkdir -p /var/www/cgi-bin/aodh				
-				wget -O /var/www/cgi-bin/aodh/app.wsgi https://raw.githubusercontent.com/tigerlinux/openstack-newton-installer-centos7/master/libs/aodh/app.wsgi
-				systemctl enable httpd
-				systemctl stop memcached
-				systemctl start memcached
-				systemctl enable memcached
-				systemctl stop httpd
-				sleep 5
-				systemctl start httpd
-				sleep 5
+		wget -O /etc/httpd/conf.d/wsgi-aodh.conf https://raw.githubusercontent.com/tigerlinux/openstack-newton-installer-centos7/master/libs/aodh/wsgi-aodh.conf
+		mkdir -p /var/www/cgi-bin/aodh				
+		wget -O /var/www/cgi-bin/aodh/app.wsgi https://raw.githubusercontent.com/tigerlinux/openstack-newton-installer-centos7/master/libs/aodh/app.wsgi
+		systemctl enable httpd
+		systemctl stop memcached
+		systemctl start memcached
+		systemctl enable memcached
+		systemctl stop httpd
+		sleep 5
+		systemctl start httpd
+		sleep 5
 }
 
 function aodh_enable_restart {
 
-        echocolor "Restart dich vu aodh"
-        sleep 3
-				systemctl stop openstack-aodh-api.service 
-				systemctl disable openstack-aodh-api.service 
+		echocolor "Restart dich vu aodh"
+		sleep 3
+		systemctl stop openstack-aodh-api.service 
+		systemctl disable openstack-aodh-api.service 
 
-				systemctl enable \
-				openstack-aodh-evaluator.service \
-				openstack-aodh-notifier.service \
-				openstack-aodh-listener.service
+		systemctl enable \
+		openstack-aodh-evaluator.service \
+		openstack-aodh-notifier.service \
+		openstack-aodh-listener.service
 
-				systemctl start \
-				openstack-aodh-evaluator.service \
-				openstack-aodh-notifier.service \
-				openstack-aodh-listener.service
+		systemctl start \
+		openstack-aodh-evaluator.service \
+		openstack-aodh-notifier.service \
+		openstack-aodh-listener.service
 
 
 }
 
 
 function gnocchi_create_db {
-      mysql -uroot -p$PASS_DATABASE_ROOT  -e "CREATE DATABASE gnocchi;
-      GRANT ALL PRIVILEGES ON gnocchi.* TO 'gnocchi'@'localhost' IDENTIFIED BY '$PASS_DATABASE_AODH' WITH GRANT OPTION ;FLUSH PRIVILEGES;
-      GRANT ALL PRIVILEGES ON gnocchi.* TO 'gnocchi'@'%' IDENTIFIED BY '$PASS_DATABASE_AODH' WITH GRANT OPTION ;FLUSH PRIVILEGES;
-      GRANT ALL PRIVILEGES ON gnocchi.* TO 'gnocchi'@'$CTL1_IP_NIC1' IDENTIFIED BY '$PASS_DATABASE_AODH' WITH GRANT OPTION ;FLUSH PRIVILEGES;
+		mysql -uroot -p$PASS_DATABASE_ROOT  -e "CREATE DATABASE gnocchi;
+		GRANT ALL PRIVILEGES ON gnocchi.* TO 'gnocchi'@'localhost' IDENTIFIED BY '$PASS_DATABASE_AODH' WITH GRANT OPTION ;FLUSH PRIVILEGES;
+		GRANT ALL PRIVILEGES ON gnocchi.* TO 'gnocchi'@'%' IDENTIFIED BY '$PASS_DATABASE_AODH' WITH GRANT OPTION ;FLUSH PRIVILEGES;
+		GRANT ALL PRIVILEGES ON gnocchi.* TO 'gnocchi'@'$CTL1_IP_NIC1' IDENTIFIED BY '$PASS_DATABASE_AODH' WITH GRANT OPTION ;FLUSH PRIVILEGES;
 
-      FLUSH PRIVILEGES;"
+		FLUSH PRIVILEGES;"
 }
 
 
 function gnocchi_ceilometer_user_endpoint {
 
-			openstack user create ceilometer --domain default --password $CEILOMETER_PASS
-			openstack role add --project service --user ceilometer admin
-			openstack service create --name ceilometer --description "Telemetry" metering
+		openstack user create ceilometer --domain default --password $CEILOMETER_PASS
+		openstack role add --project service --user ceilometer admin
+		openstack service create --name ceilometer --description "Telemetry" metering
 
-			openstack role create ResellerAdmin
-			openstack role add --project service --user ceilometer ResellerAdmin
+		openstack role create ResellerAdmin
+		openstack role add --project service --user ceilometer ResellerAdmin
 
-			openstack user create gnocchi --domain default --password $GNOCCHI_PASS
-			openstack role add --project service --user gnocchi admin
-			openstack service create --name gnocchi --description "OpenStack Metric" metric
+		openstack user create gnocchi --domain default --password $GNOCCHI_PASS
+		openstack role add --project service --user gnocchi admin
+		openstack service create --name gnocchi --description "OpenStack Metric" metric
 
-			openstack endpoint create --region RegionOne metric public http://$CTL1_IP_NIC1:8041
-			openstack endpoint create --region RegionOne metric internal http://$CTL1_IP_NIC1:8041
-			openstack endpoint create --region RegionOne metric admin http://$CTL1_IP_NIC1:8041
+		openstack endpoint create --region RegionOne metric public http://$CTL1_IP_NIC1:8041
+		openstack endpoint create --region RegionOne metric internal http://$CTL1_IP_NIC1:8041
+		openstack endpoint create --region RegionOne metric admin http://$CTL1_IP_NIC1:8041
 }
 
 function gnocchi_ceilometer_install_config {
 
-			yum install -y openstack-ceilometer-central \
-			openstack-ceilometer-collector \
-			openstack-ceilometer-common \
-			openstack-ceilometer-compute \
-			openstack-ceilometer-notification \
-			python-ceilometerclient \
-			python-ceilometer \
-			python-ceilometerclient-doc \
-			openstack-utils \
-			openstack-selinux
-			
-			yum install -y openstack-gnocchi-api \
-			openstack-gnocchi-common \
-			openstack-gnocchi-indexer-sqlalchemy \
-			openstack-gnocchi-metricd \
-			openstack-gnocchi-statsd \
-			python2-gnocchiclient
-			
-			ctl_ceilometer_conf = /etc/ceilometer/ceilometer.conf
-			cp $ctl_ceilometer_conf $ctl_ceilometer_conf.orig
-			
+		yum install -y openstack-ceilometer-central \
+		openstack-ceilometer-collector \
+		openstack-ceilometer-common \
+		openstack-ceilometer-compute \
+		openstack-ceilometer-notification \
+		python-ceilometerclient \
+		python-ceilometer \
+		python-ceilometerclient-doc \
+		openstack-utils \
+		openstack-selinux
+		
+		yum install -y openstack-gnocchi-api \
+		openstack-gnocchi-common \
+		openstack-gnocchi-indexer-sqlalchemy \
+		openstack-gnocchi-metricd \
+		openstack-gnocchi-statsd \
+		python2-gnocchiclient
+		
+		ctl_ceilometer_conf = /etc/ceilometer/ceilometer.conf
+		cp $ctl_ceilometer_conf $ctl_ceilometer_conf.orig
+		
 
-			ops_edit  $ctl_ceilometer_conf keystone_authtoken admin_tenant_name service
-			ops_edit  $ctl_ceilometer_conf keystone_authtoken admin_user ceilometer
-			ops_edit  $ctl_ceilometer_conf keystone_authtoken admin_password '$CEILOMETER_PASS'
-			ops_edit  $ctl_ceilometer_conf keystone_authtoken auth_type password
-			ops_edit  $ctl_ceilometer_conf keystone_authtoken username ceilometer
-			ops_edit  $ctl_ceilometer_conf keystone_authtoken password $CEILOMETER_PASS
-			ops_edit  $ctl_ceilometer_conf keystone_authtoken project_domain_name Default
-			ops_edit  $ctl_ceilometer_conf keystone_authtoken user_domain_name Default
-			ops_edit  $ctl_ceilometer_conf keystone_authtoken project_name service
+		ops_edit  $ctl_ceilometer_conf keystone_authtoken admin_tenant_name service
+		ops_edit  $ctl_ceilometer_conf keystone_authtoken admin_user ceilometer
+		ops_edit  $ctl_ceilometer_conf keystone_authtoken admin_password '$CEILOMETER_PASS'
+		ops_edit  $ctl_ceilometer_conf keystone_authtoken auth_type password
+		ops_edit  $ctl_ceilometer_conf keystone_authtoken username ceilometer
+		ops_edit  $ctl_ceilometer_conf keystone_authtoken password $CEILOMETER_PASS
+		ops_edit  $ctl_ceilometer_conf keystone_authtoken project_domain_name Default
+		ops_edit  $ctl_ceilometer_conf keystone_authtoken user_domain_name Default
+		ops_edit  $ctl_ceilometer_conf keystone_authtoken project_name service
 
-			ops_edit  $ctl_ceilometer_conf keystone_authtoken auth_uri http://$CTL1_IP_NIC1:5000
-			ops_edit  $ctl_ceilometer_conf keystone_authtoken auth_url http://$CTL1_IP_NIC1:35357
-			ops_edit  $ctl_ceilometer_conf keystone_authtoken signing_dir '/var/lib/ceilometer/tmp-signing'
-			ops_edit  $ctl_ceilometer_conf keystone_authtoken auth_version v3
-			ops_edit  $ctl_ceilometer_conf keystone_authtoken memcached_servers $CTL1_IP_NIC1:11211
+		ops_edit  $ctl_ceilometer_conf keystone_authtoken auth_uri http://$CTL1_IP_NIC1:5000
+		ops_edit  $ctl_ceilometer_conf keystone_authtoken auth_url http://$CTL1_IP_NIC1:35357
+		ops_edit  $ctl_ceilometer_conf keystone_authtoken signing_dir '/var/lib/ceilometer/tmp-signing'
+		ops_edit  $ctl_ceilometer_conf keystone_authtoken auth_version v3
+		ops_edit  $ctl_ceilometer_conf keystone_authtoken memcached_servers $CTL1_IP_NIC1:11211
 
-			ops_edit  $ctl_ceilometer_conf service_credentials os_username ceilometer
-			ops_edit  $ctl_ceilometer_conf service_credentials os_password $CEILOMETER_PASS
-			ops_edit  $ctl_ceilometer_conf service_credentials os_tenant_name service
-			ops_edit  $ctl_ceilometer_conf service_credentials os_auth_url http://$CTL1_IP_NIC1:5000/v3
-			ops_edit  $ctl_ceilometer_conf service_credentials os_region_name RegionOne
-			ops_edit  $ctl_ceilometer_conf service_credentials os_endpoint_type internalURL
-			ops_edit  $ctl_ceilometer_conf service_credentials region_name RegionOne
-			ops_edit  $ctl_ceilometer_conf service_credentials interface internal
-			ops_edit  $ctl_ceilometer_conf service_credentials auth_type password
+		ops_edit  $ctl_ceilometer_conf service_credentials os_username ceilometer
+		ops_edit  $ctl_ceilometer_conf service_credentials os_password $CEILOMETER_PASS
+		ops_edit  $ctl_ceilometer_conf service_credentials os_tenant_name service
+		ops_edit  $ctl_ceilometer_conf service_credentials os_auth_url http://$CTL1_IP_NIC1:5000/v3
+		ops_edit  $ctl_ceilometer_conf service_credentials os_region_name RegionOne
+		ops_edit  $ctl_ceilometer_conf service_credentials os_endpoint_type internalURL
+		ops_edit  $ctl_ceilometer_conf service_credentials region_name RegionOne
+		ops_edit  $ctl_ceilometer_conf service_credentials interface internal
+		ops_edit  $ctl_ceilometer_conf service_credentials auth_type password
 
-			ops_edit  $ctl_ceilometer_conf service_credentials username ceilometer
-			ops_edit  $ctl_ceilometer_conf service_credentials password $CEILOMETER_PASS
-			ops_edit  $ctl_ceilometer_conf service_credentials auth_url http://$CTL1_IP_NIC1:5000/v3
-			ops_edit  $ctl_ceilometer_conf service_credentials project_domain_name Default
-			ops_edit  $ctl_ceilometer_conf service_credentials user_domain_name Default
-			ops_edit  $ctl_ceilometer_conf service_credentials project_name service
-
-
-			# End of Keystone Section
-
-			ops_edit  $ctl_ceilometer_conf DEFAULT metering_api_port 8777
-			ops_edit  $ctl_ceilometer_conf DEFAULT auth_strategy keystone
-			ops_edit  $ctl_ceilometer_conf DEFAULT log_dir /var/log/ceilometer
-			ops_edit  $ctl_ceilometer_conf DEFAULT host `hostname`
-			ops_edit  $ctl_ceilometer_conf DEFAULT pipeline_cfg_file pipeline.yaml
-			ops_edit  $ctl_ceilometer_conf collector workers 2
-			ops_edit  $ctl_ceilometer_conf notification workers 2
-			ops_edit  $ctl_ceilometer_conf DEFAULT hypervisor_inspector libvirt
-			 
-			ops_edit  $ctl_ceilometer_conf DEFAULT nova_control_exchange nova
-			ops_edit  $ctl_ceilometer_conf DEFAULT glance_control_exchange glance
-			ops_edit  $ctl_ceilometer_conf DEFAULT neutron_control_exchange neutron
-			ops_edit  $ctl_ceilometer_conf DEFAULT cinder_control_exchange cinder
-			 
-			ops_edit  $ctl_ceilometer_conf publisher telemetry_secret fe01a6ed3e04c4be1cd8
+		ops_edit  $ctl_ceilometer_conf service_credentials username ceilometer
+		ops_edit  $ctl_ceilometer_conf service_credentials password $CEILOMETER_PASS
+		ops_edit  $ctl_ceilometer_conf service_credentials auth_url http://$CTL1_IP_NIC1:5000/v3
+		ops_edit  $ctl_ceilometer_conf service_credentials project_domain_name Default
+		ops_edit  $ctl_ceilometer_conf service_credentials user_domain_name Default
+		ops_edit  $ctl_ceilometer_conf service_credentials project_name service
 
 
-			kvm_possible=`grep -E 'svm|vmx' /proc/cpuinfo|uniq|wc -l`
+		# End of Keystone Section
 
-			if [ $forceqemu == "yes" ]
-			then
-							kvm_possible="0"
-			fi
+		ops_edit  $ctl_ceilometer_conf DEFAULT metering_api_port 8777
+		ops_edit  $ctl_ceilometer_conf DEFAULT auth_strategy keystone
+		ops_edit  $ctl_ceilometer_conf DEFAULT log_dir /var/log/ceilometer
+		ops_edit  $ctl_ceilometer_conf DEFAULT host `hostname`
+		ops_edit  $ctl_ceilometer_conf DEFAULT pipeline_cfg_file pipeline.yaml
+		ops_edit  $ctl_ceilometer_conf collector workers 2
+		ops_edit  $ctl_ceilometer_conf notification workers 2
+		ops_edit  $ctl_ceilometer_conf DEFAULT hypervisor_inspector libvirt
+		 
+		ops_edit  $ctl_ceilometer_conf DEFAULT nova_control_exchange nova
+		ops_edit  $ctl_ceilometer_conf DEFAULT glance_control_exchange glance
+		ops_edit  $ctl_ceilometer_conf DEFAULT neutron_control_exchange neutron
+		ops_edit  $ctl_ceilometer_conf DEFAULT cinder_control_exchange cinder
+		 
+		ops_edit  $ctl_ceilometer_conf publisher telemetry_secret fe01a6ed3e04c4be1cd8
 
-			if [ $kvm_possible == "0" ]
-			then
-				ops_edit  $ctl_ceilometer_conf DEFAULT libvirt_type qemu
-			else
-				ops_edit  $ctl_ceilometer_conf DEFAULT libvirt_type kvm
-			fi
 
-			ops_edit  $ctl_ceilometer_conf DEFAULT debug false
+		kvm_possible=`grep -E 'svm|vmx' /proc/cpuinfo|uniq|wc -l`
 
-			# ops_edit  $ctl_ceilometer_conf database metering_time_to_live 604800
-			# ops_edit  $ctl_ceilometer_conf database time_to_live 604800
-			# ops_edit  $ctl_ceilometer_conf database event_time_to_live 604800
+		if [ $forceqemu == "yes" ]
+		then
+						kvm_possible="0"
+		fi
 
-			ops_edit  $ctl_ceilometer_conf DEFAULT notification_topics notifications
+		if [ $kvm_possible == "0" ]
+		then
+			ops_edit  $ctl_ceilometer_conf DEFAULT libvirt_type qemu
+		else
+			ops_edit  $ctl_ceilometer_conf DEFAULT libvirt_type kvm
+		fi
 
-			ops_edit  $ctl_ceilometer_conf oslo_messaging_rabbit rabbit_host $CTL1_IP_NIC1
-			ops_edit  $ctl_ceilometer_conf oslo_messaging_rabbit rabbit_port 5672
-			ops_edit  $ctl_ceilometer_conf oslo_messaging_rabbit rabbit_userid openstack
-			ops_edit  $ctl_ceilometer_conf oslo_messaging_rabbit rabbit_password $RABBIT_PASS
+		ops_edit  $ctl_ceilometer_conf DEFAULT debug false
 
-			# ops_edit  $ctl_ceilometer_conf notification messaging_urls 'rabbit://openstack:Ec0net#!2017@$CTL1_IP_NIC1:5672/openstack'
+		# ops_edit  $ctl_ceilometer_conf database metering_time_to_live 604800
+		# ops_edit  $ctl_ceilometer_conf database time_to_live 604800
+		# ops_edit  $ctl_ceilometer_conf database event_time_to_live 604800
 
-			ops_edit  $ctl_ceilometer_conf alarm evaluation_service ceilometer.alarm.service.SingletonAlarmService
-			ops_edit  $ctl_ceilometer_conf alarm partition_rpc_topic alarm_partition_coordination
+		ops_edit  $ctl_ceilometer_conf DEFAULT notification_topics notifications
 
-			ops_edit  $ctl_ceilometer_conf api port 8777
-			ops_edit  $ctl_ceilometer_conf api host 0.0.0.0
+		ops_edit  $ctl_ceilometer_conf oslo_messaging_rabbit rabbit_host $CTL1_IP_NIC1
+		ops_edit  $ctl_ceilometer_conf oslo_messaging_rabbit rabbit_port 5672
+		ops_edit  $ctl_ceilometer_conf oslo_messaging_rabbit rabbit_userid openstack
+		ops_edit  $ctl_ceilometer_conf oslo_messaging_rabbit rabbit_password $RABBIT_PASS
 
-			ops_edit  $ctl_ceilometer_conf DEFAULT heat_control_exchange heat
-			ops_edit  $ctl_ceilometer_conf DEFAULT control_exchange ceilometer
-			ops_edit  $ctl_ceilometer_conf DEFAULT http_control_exchanges nova
+		# ops_edit  $ctl_ceilometer_conf notification messaging_urls 'rabbit://openstack:Ec0net#!2017@$CTL1_IP_NIC1:5672/openstack'
 
-			sed -r -i 's/http_control_exchanges\ =\ nova/http_control_exchanges\ =\ nova\nhttp_control_exchanges\ =\ glance\nhttp_control_exchanges\ =\ cinder\nhttp_control_exchanges\ =\ neutron\n/'  $ctl_ceilometer_conf
+		ops_edit  $ctl_ceilometer_conf alarm evaluation_service ceilometer.alarm.service.SingletonAlarmService
+		ops_edit  $ctl_ceilometer_conf alarm partition_rpc_topic alarm_partition_coordination
 
-			ops_edit  $ctl_ceilometer_conf service_types neutron network
-			ops_edit  $ctl_ceilometer_conf service_types nova compute
-			ops_edit  $ctl_ceilometer_conf service_types swift object-store
-			ops_edit  $ctl_ceilometer_conf service_types glance image
-			crudini --del  $ctl_ceilometer_conf service_types kwapi
-			ops_edit  $ctl_ceilometer_conf service_types neutron_lbaas_version v2
+		ops_edit  $ctl_ceilometer_conf api port 8777
+		ops_edit  $ctl_ceilometer_conf api host 0.0.0.0
 
-			ops_edit  $ctl_ceilometer_conf oslo_messaging_notifications topics notifications
-			ops_edit  $ctl_ceilometer_conf oslo_messaging_notifications driver messagingv2
-			ops_edit  $ctl_ceilometer_conf exchange_control heat_control_exchange heat
-			ops_edit  $ctl_ceilometer_conf exchange_control glance_control_exchange glance
-			ops_edit  $ctl_ceilometer_conf exchange_control keystone_control_exchange keystone
-			ops_edit  $ctl_ceilometer_conf exchange_control cinder_control_exchange cinder
-			ops_edit  $ctl_ceilometer_conf exchange_control sahara_control_exchange sahara
-			ops_edit  $ctl_ceilometer_conf exchange_control swift_control_exchange swift
-			ops_edit  $ctl_ceilometer_conf exchange_control magnum_control_exchange magnum
-			ops_edit  $ctl_ceilometer_conf exchange_control trove_control_exchange trove
-			ops_edit  $ctl_ceilometer_conf exchange_control nova_control_exchange nova
-			ops_edit  $ctl_ceilometer_conf exchange_control neutron_control_exchange neutron
-			ops_edit  $ctl_ceilometer_conf publisher_notifier telemetry_driver messagingv2
-			ops_edit  $ctl_ceilometer_conf publisher_notifier metering_topic metering
-			ops_edit  $ctl_ceilometer_conf publisher_notifier event_topic event
-			
-			# Khai bao cau hinh cho ceilometer khi su dung gnocchi
-			ops_edit  $ctl_ceilometer_conf DEFAULT dispatcher gnocchi
-			ops_edit  $ctl_ceilometer_conf DEFAULT meter_dispatchers gnocchi
-			ops_edit  $ctl_ceilometer_conf DEFAULT event_dispatchers gnocchi
-			ops_edit  $ctl_ceilometer_conf dispatcher_gnocchi url http://$CTL1_IP_NIC1:8041
-			ops_edit  $ctl_ceilometer_conf dispatcher_gnocchi filter_service_activity False
-			ops_edit  $ctl_ceilometer_conf dispatcher_gnocchi archive_policy low
-			ops_edit  $ctl_ceilometer_conf dispatcher_gnocchi resources_definition_file gnocchi_resources.yaml
+		ops_edit  $ctl_ceilometer_conf DEFAULT heat_control_exchange heat
+		ops_edit  $ctl_ceilometer_conf DEFAULT control_exchange ceilometer
+		ops_edit  $ctl_ceilometer_conf DEFAULT http_control_exchanges nova
 
-			
-			mkdir -p /var/lib/ceilometer/tmp-signing
-			chown ceilometer.ceilometer /var/lib/ceilometer/tmp-signing
-			chmod 700 /var/lib/ceilometer/tmp-signing
+		sed -r -i 's/http_control_exchanges\ =\ nova/http_control_exchanges\ =\ nova\nhttp_control_exchanges\ =\ glance\nhttp_control_exchanges\ =\ cinder\nhttp_control_exchanges\ =\ neutron\n/'  $ctl_ceilometer_conf
 
-			############### Cau hinh cho Gnocchi 
-			ctl_gnocchi_api_paste = /etc/gnocchi/api-paste.ini
-			ctl_gnocchi_json = /etc/gnocchi/policy.json
-			ctl_gnocchi_conf = /etc/gnocchi/gnocchi.conf
-			ctl_gnocchi_resources = /etc/ceilometer/gnocchi_resources.yaml
-			cp $ctl_gnocchi_api_paste $ctl_gnocchi_api_paste.orig 
-			cp $ctl_gnocchi_json $ctl_gnocchi_json.orig
-			cp $ctl_gnocchi_conf $ctl_gnocchi_conf.orig 
-			cp $ctl_gnocchi_resources $ctl_gnocchi_resources.orig 
-			
-						ops_edit $ctl_gnocchi_conf DEFAULT debug false
-			ops_edit $ctl_gnocchi_conf DEFAULT log_file /var/log/gnocchi/gnocchi.log
+		ops_edit  $ctl_ceilometer_conf service_types neutron network
+		ops_edit  $ctl_ceilometer_conf service_types nova compute
+		ops_edit  $ctl_ceilometer_conf service_types swift object-store
+		ops_edit  $ctl_ceilometer_conf service_types glance image
+		crudini --del  $ctl_ceilometer_conf service_types kwapi
+		ops_edit  $ctl_ceilometer_conf service_types neutron_lbaas_version v2
 
-			ops_edit $ctl_gnocchi_conf api host 0.0.0.0
-			ops_edit $ctl_gnocchi_conf api port 8041
-			ops_edit $ctl_gnocchi_conf api paste_config /etc/gnocchi/api-paste.ini
-			ops_edit $ctl_gnocchi_conf api auth_mode keystone
+		ops_edit  $ctl_ceilometer_conf oslo_messaging_notifications topics notifications
+		ops_edit  $ctl_ceilometer_conf oslo_messaging_notifications driver messagingv2
+		ops_edit  $ctl_ceilometer_conf exchange_control heat_control_exchange heat
+		ops_edit  $ctl_ceilometer_conf exchange_control glance_control_exchange glance
+		ops_edit  $ctl_ceilometer_conf exchange_control keystone_control_exchange keystone
+		ops_edit  $ctl_ceilometer_conf exchange_control cinder_control_exchange cinder
+		ops_edit  $ctl_ceilometer_conf exchange_control sahara_control_exchange sahara
+		ops_edit  $ctl_ceilometer_conf exchange_control swift_control_exchange swift
+		ops_edit  $ctl_ceilometer_conf exchange_control magnum_control_exchange magnum
+		ops_edit  $ctl_ceilometer_conf exchange_control trove_control_exchange trove
+		ops_edit  $ctl_ceilometer_conf exchange_control nova_control_exchange nova
+		ops_edit  $ctl_ceilometer_conf exchange_control neutron_control_exchange neutron
+		ops_edit  $ctl_ceilometer_conf publisher_notifier telemetry_driver messagingv2
+		ops_edit  $ctl_ceilometer_conf publisher_notifier metering_topic metering
+		ops_edit  $ctl_ceilometer_conf publisher_notifier event_topic event
+		
+		# Khai bao cau hinh cho ceilometer khi su dung gnocchi
+		ops_edit  $ctl_ceilometer_conf DEFAULT dispatcher gnocchi
+		ops_edit  $ctl_ceilometer_conf DEFAULT meter_dispatchers gnocchi
+		ops_edit  $ctl_ceilometer_conf DEFAULT event_dispatchers gnocchi
+		ops_edit  $ctl_ceilometer_conf dispatcher_gnocchi url http://$CTL1_IP_NIC1:8041
+		ops_edit  $ctl_ceilometer_conf dispatcher_gnocchi filter_service_activity False
+		ops_edit  $ctl_ceilometer_conf dispatcher_gnocchi archive_policy low
+		ops_edit  $ctl_ceilometer_conf dispatcher_gnocchi resources_definition_file gnocchi_resources.yaml
 
-			ops_edit $ctl_gnocchi_conf database connection 'mysql+pymysql://gnocchi:$PASS_DATABASE_GNOCCHI@$CTL1_IP_NIC1/gnocchi'
-			ops_edit $ctl_gnocchi_conf indexer url 'mysql+pymysql://gnocchi:$PASS_DATABASE_GNOCCHI@$CTL1_IP_NIC1/gnocchi'
+		
+		mkdir -p /var/lib/ceilometer/tmp-signing
+		chown ceilometer.ceilometer /var/lib/ceilometer/tmp-signing
+		chmod 700 /var/lib/ceilometer/tmp-signing
 
-			ops_edit $ctl_gnocchi_conf keystone_authtoken auth_uri http://$CTL1_IP_NIC1:5000/v3
-			ops_edit $ctl_gnocchi_conf keystone_authtoken auth_url http://$CTL1_IP_NIC1:35357/v3
-			ops_edit $ctl_gnocchi_conf keystone_authtoken auth_type password
-			ops_edit $ctl_gnocchi_conf keystone_authtoken memcached_servers $CTL1_IP_NIC1:11211
-			ops_edit $ctl_gnocchi_conf keystone_authtoken project_domain_name Default
-			ops_edit $ctl_gnocchi_conf keystone_authtoken user_domain_name Default
-			ops_edit $ctl_gnocchi_conf keystone_authtoken project_name service
-			ops_edit $ctl_gnocchi_conf keystone_authtoken username gnocchi
-			ops_edit $ctl_gnocchi_conf keystone_authtoken password $GNOCCHI_PASS
-			ops_edit $ctl_gnocchi_conf keystone_authtoken interface internalURL
-			ops_edit $ctl_gnocchi_conf keystone_authtoken region_name RegionOne
+		############### Cau hinh cho Gnocchi 
+		ctl_gnocchi_api_paste = /etc/gnocchi/api-paste.ini
+		ctl_gnocchi_json = /etc/gnocchi/policy.json
+		ctl_gnocchi_conf = /etc/gnocchi/gnocchi.conf
+		ctl_gnocchi_resources = /etc/ceilometer/gnocchi_resources.yaml
+		cp $ctl_gnocchi_api_paste $ctl_gnocchi_api_paste.orig 
+		cp $ctl_gnocchi_json $ctl_gnocchi_json.orig
+		cp $ctl_gnocchi_conf $ctl_gnocchi_conf.orig 
+		cp $ctl_gnocchi_resources $ctl_gnocchi_resources.orig 
+		
+					ops_edit $ctl_gnocchi_conf DEFAULT debug false
+		ops_edit $ctl_gnocchi_conf DEFAULT log_file /var/log/gnocchi/gnocchi.log
 
-			ops_edit $ctl_gnocchi_conf service_credentials auth_uri http://$CTL1_IP_NIC1:5000/v3
-			ops_edit $ctl_gnocchi_conf service_credentials auth_url http://$CTL1_IP_NIC1:35357/v3
-			ops_edit $ctl_gnocchi_conf service_credentials auth_type password
-			ops_edit $ctl_gnocchi_conf service_credentials memcached_servers $CTL1_IP_NIC1:11211
-			ops_edit $ctl_gnocchi_conf service_credentials project_domain_name Default
-			ops_edit $ctl_gnocchi_conf service_credentials user_domain_name Default
-			ops_edit $ctl_gnocchi_conf service_credentials project_name service
-			ops_edit $ctl_gnocchi_conf service_credentials username gnocchi
-			ops_edit $ctl_gnocchi_conf service_credentials password $GNOCCHI_PASS
-			ops_edit $ctl_gnocchi_conf service_credentials interface internalURL
-			ops_edit $ctl_gnocchi_conf service_credentials region_name RegionOne
+		ops_edit $ctl_gnocchi_conf api host 0.0.0.0
+		ops_edit $ctl_gnocchi_conf api port 8041
+		ops_edit $ctl_gnocchi_conf api paste_config /etc/gnocchi/api-paste.ini
+		ops_edit $ctl_gnocchi_conf api auth_mode keystone
 
-			ops_edit $ctl_gnocchi_conf storage driver file
-			ops_edit $ctl_gnocchi_conf storage file_basepath '/var/lib/gnocchi'
-			ops_edit $ctl_gnocchi_conf storage coordination_url 'file:///var/lib/gnocchi/locks'
+		ops_edit $ctl_gnocchi_conf database connection 'mysql+pymysql://gnocchi:$PASS_DATABASE_GNOCCHI@$CTL1_IP_NIC1/gnocchi'
+		ops_edit $ctl_gnocchi_conf indexer url 'mysql+pymysql://gnocchi:$PASS_DATABASE_GNOCCHI@$CTL1_IP_NIC1/gnocchi'
 
-			ops_edit $ctl_gnocchi_conf indexer driver sqlalchemy
-			ops_edit $ctl_gnocchi_conf archive_policy default_aggregation_methods 'mean,min,max,sum,std,median,count,last,95pct'
+		ops_edit $ctl_gnocchi_conf keystone_authtoken auth_uri http://$CTL1_IP_NIC1:5000/v3
+		ops_edit $ctl_gnocchi_conf keystone_authtoken auth_url http://$CTL1_IP_NIC1:35357/v3
+		ops_edit $ctl_gnocchi_conf keystone_authtoken auth_type password
+		ops_edit $ctl_gnocchi_conf keystone_authtoken memcached_servers $CTL1_IP_NIC1:11211
+		ops_edit $ctl_gnocchi_conf keystone_authtoken project_domain_name Default
+		ops_edit $ctl_gnocchi_conf keystone_authtoken user_domain_name Default
+		ops_edit $ctl_gnocchi_conf keystone_authtoken project_name service
+		ops_edit $ctl_gnocchi_conf keystone_authtoken username gnocchi
+		ops_edit $ctl_gnocchi_conf keystone_authtoken password $GNOCCHI_PASS
+		ops_edit $ctl_gnocchi_conf keystone_authtoken interface internalURL
+		ops_edit $ctl_gnocchi_conf keystone_authtoken region_name RegionOne
 
-			su gnocchi -s /bin/sh -c 'gnocchi-upgrade --config-file $ctl_gnocchi_conf --create-legacy-resource-types'
+		ops_edit $ctl_gnocchi_conf service_credentials auth_uri http://$CTL1_IP_NIC1:5000/v3
+		ops_edit $ctl_gnocchi_conf service_credentials auth_url http://$CTL1_IP_NIC1:35357/v3
+		ops_edit $ctl_gnocchi_conf service_credentials auth_type password
+		ops_edit $ctl_gnocchi_conf service_credentials memcached_servers $CTL1_IP_NIC1:11211
+		ops_edit $ctl_gnocchi_conf service_credentials project_domain_name Default
+		ops_edit $ctl_gnocchi_conf service_credentials user_domain_name Default
+		ops_edit $ctl_gnocchi_conf service_credentials project_name service
+		ops_edit $ctl_gnocchi_conf service_credentials username gnocchi
+		ops_edit $ctl_gnocchi_conf service_credentials password $GNOCCHI_PASS
+		ops_edit $ctl_gnocchi_conf service_credentials interface internalURL
+		ops_edit $ctl_gnocchi_conf service_credentials region_name RegionOne
 
-			systemctl stop openstack-gnocchi-api
-			systemctl disable openstack-gnocchi-api
+		ops_edit $ctl_gnocchi_conf storage driver file
+		ops_edit $ctl_gnocchi_conf storage file_basepath '/var/lib/gnocchi'
+		ops_edit $ctl_gnocchi_conf storage coordination_url 'file:///var/lib/gnocchi/locks'
+
+		ops_edit $ctl_gnocchi_conf indexer driver sqlalchemy
+		ops_edit $ctl_gnocchi_conf archive_policy default_aggregation_methods 'mean,min,max,sum,std,median,count,last,95pct'
+
+		su gnocchi -s /bin/sh -c 'gnocchi-upgrade --config-file $ctl_gnocchi_conf --create-legacy-resource-types'
+
+		systemctl stop openstack-gnocchi-api
+		systemctl disable openstack-gnocchi-api
 }
 
 
