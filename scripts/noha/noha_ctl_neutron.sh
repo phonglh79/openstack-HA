@@ -104,10 +104,10 @@ function neutron_config {
         ops_edit $ctl_neutron_conf securitygroup enable_security_group True
         ops_edit $ctl_neutron_conf securitygroup firewall_driver neutron.agent.linux.iptables_firewall.IptablesFirewallDriver
 				
-				ops_edit $ctl_linuxbridge_agent linux_bridge physical_interface_mappings provider:ens256
-        ops_edit $ctl_linuxbridge_agent vxlan enable_vxlan False
-        ops_edit $ctl_linuxbridge_agent securitygroup enable_security_group True
-        ops_edit $ctl_linuxbridge_agent securitygroup firewall_driver neutron.agent.linux.iptables_firewall.IptablesFirewallDriver
+				# ops_edit $ctl_linuxbridge_agent linux_bridge physical_interface_mappings provider:ens256
+        # ops_edit $ctl_linuxbridge_agent vxlan enable_vxlan False
+        # ops_edit $ctl_linuxbridge_agent securitygroup enable_security_group True
+        # ops_edit $ctl_linuxbridge_agent securitygroup firewall_driver neutron.agent.linux.iptables_firewall.IptablesFirewallDriver
         
         ops_edit $ctl_neutron_conf DEFAULT nova_metadata_ip $CTL1_IP_NIC1
         ops_edit $ctl_neutron_conf DEFAULT metadata_proxy_shared_secret $METADATA_SECRET

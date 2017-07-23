@@ -31,9 +31,9 @@ function ops_del {
 
 function aodh_create_db {
       mysql -uroot -p$PASS_DATABASE_ROOT  -e "CREATE DATABASE aodh;
-      GRANT ALL PRIVILEGES ON aodh.* TO 'aodh'@'localhost' IDENTIFIED BY '$PASS_DATABASE_AODH';
-      GRANT ALL PRIVILEGES ON aodh.* TO 'aodh'@'%' IDENTIFIED BY '$PASS_DATABASE_AODH';
-      GRANT ALL PRIVILEGES ON aodh.* TO 'aodh'@'$CTL1_IP_NIC1' IDENTIFIED BY '$PASS_DATABASE_AODH';
+      GRANT ALL PRIVILEGES ON aodh.* TO 'aodh'@'localhost' IDENTIFIED BY '$PASS_DATABASE_AODH' WITH GRANT OPTION ;FLUSH PRIVILEGES;
+      GRANT ALL PRIVILEGES ON aodh.* TO 'aodh'@'%' IDENTIFIED BY '$PASS_DATABASE_AODH' WITH GRANT OPTION ;FLUSH PRIVILEGES;
+      GRANT ALL PRIVILEGES ON aodh.* TO 'aodh'@'$CTL1_IP_NIC1' IDENTIFIED BY '$PASS_DATABASE_AODH' WITH GRANT OPTION ;FLUSH PRIVILEGES;
 
       FLUSH PRIVILEGES;"
 }
@@ -57,7 +57,7 @@ function aodh_install_config {
 				openstack-aodh-listener openstack-aodh-expirer \
 				python-aodhclient
 				
-				yum -y install mod_wsgi memcached python-memcached httpd
+				yum -y install mod_wsgi memcached python-memcached httpd install python-pip
 				
 				pip install requests-aws
 				
@@ -67,10 +67,10 @@ function aodh_install_config {
         ops_edit $ctl_aodh_conf DEFAULT rpc_backend rabbit
         ops_edit $ctl_aodh_conf DEFAULT auth_strategy keystone
         ops_edit $ctl_aodh_conf DEFAULT my_ip $CTL1_IP_NIC1
-        ops_edit $ctl_aodh_conf DEFAULT DEFAULT host `hostname`
+        ops_edit $ctl_aodh_conf DEFAULT host `hostname`
 				
         
-        ops_edit $ctl_aodh_conf database connection  mysql+pymysql://aodh:PASS_DATABASE_AODH@$CTL1_IP_NIC1/aodh
+        ops_edit $ctl_aodh_conf database connection  mysql+pymysql://aodh:$PASS_DATABASE_AODH@$CTL1_IP_NIC1/aodh
 
         ops_edit $ctl_aodh_conf keystone_authtoken auth_uri http://$CTL1_IP_NIC1:5000
         ops_edit $ctl_aodh_conf keystone_authtoken auth_url http://$CTL1_IP_NIC1:35357
