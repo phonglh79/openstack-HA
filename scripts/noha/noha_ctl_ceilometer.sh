@@ -156,7 +156,6 @@ function gnocchi_create_db {
 
 
 function gnocchi_ceilometer_user_endpoint {
-
 		openstack user create ceilometer --domain default --password $CEILOMETER_PASS
 		openstack role add --project service --user ceilometer admin
 		openstack service create --name ceilometer --description "Telemetry" metering
@@ -174,7 +173,6 @@ function gnocchi_ceilometer_user_endpoint {
 }
 
 function gnocchi_ceilometer_install_config {
-
 		yum install -y openstack-ceilometer-central \
 		openstack-ceilometer-collector \
 		openstack-ceilometer-common \
@@ -196,7 +194,6 @@ function gnocchi_ceilometer_install_config {
 		ctl_ceilometer_conf = /etc/ceilometer/ceilometer.conf
 		cp $ctl_ceilometer_conf $ctl_ceilometer_conf.orig
 		
-
 		ops_edit  $ctl_ceilometer_conf keystone_authtoken admin_tenant_name service
 		ops_edit  $ctl_ceilometer_conf keystone_authtoken admin_user ceilometer
 		ops_edit  $ctl_ceilometer_conf keystone_authtoken admin_password '$CEILOMETER_PASS'
@@ -229,7 +226,6 @@ function gnocchi_ceilometer_install_config {
 		ops_edit  $ctl_ceilometer_conf service_credentials project_domain_name Default
 		ops_edit  $ctl_ceilometer_conf service_credentials user_domain_name Default
 		ops_edit  $ctl_ceilometer_conf service_credentials project_name service
-
 
 		# End of Keystone Section
 
@@ -323,7 +319,6 @@ function gnocchi_ceilometer_install_config {
 		ops_edit  $ctl_ceilometer_conf dispatcher_gnocchi archive_policy low
 		ops_edit  $ctl_ceilometer_conf dispatcher_gnocchi resources_definition_file gnocchi_resources.yaml
 
-		
 		mkdir -p /var/lib/ceilometer/tmp-signing
 		chown ceilometer.ceilometer /var/lib/ceilometer/tmp-signing
 		chmod 700 /var/lib/ceilometer/tmp-signing
@@ -338,7 +333,7 @@ function gnocchi_ceilometer_install_config {
 		cp $ctl_gnocchi_conf $ctl_gnocchi_conf.orig 
 		cp $ctl_gnocchi_resources $ctl_gnocchi_resources.orig 
 		
-					ops_edit $ctl_gnocchi_conf DEFAULT debug false
+		ops_edit $ctl_gnocchi_conf DEFAULT debug false
 		ops_edit $ctl_gnocchi_conf DEFAULT log_file /var/log/gnocchi/gnocchi.log
 
 		ops_edit $ctl_gnocchi_conf api host 0.0.0.0
@@ -401,7 +396,6 @@ function gnocchi_wsgi_config {
 }
 
 function gnocchi_ceilometer_enable_restart {
-
 		gnocchi-upgrade --create-legacy-resource-types
 
 		systemctl start openstack-ceilometer-compute
