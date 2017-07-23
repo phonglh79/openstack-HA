@@ -31,6 +31,9 @@ function ops_del {
 
 function aodh_create_db {
       mysql -uroot -p$PASS_DATABASE_ROOT  -e "CREATE DATABASE aodh;
+      GRANT ALL PRIVILEGES ON aodh.* TO 'aodh'@'localhost' IDENTIFIED BY '$PASS_DATABASE_AODH';
+      GRANT ALL PRIVILEGES ON aodh.* TO 'aodh'@'%' IDENTIFIED BY '$PASS_DATABASE_AODH';
+      GRANT ALL PRIVILEGES ON aodh.* TO 'aodh'@'$CTL1_IP_NIC1' IDENTIFIED BY '$PASS_DATABASE_AODH';
 
       FLUSH PRIVILEGES;"
 }
