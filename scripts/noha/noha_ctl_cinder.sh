@@ -89,6 +89,9 @@ function cinder_install_config {
         ops_edit $ctl_cinder_conf oslo_messaging_rabbit rabbit_password $RABBIT_PASS
         
         ops_edit $ctl_cinder_conf oslo_concurrency lock_path /var/lib/cinder/tmp
+				
+        ops_edit $ctl_cinder_conf oslo_messaging_notifications driver messagingv2
+				
         
         ops_edit $ctl_cinder_conf lvm volume_driver cinder.volume.drivers.lvm.LVMVolumeDriver
         ops_edit $ctl_cinder_conf lvm volume_group cinder-volumes

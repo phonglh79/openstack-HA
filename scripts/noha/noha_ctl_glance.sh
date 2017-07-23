@@ -58,6 +58,7 @@ function glance_install_config {
         cp $glance_registry_conf $glance_registry_conf.orig
 
         ###glance_api_conf
+				ops_edit $glance_api_conf DEFAULT rpc_backend rabbit
         ops_edit $glance_api_conf glance_store stores file,http
         ops_edit $glance_api_conf glance_store default_store file
         ops_edit $glance_api_conf glance_store filesystem_store_datadir /var/lib/glance/images/
@@ -83,6 +84,7 @@ function glance_install_config {
         ops_edit $glance_api_conf oslo_messaging_notifications driver messagingv2
 
         ###glance_registry_conf
+				ops_edit $glance_registry_conf DEFAULT rpc_backend rabbit
         ops_edit $glance_registry_conf database connection mysql+pymysql://glance:$PASS_DATABASE_GLANCE@$CTL1_IP_NIC1/glance
 
         ops_edit $glance_registry_conf keystone_authtoken auth_uri http://$CTL1_IP_NIC1:5000

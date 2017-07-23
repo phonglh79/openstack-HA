@@ -31,10 +31,9 @@ function ops_del {
 
 function aodh_create_db {
 		mysql -uroot -p$PASS_DATABASE_ROOT  -e "CREATE DATABASE aodh;
-		GRANT ALL PRIVILEGES ON aodh.* TO 'aodh'@'localhost' IDENTIFIED BY '$PASS_DATABASE_AODH' WITH GRANT OPTION ;FLUSH PRIVILEGES;
-		GRANT ALL PRIVILEGES ON aodh.* TO 'aodh'@'%' IDENTIFIED BY '$PASS_DATABASE_AODH' WITH GRANT OPTION ;FLUSH PRIVILEGES;
-		GRANT ALL PRIVILEGES ON aodh.* TO 'aodh'@'$CTL1_IP_NIC1' IDENTIFIED BY '$PASS_DATABASE_AODH' WITH GRANT OPTION ;FLUSH PRIVILEGES;
-
+		GRANT ALL PRIVILEGES ON aodh.* TO 'aodh'@'localhost' IDENTIFIED BY '$PASS_DATABASE_AODH';
+		GRANT ALL PRIVILEGES ON aodh.* TO 'aodh'@'%' IDENTIFIED BY '$PASS_DATABASE_AODH';
+		GRANT ALL PRIVILEGES ON aodh.* TO 'aodh'@'$CTL1_IP_NIC1' IDENTIFIED BY '$PASS_DATABASE_AODH';
 		FLUSH PRIVILEGES;"
 }
 
@@ -102,7 +101,6 @@ function aodh_install_config {
 		
 		ops_edit $ctl_aodh_conf oslo_messaging_notifications driver messagingv2
 		ops_edit $ctl_aodh_conf oslo_messaging_notifications topics notifications
-
 }
 
 function aodh_syncdb {
@@ -170,7 +168,6 @@ function gnocchi_ceilometer_user_endpoint {
 }
 
 function gnocchi_ceilometer_install_config {
-
 		yum -y install openstack-ceilometer-central \
 		openstack-ceilometer-collector \
 		openstack-ceilometer-common \
@@ -242,12 +239,11 @@ function gnocchi_ceilometer_install_config {
 		 
 		ops_edit  $ctl_ceilometer_conf publisher telemetry_secret fe01a6ed3e04c4be1cd8
 
-
 		kvm_possible=`grep -E 'svm|vmx' /proc/cpuinfo|uniq|wc -l`
 		forceqemu="no"
 		if [ $forceqemu == "yes" ]
 		then
-						kvm_possible="0"
+			kvm_possible="0"
 		fi
 
 		if [ $kvm_possible == "0" ]
@@ -394,27 +390,40 @@ function gnocchi_wsgi_config {
 }
 
 function gnocchi_ceilometer_enable_restart {
-				gnocchi-upgrade --create-legacy-resource-types
+		gnocchi-upgrade --create-legacy-resource-types
 
-				systemctl start openstack-ceilometer-compute
-				systemctl enable openstack-ceilometer-compute
+		systemctl start openstack-ceilometer-compute
+		systemctl enable openstack-ceilometer-compute
 
-				systemctl start openstack-gnocchi-metricd
-				systemctl enable openstack-gnocchi-metricd
+		systemctl start openstack-gnocchi-metricd
+		systemctl enable openstack-gnocchi-metricd
 
-				systemctl start openstack-ceilometer-central
-				systemctl enable openstack-ceilometer-central
+		systemctl start openstack-ceilometer-central
+		systemctl enable openstack-ceilometer-central
 
-				systemctl disable openstack-ceilometer-api
-				systemctl stop openstack-ceilometer-api
+		systemctl disable openstack-ceilometer-api
+		systemctl stop openstack-ceilometer-api
 
-				systemctl start openstack-ceilometer-collector
-				systemctl enable openstack-ceilometer-collector
+		systemctl start openstack-ceilometer-collector
+		systemctl enable openstack-ceilometer-collector
 
-				systemctl start openstack-ceilometer-notification
-				systemctl enable openstack-ceilometer-notification
+		systemctl start openstack-ceilometer-notification
+		systemctl enable openstack-ceilometer-notification
 
-				systemctl disable openstack-ceilometer-polling > /dev/null 2>&1
+		systemctl disable openstack-ceilometer-polling > /dev/null 2>&1
+}
+
+
+function enable_ceilometer_for_services {
+		 #cinder-volume-usage-audit  --start_time='YYYY-MM-DD HH:MM:SS' --end_time='YYYY-MM-DD HH:MM:SS' --send_actions
+		 systemctl restart openstack-cinder-api.service openstack-cinder-scheduler.service
+		 systemctl restart openstack-cinder-volume.service
+		 
+		 ops_edit /etc/neutron/neutron.conf oslo_messaging_notifications driver messagingv2
+		 systemctl restart neutron-server.service
+		 
+		 
+
 }
 
 ############################
@@ -467,3 +476,5 @@ echocolor "Restart dich vu Ceilometer & Gnocchi"
 sleep 3
 gnocchi_ceilometer_enable_restart
 echocolor "Da cai dat xong Ceilometer & Gnocchi"
+
+enable_ceilometer_for_services
