@@ -468,9 +468,15 @@ echocolor "Tao user va endpoint cho Ceilometer & Gnocchi"
 sleep 3
 gnocchi_ceilometer_user_endpoint
 
+echocolor "Cai dat va cau hinh Ceilometer & Gnocchi"
+sleep 3
+gnocchi_ceilometer_install_config
+
 echocolor "Cau hinh WSGI cho Ceilometer & Gnocchi"
 sleep 3
 gnocchi_wsgi_config
+
+
 
 echocolor "Restart dich vu Ceilometer & Gnocchi"
 sleep 3

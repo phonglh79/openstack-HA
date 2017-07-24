@@ -39,7 +39,7 @@
 - Đứng trên node CTL1 và thực hiện các bước dưới.
 - Chuyển sang quyền root
 	```sh
-	yum -y install git
+	su -
 	```
 	
 - Cài đặt git và script cài đặt.
@@ -58,8 +58,9 @@
 - Trong toàn bộ quá trình chạy script, chỉ cần thực hiện trên node CTL1, script sẽ tự động cài đặt các node còn lại. Do vậy cần phải ping được từ node CTL1 tới COM1 và COM2 để đảm bảo CTL1 có thể tạo ssh keygen cho COM1 và COM2.
 
 	```sh
-	ping 192.168.20.34 
-	ping 192.168.20.35
+	ping -c 3 192.168.20.34 
+	
+	ping -c 3 192.168.20.35
 	```
 
 -  Nếu cần thiết thì cài ứng dụng `byobu` để khi các phiên ssh bị mất kết nối thì có thể sử dụng lại (để sử đụng lại thì cần ssh vào và gõ lại lệnh `byobu`)
