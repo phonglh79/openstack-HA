@@ -240,4 +240,56 @@ openstack token issue
 
 ### Tạo network  và các máy ảo để kiểm chứng. 
 
-#### Tạo provider network
+#### Tạo provider network và subnet thuộc provider network
+
+- Tạo provider network. Lưu ID của network này để cung cấp khi tạo máy ảo.
+
+	```sh
+	openstack network create  --share --external \
+		--provider-physical-network provider \
+		--provider-network-type flat provider
+	```
+	
+	- Giả sửa ID của network là `9681d9dd-aae2-42fe-9b84-dd7cb04c1aca`
+	
+- Tạo subnet thuộc provider network. Lưu ý nhập đúng gateway, IP cấp cho máy ảo từ 200 tới 220.
+
+	```sh
+	openstack subnet create provider --network provider \
+		--allocation-pool start=192.168.40.200,end=192.168.40.220 \
+		--dns-nameserver 8.8.8.8 --gateway 192.168.40.254 \
+		--subnet-range 192.168.40.0/24 
+	```
+
+#### Tạo flavor
+
+- Tạo flavor
+
+	```sh
+	openstack flavor create --id 0 --vcpus 1 --ram 64 --disk 1 m1.nano
+	```
+
+#### Mở các rule 
+
+- Khai báo các rule cho phép ping và ssh tới máy ảo. 
+	```sh
+	openstack security group rule create --proto icmp default
+	openstack security group rule create --proto tcp --dst-port 22 default
+	```
+	
+#### Tạo máy ảo
+
+- Tạo máy ảo cần cung cấp các ID hoặc tên về images, network, flavor. Giả sử ID của network đã có, images là `cirros`, flavor có tên là `m1.nano`
+
+	```sh
+	openstack server create Provider_VM01 --flavor m1.nano --image cirros \
+		--nic net-id=9681d9dd-aae2-42fe-9b84-dd7cb04c1aca --security-group default
+	```
+	
+- Chờ một lát, máy ảo sẽ được tạo, sau đó kiểm tra bằng lệnh dưới, ta sẽ thấy thông tin máy ảo và IP
+
+```sh
+openstack server list
+```
+
+- Lúc này có thể ping và ssh tới máy ảo bằng tài khoản `cirros` và mật khẩu là `cubswin:)`

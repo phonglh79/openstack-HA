@@ -168,6 +168,7 @@ function gnocchi_ceilometer_user_endpoint {
 }
 
 function gnocchi_ceilometer_install_config {
+		# Khong cai Ceilometer API, hoc theo ban OpenStack Ocata
 		yum -y install openstack-ceilometer-central \
 		openstack-ceilometer-collector \
 		openstack-ceilometer-common \
@@ -400,9 +401,6 @@ function gnocchi_ceilometer_enable_restart {
 
 		systemctl start openstack-ceilometer-central
 		systemctl enable openstack-ceilometer-central
-
-		systemctl disable openstack-ceilometer-api
-		systemctl stop openstack-ceilometer-api
 
 		systemctl start openstack-ceilometer-collector
 		systemctl enable openstack-ceilometer-collector
