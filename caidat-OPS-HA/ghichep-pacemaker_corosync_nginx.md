@@ -492,7 +492,7 @@
   pcs property set stonith-enabled=false
   ```
 
-- Thiết lập policy cho cơ chế `quorum` (bỏ qua bước này nếu như bạn có chỉ có 2 node)
+- Thiết lập policy cho cơ chế `quorum` (bỏ qua bước này nếu như cluster có nhiều hơn 2 node)
   ```sh
   pcs property set no-quorum-policy=ignore
   ```
@@ -629,6 +629,7 @@
 
 # Tham khảo:
 - https://www.server-world.info/en/note?os=CentOS_7&p=nginx
+- https://www.digitalocean.com/community/tutorials/how-to-create-a-high-availability-setup-with-corosync-pacemaker-and-floating-ips-on-ubuntu-14-04
 - http://blog.air-foron.com/linux/centos-7/post-1433/
 - https://www.server-world.info/en/note?os=CentOS_7&p=pacemaker&f=1
 - http://www.unixarena.com/2015/12/rhel-7-configuring-pacemaker-corosync-redhat-cluster-part-4.html

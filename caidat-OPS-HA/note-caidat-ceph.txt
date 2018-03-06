@@ -34,7 +34,7 @@ sudo rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-7
 sudo rm /etc/yum.repos.d/dl.fedoraproject.org*
 
 ### Tao file repos
-cat << EOF > /etc/yum.repos.d/ceph.repo
+cat << EOF > /etc/yum.repos.d/ceph-deploy.repo
 [Ceph-noarch]
 name=Ceph noarch packages
 baseurl=http://download.ceph.com/rpm-jewel/el7/noarch
@@ -165,7 +165,7 @@ EOF
 
 - Update va cac goi can thiet
 yum -y update
-yum -y install python-rbd  ceph-common
+yum -y install python-rbd ceph-common
 
 mkdir /etc/ceph
 
@@ -180,8 +180,10 @@ ceph osd pool create vms 128 128
 
 ## Cấu hình tích hợp CEPH làm backend cho glance
 ## Đứng trên CEPH1 đẩy các file key về cac node CTL.
+
 ceph auth get-or-create client.glance mon 'allow r' osd 'allow class-read object_prefix rbd_children, allow rwx pool=images'
 
+- Tao ra file ceph.client.glance.keyring
 
 sudo ceph auth get-or-create client.glance  > ceph.client.glance.keyring
 
@@ -199,14 +201,31 @@ sudo scp /home/cephuser/ceph.client.glance.keyring root@192.168.20.63:/etc/ceph
 sudo ssh 192.168.20.63 sudo chown glance:glance /etc/ceph/ceph.client.glance.keyring
 
 
-### Chuyen sang CTL1,CTL2 va CTL3 thuc hien restart dich vu glance
+### Chuyen sang CTL1,CTL2 va CTL3 thuc hien cau hinh tren glance 
+
+- Khai bao cac dong cau hinh sau trong file /etc/glance/glance-api.conf . Luu y: sua cac dong trung va them cac dong moi
+
+[glance_store]
+default_store = rbd
+stores = rbd
+rbd_store_pool = images
+rbd_store_user = glance
+rbd_store_ceph_conf = /etc/ceph/ceph.conf
+rbd_store_chunk_size = 8
+
+- Khoi dong lai cac service trong glance 
+
+systemctl restart openstack-glance-api.service
+systemctl restart ─openstack-glance-registry.service
+
+
 
 ### Dung tren CTL1 thuc hien update de thu xem da tich hop thanh cong hay chua
 
 wget http://download.cirros-cloud.net/0.3.5/cirros-0.3.5-x86_64-disk.img
 
 
-openstack image create "cirros1" --file cirros-0.3.5-x86_64-disk.img \
+openstack image create "cirros-ceph4" --file cirros-0.3.5-x86_64-disk.img \
       --disk-format qcow2 --container-format bare \
       --public
 
@@ -255,8 +274,86 @@ ssh 192.168.20.91 ceph auth get-key client.cinder |  tee client.cinder.key
 
 
 
+##########
+## Cau hinh CEPH lam backend cho Gnocchi 
+
+######## Dung tren Gnocchi API (192.168.20.33)
+- Dung tren node cai Gnocchi API cai dat cac goi sau
+
+yum -y update
+sudo yum install -y yum-utils
+
+sudo yum-config-manager --add-repo https://dl.fedoraproject.org/pub/epel/7/x86_64/ 
+sudo yum install --nogpgcheck -y epel-release 
+sudo rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-7 
+sudo rm /etc/yum.repos.d/dl.fedoraproject.org*
+
+- Tao file repos
+cat << EOF > /etc/yum.repos.d/ceph.repo
+[Ceph-noarch]
+name=Ceph noarch packages
+baseurl=http://download.ceph.com/rpm-jewel/el7/noarch
+enabled=1
+gpgcheck=1
+type=rpm-md
+gpgkey=https://download.ceph.com/keys/release.asc
+priority=1
+EOF
+
+- Update va cac goi can thiet
+yum -y update
+yum -y install python-rbd ceph-common
+
+mkdir /etc/ceph
+
+######## Dung tren CEPH1
+- Dung tren CEPH1, tao pool ten la `metrics`:
+
+ceph osd pool create metrics 128
+
+- Kiem tra lai bang lenh: 
+
+ceph osd pool ls
+
+- Tao user gnocchi va cap quyen tren pool metrics 
+
+ceph auth get-or-create client.gnocchi mon 'allow r' osd 'allow class-read object_prefix rbd_children, allow rwx pool=metrics'
+
+- Tao file client.gnocchi
+
+ceph auth get-or-create client.gnocchi > ceph.client.gnocchi.keyring
+
+- Copy file sang gnocchi API 
+
+sudo scp /etc/ceph/ceph.conf root@192.168.20.33:/etc/ceph
+sudo scp /home/cephuser/ceph.client.gnocchi.keyring root@192.168.20.33:/etc/ceph
+sudo ssh 192.168.20.33 sudo chown gnocchi:gnocchi /etc/ceph/ceph.client.gnocchi.keyring
+
+######## Dung tren CTL1 va khai bao cau hinh cho gnocchi su dung ceph lam backend
+
+- Sua file /etc/gnocchi/gnocchi.conf, tim section [storage] va khai bao cac dong duoi: 
+
+[storage]
+coordination_url = file:///var/lib/gnocchi/locks
+driver = ceph
+ceph_pool = metrics
+ceph_username = gnocchi
+ceph_keyring = /etc/ceph/ceph.client.gnocchi.keyring
+ceph_conffile = /etc/ceph/ceph.conf
 
 
+- Khoi dong lai cac dich vu cua cielometer va gnocchi
 
 
+systemctl restart httpd
+
+systemctl restart openstack-gnocchi-metricd
+
+systemctl restart openstack-ceilometer-compute
+
+systemctl restart openstack-ceilometer-central
+
+systemctl restart openstack-ceilometer-collector
+
+systemctl restart openstack-ceilometer-notification
 
